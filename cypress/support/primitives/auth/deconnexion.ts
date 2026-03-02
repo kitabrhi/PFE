@@ -8,7 +8,7 @@ export class AuthDeconnexionPrimitives {
   /**
    * Se déconnecter de l'application
    */
-  static seDeconnecter(version) {
+  static seDeconnecter(version: string): void {
     console.log(`🚪 [${version}] Déconnexion`)
     
     if (version === 'v1') {

@@ -8,7 +8,7 @@ export class AuthNavigationPrimitives {
   /**
    * Naviguer vers la page de connexion
    */
-  static naviguerPageConnexion(version) {
+  static naviguerPageConnexion(version: string): void {
     console.log(`🌐 [${version}] Navigation vers page connexion`)
     
     if (version === 'v1') {
@@ -27,7 +27,7 @@ export class AuthNavigationPrimitives {
   /**
    * Tenter d'accéder à une page protégée sans authentification
    */
-  static tenterAccesPageProtegee(version) {
+  static tenterAccesPageProtegee(version: string): void {
     console.log(`🚫 [${version}] Tentative accès page protégée`)
     
     if (version === 'v1') {

@@ -8,7 +8,7 @@ export class AuthVerificationPrimitives {
   /**
    * Vérifier authentification réussie
    */
-  static verifierAuthentificationReussie(version) {
+  static verifierAuthentificationReussie(version: string): void {
     console.log(`✅ [${version}] Vérification authentification réussie`)
     
     if (version === 'v1') {
@@ -24,7 +24,7 @@ export class AuthVerificationPrimitives {
   /**
    * Vérifier espace personnel visible
    */
-  static verifierEspacePersonnel(version) {
+  static verifierEspacePersonnel(version: string): void {
     console.log(`✅ [${version}] Vérification espace personnel`)
     
     if (version === 'v1') {
@@ -38,7 +38,7 @@ export class AuthVerificationPrimitives {
   /**
    * Vérifier message erreur identifiants invalides
    */
-  static verifierErreurIdentifiants(version) {
+  static verifierErreurIdentifiants(version: string): void {
     console.log(`❌ [${version}] Vérification erreur identifiants`)
     
     if (version === 'v1') {
@@ -54,7 +54,7 @@ export class AuthVerificationPrimitives {
   /**
    * Vérifier message compte inexistant
    */
-  static verifierErreurCompteInexistant(version) {
+  static verifierErreurCompteInexistant(version: string): void {
     console.log(`❌ [${version}] Vérification erreur compte inexistant`)
     
     if (version === 'v1') {
@@ -70,7 +70,7 @@ export class AuthVerificationPrimitives {
   /**
    * Vérifier reste sur page connexion
    */
-  static verifierResteSurPageConnexion(version) {
+  static verifierResteSurPageConnexion(version: string): void {
     console.log(`❌ [${version}] Vérification reste sur page connexion`)
     
     if (version === 'v1') {
@@ -84,7 +84,7 @@ export class AuthVerificationPrimitives {
   /**
    * Vérifier redirection vers page connexion
    */
-  static verifierRedirectionPageConnexion(version) {
+  static verifierRedirectionPageConnexion(version: string): void {
     console.log(`➡️ [${version}] Vérification redirection page connexion`)
     
     if (version === 'v1') {
