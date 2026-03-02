@@ -7,17 +7,25 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "cypress:run:auth": "cypress run --spec \"cypress/e2e/auth/**/*.feature\"",
+    "ts:check": "tsc --noEmit",
+    "ts:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
     "@badeball/cypress-cucumber-preprocessor": "^24.0.0",
     "@bahmutov/cypress-esbuild-preprocessor": "^2.2.8",
+    "@types/node": "^25.3.3",
+    "@typescript-eslint/eslint-plugin": "^8.56.1",
+    "@typescript-eslint/parser": "^8.56.1",
     "cypress": "^15.10.0",
     "cypress-dotenv": "^3.0.1",
     "ts-loader": "^9.5.4",
+    "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
   "cypress-cucumber-preprocessor": {
-    "stepDefinitions": "cypress/support/step_definitions/**/*.js"
+    "stepDefinitions": "cypress/support/step_definitions/**/*.ts"
   }
 }
