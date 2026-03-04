@@ -25,28 +25,26 @@ export class AuthConnexionPrimitives {
         .type(password)
       
       cy.get('button[id=next]').click()
-      cy.wait(5000)
-    } 
+    }
     else if (version === 'v2') {
       cy.get('[data-testid="email-input"]')
         .clear()
         .type(email)
-      
+
       cy.get('[data-testid="password-input"]')
         .clear()
         .type(password)
-      
+
       cy.get('[data-testid="login-button"]').click()
-      cy.wait(3000)
     }
   }
-  
+
   /**
    * Authentification complète (navigation + connexion)
    */
   static authentifierComplet(email: string, password: string, version: string): void {
     AuthNavigationPrimitives.naviguerPageConnexion(version)
     this.seConnecter(email, password, version)
-    cy.wait(2000)
+    cy.url({ timeout: 20000 }).should('not.include', 'b2clogin.com')
   }
 }

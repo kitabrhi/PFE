@@ -1,28 +1,18 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "lib": ["ES2020", "DOM"],
-    "module": "ESNext",
-    "moduleResolution": "bundler",  // ✅ Moderne
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
+    "target": "ES2017",
+    "lib": ["ES2017", "DOM"],
+    "module": "CommonJS",
     "strict": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "types": ["cypress", "node"],
-    "baseUrl": "./",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "bundler",
+    "baseUrl": ".",
     "paths": {
-      "@support/*": ["cypress/support/*"],
-      "@primitives/*": ["cypress/support/primitives/*"]
-    }
+      "@support/*": ["cypress/support/*"]
+    },
+    "types": ["cypress", "node"]
   },
-  "include": [
-    "cypress/**/*.ts",
-    "cypress.config.ts"
-  ],
+  "include": ["cypress/**/*.ts", "cypress.config.ts"],
   "exclude": ["node_modules"]
 }

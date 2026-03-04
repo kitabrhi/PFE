@@ -5,8 +5,8 @@ import { AuthNavigationPrimitives } from "../primitives/auth/navigation";
 import { AuthConnexionPrimitives } from "../primitives/auth/connexion";
 
 const VERSION = 'v1'
-const EMAIL = "kitabrhi.youssef.1@gmail.com"
-const PASSWORD = "Winners@2003"
+const EMAIL: string = Cypress.env('userEmail')
+const PASSWORD: string = Cypress.env('userPassword')
 
 /**
  * ════════════════════════════════════════════════════════════
@@ -27,37 +27,33 @@ Given('Je suis authentifié dans l\'application', () => {
 Given('Je ne suis pas authentifié', () => {
   console.log(`⚠️ [${VERSION}] Utilisateur non authentifié`)
   cy.visit("https://redsumedev.z6.web.core.windows.net")
-  cy.wait(1000)
+  cy.url().should('not.include', '/home')
 })
 
 Given('J\'ai un CV dans ma liste', () => {
   console.log(`📋 [${VERSION}] Présence CV dans liste`)
-  cy.wait(500)
+  cy.get('.mat-mdc-table, .cv-list', { timeout: 10000 }).should('be.visible')
+  cy.get('.mat-mdc-row, .cv-item').should('have.length.greaterThan', 0)
 })
 
 // ═══ THEN ═══
 
 Then('L\'authentification échoue', () => {
-  console.log(`❌ [${VERSION}] Échec authentification (attendu)`)
-  cy.wait(500)
+  cy.url().should('include', 'b2clogin.com')
 })
 
 Then('Ma session est terminée', () => {
-  console.log(`✅ [${VERSION}] Session terminée`)
-  cy.wait(500)
+  cy.url({ timeout: 10000 }).should('include', 'b2clogin.com')
 })
 
 Then('L\'accès est refusé', () => {
-  console.log(`🚫 [${VERSION}] Accès refusé (attendu)`)
-  cy.wait(500)
+  cy.url({ timeout: 10000 }).should('include', 'b2clogin.com')
 })
 
 Then('La création échoue', () => {
-  console.log(`❌ [${VERSION}] Échec création (attendu)`)
-  cy.wait(500)
+  cy.get('[class*="error"], [class*="alert"], mat-error', { timeout: 5000 }).should('be.visible')
 })
 
 Then('Le CV disparaît de ma liste', () => {
-  console.log(`✅ [${VERSION}] CV supprimé de la liste`)
-  cy.wait(1000)
+  cy.get('.mat-mdc-table').should('be.visible')
 })

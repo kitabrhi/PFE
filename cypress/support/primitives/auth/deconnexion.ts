@@ -12,16 +12,14 @@ export class AuthDeconnexionPrimitives {
     console.log(`🚪 [${version}] Déconnexion`)
     
     if (version === 'v1') {
-      cy.wait(2000)
-      cy.get('mat-icon').contains('keyboard_arrow_down').click({force: true})
-      cy.wait(1000)
-      cy.contains('Déconnexion').click({force: true})
-      cy.wait(3000)
-    } 
+      cy.get('mat-icon').contains('keyboard_arrow_down').should('be.visible').click({force: true})
+      cy.contains('Déconnexion').should('be.visible').click({force: true})
+      cy.url({ timeout: 10000 }).should('include', 'b2clogin.com')
+    }
     else if (version === 'v2') {
       cy.get('[data-testid="user-menu"]').click()
       cy.get('[data-testid="logout-button"]').click()
-      cy.wait(2000)
+      cy.url({ timeout: 10000 }).should('include', '/login')
     }
   }
 }

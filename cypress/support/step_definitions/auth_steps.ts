@@ -7,8 +7,8 @@ import { AuthDeconnexionPrimitives } from "../primitives/auth/deconnexion";
 import { AuthVerificationPrimitives } from "../primitives/auth/verification";
 
 const VERSION = 'v1'
-const EMAIL = "kitabrhi.youssef.1@gmail.com"
-const PASSWORD = "Winners@2003"
+const EMAIL: string = Cypress.env('userEmail')
+const PASSWORD: string = Cypress.env('userPassword')
 
 /**
  * ════════════════════════════════════════════════════════════
@@ -49,7 +49,7 @@ Then('Je vois mon espace personnel', () => {
 })
 
 Then('Je vois un message d\'erreur indiquant que les identifiants sont invalides', () => {
-  AuthVerificationPrimitives.verifierErreurCompteInexistant(VERSION)
+  AuthVerificationPrimitives.verifierErreurIdentifiants(VERSION)
 })
 
 Then('Je vois un message indiquant que le compte n\'existe pas', () => {
