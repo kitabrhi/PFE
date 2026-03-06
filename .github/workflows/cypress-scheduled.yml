@@ -1,0 +1,56 @@
+name: Cypress BDD Scheduled Tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    - cron: '0 8 * * 1'
+    - cron: '30 13 * * 1'
+    - cron: '15 9 * * 2'
+    - cron: '0 15 * * 2'
+    - cron: '45 10 * * 3'
+    - cron: '20 14 * * 3'
+    - cron: '0 9 * * 4'
+    - cron: '30 16 * * 4'
+    - cron: '10 8 * * 5'
+    - cron: '0 14 * * 5'
+    - cron: '0 10 * * 6'
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    fail-fast: false
+    steps:
+      - name: 📥 Checkout du code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Installation de Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: 📦 Installation des dépendances
+        run: npm ci
+
+      - name: 🧪 Lancer les tests Cypress (Cucumber BDD)
+        uses: cypress-io/github-action@v6
+        with:
+          browser: chrome
+          headed: false
+        env:
+          CYPRESS_BASE_URL: ${{ secrets.CYPRESS_BASE_URL }}
+
+      - name: 📊 Upload des rapports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cypress-reports-${{ github.run_number }}
+          path: |
+            cypress/reports/
+            cypress/screenshots/
+            cypress/videos/
+          retention-days: 7
