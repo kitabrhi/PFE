@@ -15,7 +15,7 @@ import {
   AUTH_URLS,
   AUTH_SELECTORS,
   AUTH_CREDENTIALS
-} from '../../config/Selectors-auth.config';
+} from '../../config/selectors-auth.config';
 
 export class AuthPrimitives {
 

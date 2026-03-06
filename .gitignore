@@ -19,7 +19,6 @@ backup-*/
 
 # Environnement (IMPORTANT : ne pas commit les credentials)
 .env
-cypress.env.json
 
 # TypeScript
 *.tsbuildinfo
