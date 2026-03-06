@@ -1,0 +1,17 @@
+@carte-cv @dupliquer @prioritaire
+Feature: Dupliquer un CV
+  en tant qu'utilisateur de ReDsume
+  Je veux pouvoir dupliquer mon CV
+  Afin de créer des variantes pour différentes candidatures
+
+  Background:
+    Given Je suis sur la page de connexion
+    When Je me connecte avec un compte valide
+    Then Je suis authentifié avec succès
+    And je suis sur la page "Mes CVS"
+
+  @CARTE-002
+  Scenario: Dupliquer un CV complété
+    When je duplique un CV avec le statut "Complété"
+    Then une copie du CV est créée
+    And la copie apparaît dans ma liste de CV
