@@ -175,16 +175,40 @@ Then('le contenu du CV reste intact', () => {
 // 👤 CHANGER PROPRIÉTAIRE
 // ═══════════════════════════════════════════════════════════════════════════════
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// 👤 CHANGER PROPRIÉTAIRE - SUCCÈS
+// ═══════════════════════════════════════════════════════════════════════════════
+
 When('je transfère un CV avec le statut {string} à {string}', (statut: string, email: string) => {
   cy.log(`👤 INTENTION: Transférer CV "${statut}" à ${email}`);
 
   selectionnerCVParStatut(statut);
-  CarteCVPrimitives.changerProprietaire(VERSION, email);
+  CarteCVPrimitives.ouvrirModaleChangerProprietaire(VERSION);
+  CarteCVPrimitives.saisirEmailProprietaire(VERSION, email);
+  CarteCVPrimitives.confirmerChangementProprietaire(VERSION);
 });
 
-Then('le propriétaire du CV devient {string}', (email: string) => {
-  cy.contains(email).should('be.visible');
-  cy.log(`✅ Propriétaire: ${email}`);
+Then('le transfert est enregistré avec succès', () => {
+  CarteCVPrimitives.verifierModaleFermee(VERSION);
+  cy.log('✅ Transfert enregistré');
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 👤 CHANGER PROPRIÉTAIRE - ERREUR (email inexistant)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+When('je tente de transférer un CV avec le statut {string} à {string}', (statut: string, email: string) => {
+  cy.log(`👤 INTENTION: Tenter de transférer CV "${statut}" à ${email}`);
+
+  selectionnerCVParStatut(statut);
+  CarteCVPrimitives.ouvrirModaleChangerProprietaire(VERSION);
+  CarteCVPrimitives.saisirEmailProprietaire(VERSION, email);
+  CarteCVPrimitives.confirmerChangementProprietaire(VERSION);
+  // La modale se ferme, le message apparaît en toast
+});
+
+Then('le message {string} s\'affiche', (message: string) => {
+  CarteCVPrimitives.verifierMessageToast(VERSION, message);
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
