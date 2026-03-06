@@ -11,6 +11,12 @@ Feature: Renommer un CV
     And je suis sur la page "Mes CVS"
 
   @CARTE-001
-  Scenario: Renommer un CV en cours
-    When je renomme un CV avec le statut "En cours" en "Mon CV Professionnel"
-    Then le CV est renommé en "Mon CV Professionnel"
+  Scenario: Renommer un CV en cours avec succès
+    When je renomme un CV avec le statut "En cours" en "Mon CV Unique 2026"
+    Then le CV est renommé en "Mon CV Unique 2026"
+
+  @CARTE-001-bis
+  Scenario: Impossibilité de renommer avec un nom existant
+    When je tente de renommer un CV avec le statut "En cours" en "Mon CV Professionnel"
+    Then le message d'erreur "Ce nom existe déjà." apparaît
+    And le renommage est refusé

@@ -1,6 +1,6 @@
 @carte-cv @prioritaire
 Feature: Gestion de la carte CV
-  En tant qu'utilisateur de ReDsume
+  en tant qu'utilisateur de ReDsume
   Je veux pouvoir gérer mon CV
   Afin de maintenir mes informations professionnelles à jour
 

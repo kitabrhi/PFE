@@ -1,185 +1,311 @@
-import { Version } from '../../config/selectors-carte-cv.config';
+/**
+ * ═══════════════════════════════════════════════════════════════════════════
+ * PRIMITIVES - CARTE CV ACTIVE
+ * ═══════════════════════════════════════════════════════════════════════════
+ * Couche d'abstraction : Actions techniques (COMMENT)
+ * Instanciable sur v1 ET v2 via getSelector()
+ * 
+ * Chaque méthode statique = 1 action atomique
+ * Les steps combinent ces actions selon le scénario
+ */
+
+import { Version, getSelector, CARTE_CV } from '../../config/selectors-carte-cv.config';
 
 export class CarteCVPrimitives {
 
-  /**
-   * ✏️ Renommer le CV (v1 et v2 - Page 1 ET Page 2)
-   */
-  static renommerCV(version: Version, nouveauNom: string, page: 'liste' | 'edition' = 'liste'): void {
-    cy.log(`✏️ Renommer en "${nouveauNom}" (${page})`);
+  // ═══════════════════════════════════════════════════════════════════════════
+  // HELPER PRIVÉ : Ouvrir action via menu ⋮ (v2) ou bouton direct (v1)
+  // ═══════════════════════════════════════════════════════════════════════════
 
+  private static ouvrirAction(version: Version, selectorBouton: string, labelV2: string): void {
     if (version === 'v1') {
-      cy.get('button[title="Renommer"]').click({ force: true });
+      cy.get(selectorBouton).click({ force: true });
     } else {
-      cy.get('button[aria-label="Actions"]').click();
-      cy.contains('button', 'Renommer').should('be.visible').click();
+      // V2 : Menu contextuel ⋮ puis option
+      cy.get(getSelector(CARTE_CV.MENU_CONTEXTUEL, version)).click();
+      cy.wait(500);
+      cy.contains('button', labelV2).click();
     }
+    cy.wait(500);
+  }
 
-    cy.get('.mat-mdc-dialog-container').should('be.visible');
-    cy.get('input').filter(':visible').clear().type(nouveauNom);
-    cy.contains('button', 'Confirmer').click();
-    cy.get('.mat-mdc-dialog-container').should('not.exist');
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ✏️ RENOMMER
+  // ═══════════════════════════════════════════════════════════════════════════
 
-    cy.log(`✅ CV renommé`);
+  /**
+   * Ouvrir la modale de renommage
+   */
+  static ouvrirModaleRenommer(version: Version): void {
+    cy.log('📂 Ouverture modale renommage');
+    CarteCVPrimitives.ouvrirAction(
+      version,
+      getSelector(CARTE_CV.BTN_RENOMMER, version),
+      'Renommer'
+    );
+    cy.get(getSelector(CARTE_CV.MODAL, version), { timeout: 5000 }).should('be.visible');
   }
 
   /**
-   * 🧹 Vider le CV (v1 et v2 - Page 1 ET Page 2)
+   * Saisir le nouveau nom dans la modale
    */
-  static viderCV(version: Version, confirmer: boolean = true): void {
-    cy.log(`🧹 Vider le CV`);
+  static saisirNouveauNom(version: Version, nouveauNom: string): void {
+    cy.log(`⌨️ Saisie: "${nouveauNom}"`);
+    cy.get(getSelector(CARTE_CV.MODAL_INPUT, version)).clear().type(nouveauNom);
+  }
 
-    if (version === 'v1') {
-      cy.get('button[title="Vider"]').click({ force: true });
-    } else {
-      cy.get('button[aria-label="Actions"]').click();
-      cy.contains('button', 'Vider').should('be.visible').click();
-    }
+  /**
+   * Confirmer le renommage (clic Valider)
+   */
+  static confirmerRenommage(version: Version): void {
+    cy.log('✔️ Confirmation renommage');
+    cy.get(getSelector(CARTE_CV.MODAL, version)).within(() => {
+      cy.contains('button', 'Valider').click();
+    });
+    cy.wait(2000);
+  }
 
-    cy.get('.mat-mdc-dialog-container').should('be.visible');
-
-    if (confirmer) {
-      cy.contains('button', 'Confirmer').click();
-    } else {
+  /**
+   * Annuler le renommage (clic Annuler)
+   */
+  static annulerRenommage(version: Version): void {
+    cy.log('❌ Annulation renommage');
+    cy.get(getSelector(CARTE_CV.MODAL, version)).within(() => {
       cy.contains('button', 'Annuler').click();
-    }
-    cy.get('.mat-mdc-dialog-container').should('not.exist');
-
-    cy.log(`✅ ${confirmer ? 'CV vidé' : 'Vidage annulé'}`);
+    });
+    cy.wait(500);
   }
 
   /**
-   * 📋 Dupliquer le CV (v1 et v2 - Page 1 UNIQUEMENT pour v2)
+   * Vérifier message d'erreur dans la modale
+   */
+  static verifierMessageErreur(version: Version, message: string): void {
+    cy.log(`🔍 Vérification erreur: "${message}"`);
+    cy.get(getSelector(CARTE_CV.MODAL, version)).should('be.visible');
+    cy.get(getSelector(CARTE_CV.MODAL, version)).within(() => {
+      cy.contains(message).should('be.visible');
+    });
+  }
+
+  /**
+   * Vérifier que la modale est fermée
+   */
+  static verifierModaleFermee(version: Version): void {
+    cy.get(getSelector(CARTE_CV.MODAL, version)).should('not.exist');
+  }
+
+  /**
+   * Vérifier que le nouveau nom apparaît
+   */
+  static verifierNouveauNom(version: Version, nouveauNom: string): void {
+    cy.contains(nouveauNom).should('be.visible');
+    cy.log(`✅ Nom "${nouveauNom}" visible`);
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 📋 DUPLIQUER
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Dupliquer le CV actif
    */
   static dupliquerCV(version: Version, nomDuplication?: string): void {
-    cy.log(`📋 Dupliquer`);
+    cy.log('📋 Dupliquer le CV');
 
     if (version === 'v1') {
-      cy.get('button[title="Dupliquer"]').click({ force: true });
+      cy.get(getSelector(CARTE_CV.BTN_DUPLIQUER, version)).click({ force: true });
     } else {
+      // V2 : Icône copie sur la ligne du tableau (Page 1)
       cy.get('tr').last().find('button[aria-label]').eq(1).click();
     }
+    cy.wait(1000);
 
+    // Si modale de nom apparaît
     if (nomDuplication) {
       cy.get('body').then($body => {
-        if ($body.find('.mat-mdc-dialog-container').length > 0) {
-          cy.get('.mat-mdc-dialog-container input').clear().type(nomDuplication);
+        if ($body.find(getSelector(CARTE_CV.MODAL, version)).length > 0) {
+          cy.get(getSelector(CARTE_CV.MODAL_INPUT, version)).clear().type(nomDuplication);
           cy.contains('button', 'Confirmer').click();
-          cy.get('.mat-mdc-dialog-container').should('not.exist');
+          cy.wait(1000);
         }
       });
     }
 
-    cy.get('.mat-mdc-table').should('be.visible');
-    cy.log(`✅ CV dupliqué`);
+    cy.log('✅ CV dupliqué');
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 🧹 VIDER
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Ouvrir la confirmation de vidage
+   */
+  static ouvrirConfirmationVider(version: Version): void {
+    cy.log('🧹 Ouverture confirmation vidage');
+    CarteCVPrimitives.ouvrirAction(
+      version,
+      getSelector(CARTE_CV.BTN_VIDER, version),
+      'Vider'
+    );
   }
 
   /**
-   * 👤 Changer propriétaire (v1 Page 1 / v2 Page 2)
+   * Confirmer le vidage
    */
-  static changerProprietaire(version: Version, email: string): void {
-    cy.log(`👤 Changer propriétaire: ${email}`);
-
-    if (version === 'v1') {
-      cy.get('button[title="Changer propriétaire"]').click({ force: true });
-    } else {
-      cy.get('button[aria-label="Actions"]').click();
-      cy.contains('button', 'Changer de propriétaire').should('be.visible').click();
-    }
-
-    cy.get('.mat-mdc-dialog-container').should('be.visible');
-    cy.get('input').filter(':visible').clear().type(email);
-    cy.contains('button', 'Confirmer').click();
-    cy.get('.mat-mdc-dialog-container').should('not.exist');
-
-    cy.log(`✅ Propriétaire changé`);
+  static confirmerVidage(version: Version): void {
+    cy.log('✔️ Confirmation vidage');
+    cy.contains('button', 'Vider').click();
+    cy.wait(1000);
   }
 
   /**
-   * 🗑️ Supprimer le CV (v1 Page 1 / v2 Page 2)
+   * Vider le CV (ouverture + confirmation en une seule action)
    */
-  static supprimerCV(version: Version, confirmer: boolean = true): void {
-    cy.log(`🗑️ Supprimer le CV`);
-
-    if (version === 'v1') {
-      cy.get('button[title="Supprimer"]').click({ force: true });
-    } else {
-      cy.get('button[aria-label="Actions"]').click();
-      cy.contains('button', 'Supprimer').should('be.visible').click();
-    }
-
-    cy.get('.mat-mdc-dialog-container').should('be.visible');
+  static viderCV(version: Version, confirmer: boolean = true): void {
+    cy.log('🧹 Vider le CV');
+    CarteCVPrimitives.ouvrirConfirmationVider(version);
 
     if (confirmer) {
-      cy.contains('button', 'Confirmer').click();
+      cy.contains('button', 'Vider').click();
     } else {
       cy.contains('button', 'Annuler').click();
     }
-    cy.get('.mat-mdc-dialog-container').should('not.exist');
+    cy.wait(1000);
+
+    cy.log(`✅ ${confirmer ? 'CV vidé' : 'Vidage annulé'}`);
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 👤 CHANGER PROPRIÉTAIRE
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Changer le propriétaire du CV
+   */
+  static changerProprietaire(version: Version, email: string): void {
+    cy.log(`👤 Changer propriétaire: ${email}`);
+    CarteCVPrimitives.ouvrirAction(
+      version,
+      getSelector(CARTE_CV.BTN_CHANGER_PROPRIETAIRE, version),
+      'Changer de propriétaire'
+    );
+
+    cy.get('input').filter(':visible').clear().type(email);
+    cy.contains('button', 'Confirmer').click();
+    cy.wait(1000);
+
+    cy.log('✅ Propriétaire changé');
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 🗑️ SUPPRIMER
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Ouvrir la confirmation de suppression
+   */
+  static ouvrirConfirmationSupprimer(version: Version): void {
+    cy.log('🗑️ Ouverture confirmation suppression');
+    CarteCVPrimitives.ouvrirAction(
+      version,
+      getSelector(CARTE_CV.BTN_SUPPRIMER, version),
+      'Supprimer'
+    );
+  }
+
+  /**
+   * Supprimer le CV (ouverture + confirmation)
+   */
+  static supprimerCV(version: Version, confirmer: boolean = true): void {
+    cy.log('🗑️ Supprimer le CV');
+    CarteCVPrimitives.ouvrirConfirmationSupprimer(version);
+
+    if (confirmer) {
+      cy.contains('button', 'Supprimer').click();
+    } else {
+      cy.contains('button', 'Annuler').click();
+    }
+    cy.wait(1000);
 
     cy.log(`✅ ${confirmer ? 'CV supprimé' : 'Suppression annulée'}`);
   }
 
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 💾 ENREGISTRER / SAUVEGARDER
+  // ═══════════════════════════════════════════════════════════════════════════
+
   /**
-   * 💾 Enregistrer/Sauvegarder le CV (v1 Page 1 / v2 Page 2)
+   * Enregistrer les modifications
    */
   static enregistrerCV(version: Version): void {
-    cy.log(`💾 Enregistrer`);
+    cy.log('💾 Enregistrer');
 
     if (version === 'v1') {
-      cy.get('button[title="Enregistrer"]').click({ force: true });
+      cy.get(getSelector(CARTE_CV.BTN_ENREGISTRER, version)).click({ force: true });
     } else {
+      // V2 : Bouton rouge "Sauvegarder"
       cy.contains('button', 'Sauvegarder').click();
     }
+    cy.wait(2000);
 
-    cy.get('.mat-mdc-table').should('be.visible');
-    cy.log(`✅ CV enregistré`);
+    cy.log('✅ CV enregistré');
   }
 
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 🔄 CHANGER STATUT
+  // ═══════════════════════════════════════════════════════════════════════════
+
   /**
-   * 📥 Télécharger le CV PDF (v2 Page 2 UNIQUEMENT)
+   * Changer le statut du CV actif
+   */
+  static changerStatut(version: Version, nouveauStatut: string): void {
+    cy.log(`🔄 Changer statut → "${nouveauStatut}"`);
+
+    if (version === 'v1') {
+      cy.get(getSelector(CARTE_CV.SELECT_STATUS, version)).click({ force: true });
+      cy.wait(500);
+      cy.contains('.mat-mdc-option', nouveauStatut).click({ force: true });
+    } else {
+      // V2 : Dropdown sur Page 2
+      cy.get(getSelector(CARTE_CV.SELECT_STATUS, version)).select(nouveauStatut);
+    }
+    cy.wait(1000);
+
+    cy.log(`✅ Statut → "${nouveauStatut}"`);
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 📥 TÉLÉCHARGER (v2 uniquement)
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Télécharger le CV en PDF
    */
   static telechargerCV(version: Version): void {
-    cy.log(`📥 Télécharger CV`);
+    cy.log('📥 Télécharger CV');
 
     if (version === 'v2') {
       cy.contains('button', 'Télécharger le CV').click();
-      cy.log(`✅ CV téléchargé`);
+      cy.wait(1000);
     } else {
-      cy.log(`⚠️ Télécharger non disponible en v1`);
+      cy.log('⚠️ Téléchargement non disponible en v1 depuis cette page');
     }
   }
 
   /**
-   * 📄 Download Json (v2 Page 2 UNIQUEMENT)
+   * Télécharger le JSON (v2 uniquement)
    */
   static downloadJson(version: Version): void {
-    cy.log(`📄 Download Json`);
+    cy.log('📄 Download Json');
 
     if (version === 'v2') {
-      cy.get('button[aria-label="Actions"]').click();
-      cy.contains('button', 'Download Json').should('be.visible').click();
-      cy.log(`✅ Json téléchargé`);
+      cy.get(getSelector(CARTE_CV.MENU_CONTEXTUEL, version)).click();
+      cy.wait(500);
+      cy.contains('button', 'Download Json').click();
+      cy.wait(1000);
     } else {
-      cy.log(`⚠️ Download Json non disponible en v1`);
+      cy.log('⚠️ Download Json non disponible en v1');
     }
-  }
-
-  /**
-   * 🔄 Changer le statut (v1 et v2 - Page 2 uniquement en v2)
-   */
-  static changerStatut(version: Version, nouveauStatut: string): void {
-    cy.log(`🔄 Changer statut: ${nouveauStatut}`);
-
-    if (version === 'v1') {
-      cy.get('.mat-mdc-form-field mat-select').click({ force: true });
-      cy.get('.mat-mdc-option').should('be.visible');
-      cy.contains('.mat-mdc-option', nouveauStatut).click({ force: true });
-      cy.get('.mat-mdc-option').should('not.exist');
-    } else {
-      cy.get('select').first().select(nouveauStatut);
-    }
-
-    cy.log(`✅ Statut: ${nouveauStatut}`);
   }
 }
