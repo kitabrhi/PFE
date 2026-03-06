@@ -3,7 +3,7 @@ name: Cypress BDD Scheduled Tests
 on:
   workflow_dispatch:
   push:
-    branches: [main, develop]
+    branches: [main, develop,typescript-migration]
   pull_request:
     branches: [main, develop]
   schedule:
