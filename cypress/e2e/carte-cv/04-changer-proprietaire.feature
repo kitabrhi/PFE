@@ -1,6 +1,6 @@
 @carte-cv @proprietaire
 Feature: Transférer la propriété d'un CV
-  en tant qu'utilisateur de ReDsume
+  En tant qu'utilisateur de ReDsume
   Je veux pouvoir transférer mon CV à un collègue
   Afin de déléguer sa gestion
 
@@ -11,6 +11,13 @@ Feature: Transférer la propriété d'un CV
     And je suis sur la page "Mes CVS"
 
   @CARTE-005
-  Scenario: Transférer un CV en cours à un collègue
-    When je transfère un CV avec le statut "En cours" à "nouveau.proprietaire@redsen.com"
+  Scenario Outline: Transférer un CV à un collègue
+    Given un CV a le statut "<statut>"
+    When je transfère un CV avec le statut "<statut>" à "nouveau.proprietaire@redsen.com"
     Then le propriétaire du CV devient "nouveau.proprietaire@redsen.com"
+
+    Examples:
+      | statut       |
+      | En cours     |
+      | Non démarré  |
+      | Complété     |

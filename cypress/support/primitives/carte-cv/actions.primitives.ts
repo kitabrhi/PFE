@@ -192,7 +192,7 @@ export class CarteCVPrimitives {
     );
 
     cy.get('input').filter(':visible').clear().type(email);
-    cy.contains('button', 'Valider').click();
+    cy.contains('button', 'Confirmer').click();
     cy.wait(1000);
 
     cy.log('✅ Propriétaire changé');
