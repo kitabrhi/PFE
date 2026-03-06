@@ -1,6 +1,6 @@
 @carte-cv @supprimer
 Feature: Supprimer un CV
-  en tant qu'utilisateur de ReDsume
+  En tant qu'utilisateur de ReDsume
   Je veux pouvoir supprimer définitivement un CV
   Afin de nettoyer mes anciennes versions
 
@@ -11,13 +11,20 @@ Feature: Supprimer un CV
     And je suis sur la page "Mes CVS"
 
   @CARTE-006
-  Scenario: Supprimer un CV non démarré
-    When je supprime un CV avec le statut "Non démarré"
+  Scenario Outline: Supprimer un CV avec succès
+    Given un CV a le statut "<statut>"
+    When je supprime un CV avec le statut "<statut>"
     Then le CV est supprimé définitivement
     And il n'apparaît plus dans ma liste
 
+    Examples:
+      | statut       |
+      | En cours     |
+      | Non démarré  |
+      | Complété     |
+
   @CARTE-007
   Scenario: Annuler la suppression d'un CV
-    When je demande à supprimer un CV avec le statut "Non démarré"
+    When je demande à supprimer un CV avec le statut "En cours"
     And j'annule la suppression
     Then le CV reste dans ma liste
