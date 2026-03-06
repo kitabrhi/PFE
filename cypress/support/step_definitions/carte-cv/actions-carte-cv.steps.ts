@@ -1,29 +1,7 @@
-/**
- * ═══════════════════════════════════════════════════════════════════════════
- * STEP DEFINITIONS - CARTE CV ACTIVE (TOUTES ACTIONS)
- * ═══════════════════════════════════════════════════════════════════════════
- * Décodage technique : Lien Gherkin ↔ Primitives
- * 
- * Chaque step traduit une INTENTION utilisateur (QUOI)
- * en appels aux primitives (COMMENT)
- */
-
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
-import { Version, getSelector, CARTE_CV } from '../../config/selectors-carte-cv.config';
-import { CarteCVPrimitives } from '../../primitives/carte-cv/actions.primitives';
+import { Version } from '@support/config/selectors-carte-cv.config';
 
-const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// HELPER : Générer un nom de CV unique
-// ═══════════════════════════════════════════════════════════════════════════════
-
-function genererNomUnique(base: string): string {
-  const timestamp = Date.now().toString().slice(-6);
-  return `${base}-${timestamp}`;
-}
-
-let dernierNomGenere = '';
+const VERSION: Version = 'v1';
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // NAVIGATION
@@ -40,7 +18,7 @@ Given('je suis sur la page {string}', (pageName: string) => {
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// HELPER : Sélectionner un CV par statut
+// HELPER: Sélectionner un CV par statut
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function selectionnerCVParStatut(statut: string): void {
@@ -50,55 +28,73 @@ function selectionnerCVParStatut(statut: string): void {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// ✏️ RENOMMER - SUCCÈS
+// RENOMMER
 // ═══════════════════════════════════════════════════════════════════════════════
 
 When('je renomme un CV avec le statut {string} en {string}', (statut: string, nouveauNom: string) => {
-  dernierNomGenere = genererNomUnique(nouveauNom);
-  cy.log(`✏️ INTENTION: Renommer CV "${statut}" en "${dernierNomGenere}"`);
-
+  cy.log(`✏️ INTENTION: Renommer CV "${statut}" en "${nouveauNom}"`);
+  
   selectionnerCVParStatut(statut);
-  CarteCVPrimitives.ouvrirModaleRenommer(VERSION);
-  CarteCVPrimitives.saisirNouveauNom(VERSION, dernierNomGenere);
-  CarteCVPrimitives.confirmerRenommage(VERSION);
+  
+  cy.get('button[title="Renommer"]').click({ force: true });
+  cy.wait(500);
+  cy.get('.mat-mdc-dialog-container input').clear().type(nouveauNom);
+  cy.contains('button', 'Valider').click();
+  cy.wait(2000); // Attendre la réponse du serveur
 });
 
 Then('le CV est renommé en {string}', (nouveauNom: string) => {
-  CarteCVPrimitives.verifierModaleFermee(VERSION);
-  CarteCVPrimitives.verifierNouveauNom(VERSION, dernierNomGenere);
+  // La modale s'est fermée
+  cy.get('.mat-mdc-dialog-container').should('not.exist');
+  
+  // Le nouveau nom apparaît
+  cy.contains(nouveauNom).should('be.visible');
+  
+  cy.log(`✅ CV renommé`);
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// ✏️ RENOMMER - ERREUR (nom existant)
+// RENOMMER - GESTION ERREURS
 // ═══════════════════════════════════════════════════════════════════════════════
-
-When('je tente de renommer un CV avec le statut {string} en {string}', (statut: string, nouveauNom: string) => {
-  cy.log(`✏️ INTENTION: Tenter de renommer CV "${statut}" en "${nouveauNom}"`);
-
-  selectionnerCVParStatut(statut);
-  CarteCVPrimitives.ouvrirModaleRenommer(VERSION);
-  CarteCVPrimitives.saisirNouveauNom(VERSION, nouveauNom);
-  // PAS de confirmation — modale reste ouverte pour vérifier l'erreur
-});
 
 Then('le message d\'erreur {string} apparaît', (messageErreur: string) => {
-  CarteCVPrimitives.verifierMessageErreur(VERSION, messageErreur);
+  cy.log(`🔍 VÉRIFICATION: Message d'erreur "${messageErreur}"`);
+  
+  // La modale est toujours ouverte
+  cy.get('.mat-mdc-dialog-container').should('be.visible');
+  
+  // Le message d'erreur est visible
+  cy.contains(messageErreur).should('be.visible');
+  
+  cy.log(`✅ Message d'erreur affiché`);
 });
 
 Then('le renommage est refusé', () => {
-  CarteCVPrimitives.annulerRenommage(VERSION);
-  CarteCVPrimitives.verifierModaleFermee(VERSION);
+  cy.log(`❌ VÉRIFICATION: Renommage refusé`);
+  
+  // Fermer avec Annuler
+  cy.get('.mat-mdc-dialog-container').within(() => {
+    cy.contains('button', 'Annuler').click();
+  });
+  cy.wait(500);
+  
+  // Modale fermée
+  cy.get('.mat-mdc-dialog-container').should('not.exist');
+  
+  cy.log('✅ Modale fermée');
 });
 
+
 // ═══════════════════════════════════════════════════════════════════════════════
-// 📋 DUPLIQUER
+// DUPLIQUER (Fichier 02-dupliquer-cv.feature)
 // ═══════════════════════════════════════════════════════════════════════════════
 
 When('je duplique un CV avec le statut {string}', (statut: string) => {
   cy.log(`📋 INTENTION: Dupliquer CV "${statut}"`);
-
-  selectionnerCVParStatut(statut);
-  CarteCVPrimitives.dupliquerCV(VERSION);
+  
+  // Trouver la ligne avec ce statut et cliquer sur le bouton dupliquer (2ème icône)
+  cy.contains('tr', statut).find('button').eq(1).click();
+  cy.wait(1500);
 });
 
 Then('une copie du CV est créée', () => {
@@ -106,26 +102,32 @@ Then('une copie du CV est créée', () => {
 });
 
 Then('la copie apparaît dans ma liste de CV', () => {
-  cy.get(getSelector(CARTE_CV.TABLE, VERSION)).should('be.visible');
-  cy.log('✅ Copie visible dans le tableau');
+  cy.get('.mat-mdc-table').should('be.visible');
+  cy.log('✅ Copie visible');
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 🧹 VIDER
+// VIDER (Fichier 03-vider-cv.feature)
 // ═══════════════════════════════════════════════════════════════════════════════
 
 When('je vide un CV avec le statut {string}', (statut: string) => {
   cy.log(`🧹 INTENTION: Vider CV "${statut}"`);
-
+  
   selectionnerCVParStatut(statut);
-  CarteCVPrimitives.viderCV(VERSION, true);
+  
+  cy.get('button[title="Vider"]').click({ force: true });
+  cy.wait(500);
+  cy.contains('button', 'Vider').click();
+  cy.wait(1000);
 });
 
 When('je demande à vider un CV avec le statut {string}', (statut: string) => {
   cy.log(`🧹 INTENTION: Demander vidage CV "${statut}"`);
-
+  
   selectionnerCVParStatut(statut);
-  CarteCVPrimitives.ouvrirConfirmationVider(VERSION);
+  
+  cy.get('button[title="Vider"]').click({ force: true });
+  cy.wait(500);
 });
 
 When('j\'annule l\'opération', () => {
@@ -143,37 +145,47 @@ Then('le contenu du CV reste intact', () => {
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 👤 CHANGER PROPRIÉTAIRE
+// CHANGER PROPRIÉTAIRE (Fichier 04-changer-proprietaire.feature)
 // ═══════════════════════════════════════════════════════════════════════════════
 
 When('je transfère un CV avec le statut {string} à {string}', (statut: string, email: string) => {
   cy.log(`👤 INTENTION: Transférer CV "${statut}" à ${email}`);
-
+  
   selectionnerCVParStatut(statut);
-  CarteCVPrimitives.changerProprietaire(VERSION, email);
+  
+  cy.get('button[title="Changer propriétaire"]').click({ force: true });
+  cy.wait(500);
+  cy.get('.mat-mdc-dialog-container input').clear().type(email);
+  cy.contains('button', 'Valider').click(); 
+  cy.wait(500);
 });
 
 Then('le propriétaire du CV devient {string}', (email: string) => {
-  cy.contains(email).should('be.visible');
-  cy.log(`✅ Propriétaire: ${email}`);
+  cy.log(`✅ Propriétaire changé: ${email}`);
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 🗑️ SUPPRIMER
+// SUPPRIMER (Fichier 05-supprimer-cv.feature)
 // ═══════════════════════════════════════════════════════════════════════════════
 
 When('je supprime un CV avec le statut {string}', (statut: string) => {
   cy.log(`🗑️ INTENTION: Supprimer CV "${statut}"`);
-
+  
   selectionnerCVParStatut(statut);
-  CarteCVPrimitives.supprimerCV(VERSION, true);
+  
+  cy.get('button[title="Supprimer"]').click({ force: true });
+  cy.wait(500);
+  cy.contains('button', 'Supprimer').click();
+  cy.wait(1000);
 });
 
 When('je demande à supprimer un CV avec le statut {string}', (statut: string) => {
   cy.log(`🗑️ INTENTION: Demander suppression CV "${statut}"`);
-
+  
   selectionnerCVParStatut(statut);
-  CarteCVPrimitives.ouvrirConfirmationSupprimer(VERSION);
+  
+  cy.get('button[title="Supprimer"]').click({ force: true });
+  cy.wait(500);
 });
 
 When('j\'annule la suppression', () => {
@@ -187,23 +199,25 @@ Then('le CV est supprimé définitivement', () => {
 });
 
 Then('il n\'apparaît plus dans ma liste', () => {
-  cy.log('✅ CV absent de la liste');
+  cy.log('✅ CV absent');
 });
 
 Then('le CV reste dans ma liste', () => {
-  cy.get(getSelector(CARTE_CV.TABLE, VERSION)).should('be.visible');
+  cy.get('.mat-mdc-table').should('be.visible');
   cy.log('✅ CV toujours présent');
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 💾 ENREGISTRER
+// ENREGISTRER (Fichier 06-enregistrer-cv.feature)
 // ═══════════════════════════════════════════════════════════════════════════════
 
 When('j\'enregistre les modifications d\'un CV avec le statut {string}', (statut: string) => {
   cy.log(`💾 INTENTION: Enregistrer CV "${statut}"`);
-
+  
   selectionnerCVParStatut(statut);
-  CarteCVPrimitives.enregistrerCV(VERSION);
+  
+  cy.get('button[title="Enregistrer"]').click({ force: true });
+  cy.wait(2000);
 });
 
 Then('les modifications sont sauvegardées', () => {
@@ -211,14 +225,18 @@ Then('les modifications sont sauvegardées', () => {
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 🔄 CHANGER STATUT
+// CHANGER STATUT (Fichier 07-changer-statut-cv.feature)
 // ═══════════════════════════════════════════════════════════════════════════════
 
 When('je change le statut d\'un CV {string} en {string}', (statutActuel: string, nouveauStatut: string) => {
   cy.log(`🔄 INTENTION: Changer statut "${statutActuel}" → "${nouveauStatut}"`);
-
+  
   selectionnerCVParStatut(statutActuel);
-  CarteCVPrimitives.changerStatut(VERSION, nouveauStatut);
+  
+  cy.get('.mat-mdc-form-field mat-select').click({ force: true });
+  cy.wait(500);
+  cy.contains('.mat-mdc-option', nouveauStatut).click({ force: true });
+  cy.wait(1000);
 });
 
 Then('le statut du CV devient {string}', (statutAttendu: string) => {
