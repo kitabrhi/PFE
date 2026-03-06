@@ -18,6 +18,6 @@ Feature: Supprimer un CV
 
   @CARTE-007
   Scenario: Annuler la suppression d'un CV
-    When je demande à supprimer un CV avec le statut "En cours"
+    When je demande à supprimer un CV avec le statut "Non démarré"
     And j'annule la suppression
     Then le CV reste dans ma liste
