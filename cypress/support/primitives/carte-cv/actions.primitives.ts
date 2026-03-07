@@ -29,6 +29,15 @@ export class CarteCVPrimitives {
     cy.wait(500);
   }
 
+
+  /**
+   * Vérifier un message toast/snackbar (hors modale)
+   */
+  static verifierMessageToast(version: Version, message: string): void {
+    cy.log(`🔍 Vérification toast: "${message}"`);
+    cy.contains(message, { timeout: 5000 }).should('be.visible');
+  }
+
   // ═══════════════════════════════════════════════════════════════════════════
   // ✏️ RENOMMER
   // ═══════════════════════════════════════════════════════════════════════════
@@ -183,21 +192,40 @@ export class CarteCVPrimitives {
   /**
    * Changer le propriétaire du CV
    */
-  static changerProprietaire(version: Version, email: string): void {
-    cy.log(`👤 Changer propriétaire: ${email}`);
+ // ═══════════════════════════════════════════════════════════════════════════
+  // 👤 CHANGER PROPRIÉTAIRE
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  static ouvrirModaleChangerProprietaire(version: Version): void {
+    cy.log('👤 Ouverture modale changer propriétaire');
     CarteCVPrimitives.ouvrirAction(
       version,
       getSelector(CARTE_CV.BTN_CHANGER_PROPRIETAIRE, version),
       'Changer de propriétaire'
     );
-
-    cy.get('input').filter(':visible').clear().type(email);
-    cy.contains('button', 'Confirmer').click();
-    cy.wait(1000);
-
-    cy.log('✅ Propriétaire changé');
+    cy.get(getSelector(CARTE_CV.MODAL, version), { timeout: 5000 }).should('be.visible');
   }
 
+  static saisirEmailProprietaire(version: Version, email: string): void {
+    cy.log(`📧 Saisie email: ${email}`);
+    cy.get(getSelector(CARTE_CV.MODAL_INPUT, version)).clear().type(email);
+  }
+
+  static confirmerChangementProprietaire(version: Version): void {
+    cy.log('✔️ Confirmation changement propriétaire');
+    cy.get(getSelector(CARTE_CV.MODAL, version)).within(() => {
+      cy.contains('button', 'Valider').click();
+    });
+    cy.wait(2000);
+  }
+
+  static annulerChangementProprietaire(version: Version): void {
+    cy.log('❌ Annulation changement propriétaire');
+    cy.get(getSelector(CARTE_CV.MODAL, version)).within(() => {
+      cy.contains('button', 'Annuler').click();
+    });
+    cy.wait(500);
+  }
   // ═══════════════════════════════════════════════════════════════════════════
   // 🗑️ SUPPRIMER
   // ═══════════════════════════════════════════════════════════════════════════
