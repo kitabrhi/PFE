@@ -22,8 +22,11 @@ Feature: Renommer un CV
       | Non démarré  |
       | Complété     |
 
-  @CARTE-001-bis
+ @CARTE-001-bis
   Scenario: Impossibilité de renommer avec un nom existant
-    When je tente de renommer un CV avec le statut "En cours" en "Mon CV Professionnel"
+    Given un CV porte déjà le nom "CV Doublon Test"
+    When je tente de renommer un autre CV en "CV Doublon Test"
     Then le message d'erreur "Ce nom existe déjà." apparaît
     And le renommage est refusé
+
+    

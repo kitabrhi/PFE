@@ -95,19 +95,32 @@ Then('le CV est renommé en {string}', () => {
   CarteCVPrimitives.verifierModaleFermee(VERSION);
   CarteCVPrimitives.verifierNouveauNom(VERSION, dernierNomGenere);
 });
-
 // ═══════════════════════════════════════════════════════════════════════════════
 // ✏️ RENOMMER - ERREUR (nom existant)
 // ═══════════════════════════════════════════════════════════════════════════════
 
-When('je tente de renommer un CV avec le statut {string} en {string}', (statut: string, nouveauNom: string) => {
-  cy.log(`✏️ INTENTION: Tenter de renommer CV "${statut}" en "${nouveauNom}"`);
+Given('un CV porte déjà le nom {string}', (nom: string) => {
+  cy.log(`🔧 PRÉPARATION: S'assurer qu'un CV s'appelle "${nom}"`);
 
-  selectionnerCVParStatut(statut);
+  cy.get(getSelector(CARTE_CV.TABLE_ROW, VERSION)).first().click();
+  cy.wait(1500);
+  CarteCVPrimitives.ouvrirModaleRenommer(VERSION);
+  CarteCVPrimitives.saisirNouveauNom(VERSION, nom);
+  CarteCVPrimitives.confirmerRenommage(VERSION);
+  CarteCVPrimitives.verifierModaleFermee(VERSION);
+});
+
+When('je tente de renommer un autre CV en {string}', (nouveauNom: string) => {
+  cy.log(`✏️ INTENTION: Tenter de renommer un autre CV en "${nouveauNom}"`);
+
+  cy.get(getSelector(CARTE_CV.TABLE_ROW, VERSION)).eq(1).click();
+  cy.wait(1500);
+
   CarteCVPrimitives.ouvrirModaleRenommer(VERSION);
   CarteCVPrimitives.saisirNouveauNom(VERSION, nouveauNom);
 });
 
+// ⚠️ CE STEP EXISTAIT AVANT — IL FAUT LE GARDER
 Then('le message d\'erreur {string} apparaît', (messageErreur: string) => {
   CarteCVPrimitives.verifierMessageErreur(VERSION, messageErreur);
 });
@@ -116,7 +129,6 @@ Then('le renommage est refusé', () => {
   CarteCVPrimitives.annulerRenommage(VERSION);
   CarteCVPrimitives.verifierModaleFermee(VERSION);
 });
-
 // ═══════════════════════════════════════════════════════════════════════════════
 // 📋 DUPLIQUER
 // ═══════════════════════════════════════════════════════════════════════════════
