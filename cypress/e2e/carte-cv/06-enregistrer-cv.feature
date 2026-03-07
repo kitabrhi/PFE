@@ -1,6 +1,6 @@
 @carte-cv @enregistrer @prioritaire
 Feature: Enregistrer les modifications d'un CV
-  en tant qu'utilisateur de ReDsume
+  En tant qu'utilisateur de ReDsume
   Je veux pouvoir sauvegarder mes modifications
   Afin de conserver mon travail
 
@@ -11,6 +11,13 @@ Feature: Enregistrer les modifications d'un CV
     And je suis sur la page "Mes CVS"
 
   @CARTE-008
-  Scenario: Sauvegarder les modifications d'un CV en cours
-    When j'enregistre les modifications d'un CV avec le statut "En cours"
+  Scenario Outline: Sauvegarder les modifications d'un CV
+    Given un CV a le statut "<statut>"
+    When j'enregistre les modifications d'un CV avec le statut "<statut>"
     Then les modifications sont sauvegardées
+
+    Examples:
+      | statut       |
+      | En cours     |
+      | Non démarré  |
+      | Complété     |
