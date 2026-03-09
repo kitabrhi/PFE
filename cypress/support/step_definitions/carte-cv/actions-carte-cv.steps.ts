@@ -11,6 +11,8 @@ import { CarteCVPrimitives } from '../../primitives/carte-cv/actions.primitives'
 
 const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';
 
+
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // HELPER : Générer un nom de CV unique
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -76,6 +78,44 @@ Given('un CV a le statut {string}', (statut: string) => {
   // Forcer son statut à la valeur voulue
   CarteCVPrimitives.changerStatut(VERSION, statut);
 });
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PRÉPARATION : Garantir un nombre minimum de CVs
+// ═══════════════════════════════════════════════════════════════════════════════
+
+Given('j\'ai au moins {int} CVs dans ma liste', (nbMin: number) => {
+  cy.log(`🔧 PRÉPARATION: Garantir au moins ${nbMin} CVs`);
+
+  cy.get(getSelector(CARTE_CV.TABLE_ROW, VERSION)).then($rows => {
+    const nbActuel = $rows.length;
+    cy.log(`📊 CVs actuels: ${nbActuel}`);
+
+    if (nbActuel < nbMin) {
+      const nbACreer = nbMin - nbActuel;
+      cy.log(`➕ Duplication de ${nbACreer} CV(s)`);
+
+      for (let i = 0; i < nbACreer; i++) {
+        // Sélectionner le premier CV
+        cy.get(getSelector(CARTE_CV.TABLE_ROW, VERSION)).first().click();
+        cy.wait(1500);
+
+        // Dupliquer
+        CarteCVPrimitives.dupliquerCV(VERSION);
+        
+        // Retourner au tableau
+        cy.contains('a', 'Mes CVS').click({ force: true });
+        cy.wait(1000);
+      }
+      
+      cy.log(`✅ ${nbMin} CVs garantis`);
+    } else {
+      cy.log(`✅ Déjà ${nbActuel} CVs (>= ${nbMin})`);
+    }
+  });
+});
+
+
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // ✏️ RENOMMER - SUCCÈS

@@ -1,6 +1,6 @@
 @auth @connexion @prioritaire
 Feature: Connexion avec identifiants valides
-  en tant qu'utilisateur invité de ReDsume
+  En tant qu'utilisateur invité de ReDsume
   Je veux pouvoir me connecter avec mes identifiants
   Afin d'accéder à mon espace de gestion de CV
 

@@ -9,6 +9,8 @@ Feature: Transférer la propriété d'un CV
     When Je me connecte avec un compte valide
     Then Je suis authentifié avec succès
     And je suis sur la page "Mes CVS"
+    And j'ai au moins 2 CVs dans ma liste
+
 
   @CARTE-005
   Scenario Outline: Transférer un CV à un collègue existant
