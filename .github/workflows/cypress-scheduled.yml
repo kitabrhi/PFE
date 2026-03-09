@@ -53,8 +53,8 @@ jobs:
       - name: 📝 Créer un commit de log   # ← nouvelle étape
         if: always()
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "kitabrhi"
+          git config user.email "kitabrhi.youssef.1@gmail.com" 
           echo "Run #${{ github.run_number }} — $(date -u)" >> test-logs/run-history.log
           git add test-logs/run-history.log
           git commit -m "ci: scheduled test run #${{ github.run_number }}"
