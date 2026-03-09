@@ -102,14 +102,21 @@ export class CarteCVPrimitives {
   static verifierModaleFermee(version: Version): void {
     cy.get(getSelector(CARTE_CV.MODAL, version)).should('not.exist');
   }
-
-  /**
-   * Vérifier que le nouveau nom apparaît
-   */
-  static verifierNouveauNom(version: Version, nouveauNom: string): void {
-    cy.contains(nouveauNom).should('be.visible');
-    cy.log(`✅ Nom "${nouveauNom}" visible`);
-  }
+/**
+ * Vérifier que le nouveau nom apparaît
+ */
+static verifierNouveauNom(version: Version, nouveauNom: string): void {
+  cy.log(`✅ Vérification nom: "${nouveauNom}"`);
+  
+  // Scroller pour rendre visible
+  cy.contains(nouveauNom).scrollIntoView();
+  cy.wait(500);
+  
+  // Vérifier visibilité
+  cy.contains(nouveauNom).should('be.visible');
+  
+  cy.log(`✅ Nom "${nouveauNom}" visible`);
+}
 
   // ═══════════════════════════════════════════════════════════════════════════
   // 📋 DUPLIQUER
