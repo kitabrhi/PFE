@@ -1,4 +1,5 @@
 /// <reference types="cypress" />
+import 'cypress-wait-until';
 
 /**
  * Commandes Cypress personnalisées

@@ -1,11 +1,6 @@
 /**
- * ═══════════════════════════════════════════════════════════════════════════
- * STEP DEFINITIONS - AUTHENTIFICATION
- * ═══════════════════════════════════════════════════════════════════════════
- * Décodage technique : Lien Gherkin ↔ Primitives
- * 
- * Ces steps sont RÉUTILISÉS par tous les modules (carte-cv, profil, etc.)
- * dans leurs Background
+ * Steps Gherkin liés à l'authentification.
+ * Ce fichier sert de point commun pour les scénarios qui ont besoin de login/logout.
  */
 
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
@@ -14,9 +9,7 @@ import { AuthPrimitives } from '../../primitives/auth/auth.primitives';
 
 const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// 🌐 NAVIGATION
-// ═══════════════════════════════════════════════════════════════════════════════
+// Navigation
 
 Given('Je suis sur la page de connexion', () => {
   AuthPrimitives.naviguerPageConnexion(VERSION);
@@ -33,9 +26,7 @@ Given('Je suis authentifié dans l\'application', () => {
   AuthPrimitives.verifierAuthentificationReussie(VERSION);
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// 🔐 CONNEXION
-// ═══════════════════════════════════════════════════════════════════════════════
+// Connexion
 
 When('Je me connecte avec un compte valide', () => {
   AuthPrimitives.seConnecter(
@@ -61,25 +52,19 @@ When('Je tente de me connecter avec un email au format invalide', () => {
   );
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// 🚪 DÉCONNEXION
-// ═══════════════════════════════════════════════════════════════════════════════
+// Déconnexion
 
 When('Je me déconnecte', () => {
   AuthPrimitives.seDeconnecter(VERSION);
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// 🚫 ACCÈS PROTÉGÉ
-// ═══════════════════════════════════════════════════════════════════════════════
+// Accès protégé
 
 When('Je tente d\'accéder à une page protégée', () => {
   AuthPrimitives.tenterAccesPageProtegee(VERSION);
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// ✅ VÉRIFICATIONS - SUCCÈS
-// ═══════════════════════════════════════════════════════════════════════════════
+// Vérifications de succès
 
 Then('Je suis authentifié avec succès', () => {
   AuthPrimitives.verifierAuthentificationReussie(VERSION);
@@ -89,9 +74,7 @@ Then('Je vois mon espace personnel', () => {
   AuthPrimitives.verifierEspacePersonnel(VERSION);
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// ❌ VÉRIFICATIONS - ERREURS
-// ═══════════════════════════════════════════════════════════════════════════════
+// Vérifications d'erreur
 
 Then('L\'authentification échoue', () => {
   AuthPrimitives.verifierResteSurPageConnexion(VERSION);
@@ -109,9 +92,7 @@ Then('Je reste sur la page de connexion', () => {
   AuthPrimitives.verifierResteSurPageConnexion(VERSION);
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// 🚪 VÉRIFICATIONS - DÉCONNEXION
-// ═══════════════════════════════════════════════════════════════════════════════
+// Vérifications après déconnexion
 
 Then('Je suis redirigé vers la page de connexion', () => {
   AuthPrimitives.verifierRedirectionPageConnexion(VERSION);
@@ -121,9 +102,7 @@ Then('Ma session est terminée', () => {
   AuthPrimitives.verifierSessionTerminee(VERSION);
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// 🚫 VÉRIFICATIONS - ACCÈS PROTÉGÉ
-// ═══════════════════════════════════════════════════════════════════════════════
+// Vérification accès protégé
 
 Then('L\'accès est refusé', () => {
   AuthPrimitives.verifierRedirectionPageConnexion(VERSION);
