@@ -1,36 +1,26 @@
 /**
- * ═══════════════════════════════════════════════════════════════════════════
- * PRIMITIVES - CARTE CV ACTIVE
- * ═══════════════════════════════════════════════════════════════════════════
- * Couche d'abstraction : Actions techniques (COMMENT)
- * Instanciable sur v1 ET v2 via getSelector()
+ * Primitives pour les actions de la carte CV.
+ * v1 et v2 sont gérées dans le même fichier via getSelector().
  *
- * v2 gère 2 pages :
- *   - Page 1 (Mes CV)  : Tableau + actions en ligne (Dupliquer, ⋮→Renommer/Vider)
- *   - Page 2 (Détail)   : Fiche CV + actions (⋮→tout, Sauvegarder, Statut)
- *
- * Chaque méthode statique = 1 action atomique
- * Les steps combinent ces actions selon le scénario
+ * Rappel v2:
+ * - Page 1: liste des CV (actions en ligne),
+ * - Page 2: détail du CV (menu d'actions + sauvegarde + statut).
  */
 
 import { Version, getSelector, CARTE_CV } from '../../config/selectors-carte-cv.config';
 
 export class CarteCVPrimitives {
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // 🧭 NAVIGATION v2 : Page 1 ↔ Page 2
-  // ═══════════════════════════════════════════════════════════════════════════
+  // Navigation entre la liste et le détail (v2).
 
   /**
-   * [v2] Vérifier qu'on est bien arrivé sur la page Détail (Page 2)
-   * après avoir cliqué sur une ligne du tableau.
-   * En v1, cette méthode ne fait rien (tout est sur la même page).
+   * En v2, vérifie que la page de détail est bien chargée.
+   * En v1, rien à faire (pas de séparation liste/détail).
    */
   static verifierNavigationPageDetail(version: Version): void {
     if (version === 'v2') {
       cy.log('🧭 Attente navigation vers Page 2 (Détail)');
-      // Attendre un élément spécifique à la page Détail
-      // Fallback : le bouton Sauvegarder ou le menu ⋮ du détail
+      // On valide la présence d'un élément propre à la page détail.
       cy.get(
         `${getSelector(CARTE_CV.PAGE_DETAIL, version)}, ${getSelector(CARTE_CV.BTN_SAUVEGARDER, version)}`,
         { timeout: 10000 }
@@ -40,37 +30,34 @@ export class CarteCVPrimitives {
   }
 
   /**
-   * [v2] Retourner à la page Liste (Page 1) depuis la page Détail.
-   * En v1, cette méthode ne fait rien.
+   * Retourne à la liste des CV depuis le détail en v2.
+   * En v1, rien à faire.
    */
   static retourListeCV(version: Version): void {
     if (version === 'v2') {
       cy.log('🧭 Retour vers Page 1 (Mes CV)');
-      // Essayer le bouton retour, sinon le lien "Mes CV" dans la nav
+      // Priorité au bouton retour, sinon lien "Mes CV".
       cy.get('body').then($body => {
         const btnRetour = getSelector(CARTE_CV.BTN_RETOUR, version);
         if ($body.find(btnRetour).length > 0) {
           cy.get(btnRetour).first().click();
         } else {
-          // Fallback : clic sur le lien de navigation "Mes CV"
+          // Plan B si le bouton retour n'est pas présent.
           cy.contains('a', 'Mes CV').click({ force: true });
         }
       });
-      // Attendre que le tableau soit visible
+      // On attend le retour effectif sur le tableau.
       cy.get(getSelector(CARTE_CV.TABLE, version), { timeout: 10000 }).should('be.visible');
       cy.wait(500);
       cy.log('✅ Retour sur Page 1');
     }
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // 🔍 SÉLECTION DE CV
-  // ═══════════════════════════════════════════════════════════════════════════
+  // Sélection de CV.
 
   /**
-   * Sélectionner un CV par statut et naviguer vers son détail.
-   * - v1 : Clic sur la ligne (tout sur la même page)
-   * - v2 : Clic sur la ligne → redirection Page 2 (Détail)
+   * Sélectionne un CV par statut puis ouvre son détail.
+   * v1 reste sur la même page, v2 ouvre la page détail.
    */
   static selectionnerCVEtNaviguer(version: Version, statut: string): void {
     cy.log(`🔍 Sélection CV "${statut}" + navigation`);
@@ -89,17 +76,12 @@ export class CarteCVPrimitives {
 
     cy.wait(1500);
 
-    // v2 : vérifier qu'on est bien sur la page Détail
+    // En v2, on confirme la navigation vers le détail.
     CarteCVPrimitives.verifierNavigationPageDetail(version);
   }
 
   /**
-   * [v2 UNIQUEMENT] Trouver la ligne d'un CV par statut SANS cliquer dessus.
-   * Retourne un alias Cypress sur la ligne trouvée pour enchaîner des actions
-   * sur les boutons en ligne (Dupliquer, ⋮ de la ligne, etc.)
-   *
-   * Usage : CarteCVPrimitives.trouverLigneCV(version, statut)
-   *         cy.get('@ligneCVTrouvee').within(() => { ... })
+   * Trouve une ligne CV sans naviguer, puis stocke l'alias `@ligneCVTrouvee`.
    */
   static trouverLigneCV(version: Version, statut: string): void {
     cy.log(`🔍 Recherche ligne CV "${statut}" (sans navigation)`);
@@ -117,20 +99,16 @@ export class CarteCVPrimitives {
     });
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // HELPERS PRIVÉS
-  // ═══════════════════════════════════════════════════════════════════════════
+  // Helpers internes.
 
   /**
-   * Ouvrir une action via bouton direct (v1) ou menu ⋮ Page 2 (v2)
-   * Pour les actions disponibles sur la Page 2 du détail en v2 :
-   * Renommer, Vider, Changer de propriétaire, Download Json, Supprimer
+   * Ouvre une action depuis un bouton direct (v1) ou le menu du détail (v2).
    */
   private static ouvrirActionPage2(version: Version, selectorBoutonV1: string, labelV2: string): void {
     if (version === 'v1') {
       cy.get(selectorBoutonV1).click({ force: true });
     } else {
-      // V2 Page 2 : Menu contextuel ⋮ (du détail) puis option
+      // En v2, l'action passe par le menu de la page détail.
       cy.get(getSelector(CARTE_CV.MENU_CONTEXTUEL, version)).click();
       cy.wait(500);
       cy.contains('button', labelV2).click();
@@ -139,8 +117,7 @@ export class CarteCVPrimitives {
   }
 
   /**
-   * [v2 UNIQUEMENT] Ouvrir une action via le menu ⋮ d'une LIGNE du tableau (Page 1)
-   * Pour les actions disponibles sur la Page 1 : Renommer, Vider
+   * En v2, ouvre une action depuis le menu d'une ligne de tableau.
    */
   private static ouvrirActionLignePage1(version: Version, labelV2: string): void {
     if (version !== 'v2') return;
@@ -156,23 +133,18 @@ export class CarteCVPrimitives {
 
 
   /**
-   * Vérifier un message toast/snackbar (hors modale)
+   * Vérifie un toast/snackbar hors modale.
    */
   static verifierMessageToast(version: Version, message: string): void {
     cy.log(`🔍 Vérification toast: "${message}"`);
     cy.contains(message, { timeout: 5000 }).should('be.visible');
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // ✏️ RENOMMER
-  // ═══════════════════════════════════════════════════════════════════════════
-  // v1 : Bouton direct sur la carte active
-  // v2 : Via menu ⋮ Page 2 (après navigation vers détail)
-  //       OU via menu ⋮ de la ligne Page 1 (si on reste sur le tableau)
-  // → On utilise Page 2 pour cohérence (le flow sélectionne le CV d'abord)
+  // Renommage.
+  // Ici on passe par la page détail pour garder un flow unique.
 
   /**
-   * Ouvrir la modale de renommage
+   * Ouvre la modale de renommage.
    */
   static ouvrirModaleRenommer(version: Version): void {
     cy.log('📂 Ouverture modale renommage');
@@ -185,7 +157,7 @@ export class CarteCVPrimitives {
   }
 
   /**
-   * Saisir le nouveau nom dans la modale
+   * Saisit le nouveau nom dans la modale.
    */
   static saisirNouveauNom(version: Version, nouveauNom: string): void {
     cy.log(`⌨️ Saisie: "${nouveauNom}"`);
@@ -193,7 +165,7 @@ export class CarteCVPrimitives {
   }
 
   /**
-   * Confirmer le renommage (clic Valider)
+   * Confirme le renommage.
    */
   static confirmerRenommage(version: Version): void {
     cy.log('✔️ Confirmation renommage');
@@ -204,7 +176,7 @@ export class CarteCVPrimitives {
   }
 
   /**
-   * Annuler le renommage (clic Annuler)
+   * Annule le renommage.
    */
   static annulerRenommage(version: Version): void {
     cy.log('❌ Annulation renommage');
@@ -215,7 +187,7 @@ export class CarteCVPrimitives {
   }
 
   /**
-   * Vérifier message d'erreur dans la modale
+   * Vérifie le message d'erreur dans la modale.
    */
   static verifierMessageErreur(version: Version, message: string): void {
     cy.log(`🔍 Vérification erreur: "${message}"`);
@@ -226,14 +198,14 @@ export class CarteCVPrimitives {
   }
 
   /**
-   * Vérifier que la modale est fermée
+   * Vérifie que la modale est fermée.
    */
   static verifierModaleFermee(version: Version): void {
     cy.get(getSelector(CARTE_CV.MODAL, version)).should('not.exist');
   }
 
   /**
-   * Vérifier que le nouveau nom apparaît
+   * Vérifie que le nouveau nom est visible.
    */
   static verifierNouveauNom(version: Version, nouveauNom: string): void {
     cy.log(`✅ Vérification nom: "${nouveauNom}"`);
@@ -243,16 +215,11 @@ export class CarteCVPrimitives {
     cy.log(`✅ Nom "${nouveauNom}" visible`);
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // 📋 DUPLIQUER
-  // ═══════════════════════════════════════════════════════════════════════════
-  // v1 : Bouton direct sur la carte active (après sélection du CV)
-  // v2 : Icône Dupliquer sur la LIGNE du tableau (Page 1, SANS naviguer)
+  // Duplication.
 
   /**
-   * Dupliquer le CV.
-   * ⚠️ En v2, le CV NE doit PAS être sélectionné avant (rester sur Page 1).
-   *    L'appelant doit utiliser trouverLigneCV() au lieu de selectionnerCVEtNaviguer().
+   * Duplique un CV.
+   * En v2, l'action se fait depuis la liste (pas depuis le détail).
    */
   static dupliquerCV(version: Version, nomDuplication?: string): void {
     cy.log('📋 Dupliquer le CV');
@@ -260,14 +227,14 @@ export class CarteCVPrimitives {
     if (version === 'v1') {
       cy.get(getSelector(CARTE_CV.BTN_DUPLIQUER, version)).click({ force: true });
     } else {
-      // V2 Page 1 : Clic sur l'icône Dupliquer de la ligne (via alias @ligneCVTrouvee)
+      // En v2, on clique l'icône dupliquer sur la ligne ciblée.
       cy.get('@ligneCVTrouvee').within(() => {
         cy.get(getSelector(CARTE_CV.ROW_BTN_DUPLIQUER, version)).click();
       });
     }
     cy.wait(1000);
 
-    // Si modale de nom apparaît
+    // Certains flows ouvrent une modale de nommage.
     if (nomDuplication) {
       cy.get('body').then($body => {
         if ($body.find(getSelector(CARTE_CV.MODAL, version)).length > 0) {
@@ -281,14 +248,10 @@ export class CarteCVPrimitives {
     cy.log('✅ CV dupliqué');
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // 🧹 VIDER
-  // ═══════════════════════════════════════════════════════════════════════════
-  // v1 : Bouton direct sur la carte active
-  // v2 : Via menu ⋮ Page 2 (après navigation vers détail)
+  // Vidage.
 
   /**
-   * Ouvrir la confirmation de vidage
+   * Ouvre la confirmation de vidage.
    */
   static ouvrirConfirmationVider(version: Version): void {
     cy.log('🧹 Ouverture confirmation vidage');
@@ -300,7 +263,7 @@ export class CarteCVPrimitives {
   }
 
   /**
-   * Confirmer le vidage
+   * Confirme le vidage.
    */
   static confirmerVidage(version: Version): void {
     cy.log('✔️ Confirmation vidage');
@@ -309,7 +272,7 @@ export class CarteCVPrimitives {
   }
 
   /**
-   * Vider le CV (ouverture + confirmation en une seule action)
+   * Vide le CV (ou annule selon le paramètre).
    */
   static viderCV(version: Version, confirmer: boolean = true): void {
     cy.log('🧹 Vider le CV');
@@ -325,11 +288,7 @@ export class CarteCVPrimitives {
     cy.log(`✅ ${confirmer ? 'CV vidé' : 'Vidage annulé'}`);
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // 👤 CHANGER PROPRIÉTAIRE
-  // ═══════════════════════════════════════════════════════════════════════════
-  // v1 : Bouton direct sur la carte active
-  // v2 : Via menu ⋮ Page 2 UNIQUEMENT (pas disponible sur Page 1)
+  // Changement de propriétaire.
 
   static ouvrirModaleChangerProprietaire(version: Version): void {
     cy.log('👤 Ouverture modale changer propriétaire');
@@ -362,14 +321,10 @@ export class CarteCVPrimitives {
     cy.wait(500);
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // 🗑️ SUPPRIMER
-  // ═══════════════════════════════════════════════════════════════════════════
-  // v1 : Bouton direct sur la carte active
-  // v2 : Via menu ⋮ Page 2 UNIQUEMENT (pas disponible sur Page 1)
+  // Suppression.
 
   /**
-   * Ouvrir la confirmation de suppression
+   * Ouvre la confirmation de suppression.
    */
   static ouvrirConfirmationSupprimer(version: Version): void {
     cy.log('🗑️ Ouverture confirmation suppression');
@@ -381,7 +336,7 @@ export class CarteCVPrimitives {
   }
 
   /**
-   * Supprimer le CV (ouverture + confirmation)
+   * Supprime le CV (ou annule selon le paramètre).
    */
   static supprimerCV(version: Version, confirmer: boolean = true): void {
     cy.log('🗑️ Supprimer le CV');
@@ -397,14 +352,10 @@ export class CarteCVPrimitives {
     cy.log(`✅ ${confirmer ? 'CV supprimé' : 'Suppression annulée'}`);
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // 💾 ENREGISTRER / SAUVEGARDER
-  // ═══════════════════════════════════════════════════════════════════════════
-  // v1 : Bouton direct sur la carte active
-  // v2 : Bouton "Sauvegarder" sur la Page 2 (Détail)
+  // Sauvegarde.
 
   /**
-   * Enregistrer les modifications
+   * Enregistre les modifications.
    */
   static enregistrerCV(version: Version): void {
     cy.log('💾 Enregistrer');
@@ -412,7 +363,7 @@ export class CarteCVPrimitives {
     if (version === 'v1') {
       cy.get(getSelector(CARTE_CV.BTN_ENREGISTRER, version)).click({ force: true });
     } else {
-      // V2 Page 2 : Bouton rouge "Sauvegarder"
+      // En v2, sauvegarde depuis la page détail.
       cy.get(getSelector(CARTE_CV.BTN_SAUVEGARDER, version)).click();
     }
     cy.wait(2000);
@@ -420,14 +371,10 @@ export class CarteCVPrimitives {
     cy.log('✅ CV enregistré');
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // 🔄 CHANGER STATUT
-  // ═══════════════════════════════════════════════════════════════════════════
-  // v1 : Select sur la carte active
-  // v2 : Dropdown Statut sur la Page 2 (Détail)
+  // Changement de statut.
 
   /**
-   * Changer le statut du CV actif
+   * Change le statut du CV actif.
    */
   static changerStatut(version: Version, nouveauStatut: string): void {
     cy.log(`🔄 Changer statut → "${nouveauStatut}"`);
@@ -437,7 +384,7 @@ export class CarteCVPrimitives {
       cy.wait(500);
       cy.contains('.mat-mdc-option', nouveauStatut).click({ force: true });
     } else {
-      // V2 Page 2 : Dropdown Statut
+      // En v2, le statut se modifie depuis la page détail.
       cy.get(getSelector(CARTE_CV.SELECT_STATUS, version)).select(nouveauStatut);
     }
     cy.wait(1000);
@@ -445,12 +392,10 @@ export class CarteCVPrimitives {
     cy.log(`✅ Statut → "${nouveauStatut}"`);
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // 📥 TÉLÉCHARGER (v2 uniquement — Page 2)
-  // ═══════════════════════════════════════════════════════════════════════════
+  // Téléchargement (v2).
 
   /**
-   * Télécharger le CV en PDF
+   * Télécharge le CV en PDF.
    */
   static telechargerCV(version: Version): void {
     cy.log('📥 Télécharger CV');
@@ -464,7 +409,7 @@ export class CarteCVPrimitives {
   }
 
   /**
-   * Télécharger le JSON (v2 uniquement — Page 2, via menu ⋮)
+   * Télécharge le JSON depuis le menu du détail (v2).
    */
   static downloadJson(version: Version): void {
     cy.log('📄 Download Json');

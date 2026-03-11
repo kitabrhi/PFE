@@ -1,20 +1,3 @@
-/**
- * ═══════════════════════════════════════════════════════════════════════════
- * STEP DEFINITIONS - CARTE CV ACTIVE (TOUTES ACTIONS)
- * ═══════════════════════════════════════════════════════════════════════════
- * Décodage technique : Lien Gherkin ↔ Primitives
- *
- * v2 : Gestion de 2 pages distinctes
- *   - Actions Page 1 (tableau) : Dupliquer → trouverLigneCV() (SANS navigation)
- *   - Actions Page 2 (détail)  : Renommer, Vider, Changer propriétaire,
- *                                 Supprimer, Enregistrer, Statut, Download Json
- *                                 → selectionnerCVEtNaviguer() (AVEC navigation)
- *
- * ⚠️ 0 CV → erreur immédiate (impossible de continuer)
- * ⚠️ Pas assez de CVs → duplication automatique + log explicite
- * ⚠️ Supprimer / Changer propriétaire nécessitent au moins 2 CVs
- *    car les boutons n'apparaissent pas avec 1 seul CV (v1 confirmé).
- */
 
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
 import { Version, getSelector, CARTE_CV } from '../../config/selectors-carte-cv.config';
@@ -22,9 +5,7 @@ import { CarteCVPrimitives } from '../../primitives/carte-cv/actions.primitives'
 
 const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// HELPER : Générer un nom de CV unique
-// ═══════════════════════════════════════════════════════════════════════════════
+// Helpers
 
 function genererNomUnique(base: string): string {
   const timestamp = Date.now().toString().slice(-6);
@@ -33,9 +14,7 @@ function genererNomUnique(base: string): string {
 
 let dernierNomGenere = '';
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// HELPER : S'assurer qu'on est sur la Page 1 (tableau Mes CV)
-// ═══════════════════════════════════════════════════════════════════════════════
+// S'assure qu'on est sur la page liste.
 
 function assurerSurPageListe(): void {
   if (VERSION === 'v2') {
@@ -53,37 +32,28 @@ function assurerSurPageListe(): void {
     });
   }
   cy.get(getSelector(CARTE_CV.TABLE, VERSION), { timeout: 10000 }).should('be.visible');
-  // ⏳ Attendre que les lignes du tableau soient chargées
+  // Attend que les lignes soient bien chargées.
   cy.get(getSelector(CARTE_CV.TABLE_ROW, VERSION), { timeout: 10000 }).should('have.length.at.least', 1);
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// 🚨 HELPER : Garantir un nombre minimum de CVs
-// ═══════════════════════════════════════════════════════════════════════════════
+// Garantit un minimum de CV.
 
 /**
- * Garantit qu'il y a au moins `nbMin` CV(s) dans le tableau.
- *
- * - 0 CV trouvé   → ❌ erreur immédiate (impossible de dupliquer à partir de rien)
- * - Pas assez     → 📋 duplication automatique + log explicite
- * - Assez         → ✅ on continue
- *
- * DOIT être appelé APRÈS assurerSurPageListe()
- * (qui garantit déjà qu'au moins 1 ligne existe).
+ * Vérifie qu'on a au moins `nbMin` CV dans la liste.
+ * Si ce n'est pas le cas, on duplique automatiquement le premier CV.
  */
 function garantirNbMinCVs(nbMin: number): void {
   cy.log(`🚨 Vérification: au moins ${nbMin} CV(s) requis`);
 
   const rowSelector = getSelector(CARTE_CV.TABLE_ROW, VERSION);
 
-  // ⏳ On utilise cy.get() avec timeout au lieu de $body.find()
-  // pour laisser le temps au tableau de se charger complètement
+  // On passe par cy.get + timeout pour laisser le tableau se stabiliser.
   cy.get(rowSelector, { timeout: 10000 }).then($rows => {
     const nbActuel = $rows.length;
 
     cy.log(`📊 ${nbActuel} CV(s) trouvé(s)`);
 
-    // ══ Pas assez de CVs : duplication automatique ══
+    // Pas assez de CV: duplication automatique.
     if (nbActuel < nbMin) {
       const nbACreer = nbMin - nbActuel;
       cy.log(`⚠️ Seulement ${nbActuel} CV(s) trouvé(s), ${nbMin} requis.`);
@@ -111,9 +81,8 @@ function garantirNbMinCVs(nbMin: number): void {
 }
 
 /**
- * Raccourci : s'assurer qu'on est sur la liste ET qu'il y a au moins N CVs.
- * Si pas assez → duplication automatique.
- * Si 0 → erreur via assurerSurPageListe() (timeout sur les lignes).
+ * Raccourci: on s'assure d'abord d'être sur la liste,
+ * puis on vérifie le nombre minimum demandé.
  */
 function preparerEtVerifier(nbMinCVs: number = 1): void {
   assurerSurPageListe();
@@ -122,9 +91,7 @@ function preparerEtVerifier(nbMinCVs: number = 1): void {
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// NAVIGATION
-// ═══════════════════════════════════════════════════════════════════════════════
+// Navigation
 
 Given('je suis sur la page {string}', (pageName: string) => {
   if (pageName === 'Mes CVS') {
@@ -143,9 +110,7 @@ Given('je suis sur la page {string}', (pageName: string) => {
   }
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// 🔧 PRÉPARATION : S'assurer qu'un CV a le statut voulu
-// ═══════════════════════════════════════════════════════════════════════════════
+// Préparation: statut
 
 Given('un CV a le statut {string}', (statut: string) => {
   cy.log(`🔧 PRÉPARATION: S'assurer qu'un CV a le statut "${statut}"`);
@@ -161,9 +126,7 @@ Given('un CV a le statut {string}', (statut: string) => {
   CarteCVPrimitives.retourListeCV(VERSION);
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// PRÉPARATION : Garantir un nombre minimum de CVs
-// ═══════════════════════════════════════════════════════════════════════════════
+// Préparation: nombre minimum de CV
 
 Given('j\'ai au moins {int} CVs dans ma liste', (nbMin: number) => {
   cy.log(`🔧 PRÉPARATION: Garantir au moins ${nbMin} CVs`);
@@ -172,9 +135,7 @@ Given('j\'ai au moins {int} CVs dans ma liste', (nbMin: number) => {
   garantirNbMinCVs(nbMin);
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// ✏️ RENOMMER - SUCCÈS
-// ═══════════════════════════════════════════════════════════════════════════════
+// Renommer: succès
 
 When('je renomme un CV avec le statut {string} en {string}', (statut: string, nouveauNom: string) => {
   dernierNomGenere = genererNomUnique(nouveauNom);
@@ -193,9 +154,7 @@ Then('le CV est renommé en {string}', () => {
   CarteCVPrimitives.verifierNouveauNom(VERSION, dernierNomGenere);
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// ✏️ RENOMMER - ERREUR (nom existant)
-// ═══════════════════════════════════════════════════════════════════════════════
+// Renommer: erreur (nom déjà pris)
 
 Given('un CV porte déjà le nom {string}', (nom: string) => {
   cy.log(`🔧 PRÉPARATION: S'assurer qu'un CV s'appelle "${nom}"`);
@@ -236,9 +195,7 @@ Then('le renommage est refusé', () => {
   CarteCVPrimitives.verifierModaleFermee(VERSION);
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// 📋 DUPLIQUER
-// ═══════════════════════════════════════════════════════════════════════════════
+// Duplication
 
 When('je duplique un CV avec le statut {string}', (statut: string) => {
   cy.log(`📋 INTENTION: Dupliquer CV "${statut}"`);
@@ -264,9 +221,7 @@ Then('la copie apparaît dans ma liste de CV', () => {
   cy.log('✅ Copie visible');
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// 🧹 VIDER
-// ═══════════════════════════════════════════════════════════════════════════════
+// Vidage
 
 When('je vide un CV avec le statut {string}', (statut: string) => {
   cy.log(`🧹 INTENTION: Vider CV "${statut}"`);
@@ -300,11 +255,8 @@ Then('le contenu du CV reste intact', () => {
   cy.log('✅ Contenu intact');
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// 👤 CHANGER PROPRIÉTAIRE - SUCCÈS
-// ═══════════════════════════════════════════════════════════════════════════════
-// ⚠️ 2 CVs minimum : le bouton n'apparaît pas avec 1 seul CV (v1)
-//    → duplication automatique si nécessaire
+// Changer propriétaire: succès
+// En v1, cette action peut nécessiter au moins 2 CV.
 
 When('je transfère un CV avec le statut {string} à {string}', (statut: string, email: string) => {
   cy.log(`👤 INTENTION: Transférer CV "${statut}" à ${email}`);
@@ -321,11 +273,8 @@ Then('le transfert est enregistré avec succès', () => {
   cy.log('✅ Transfert enregistré');
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// 👤 CHANGER PROPRIÉTAIRE - ERREUR (email inexistant)
-// ═══════════════════════════════════════════════════════════════════════════════
-// ⚠️ 2 CVs minimum : le bouton n'apparaît pas avec 1 seul CV (v1)
-//    → duplication automatique si nécessaire
+// Changer propriétaire: erreur (email inexistant)
+// En v1, cette action peut nécessiter au moins 2 CV.
 
 When('je tente de transférer un CV avec le statut {string} à {string}', (statut: string, email: string) => {
   cy.log(`👤 INTENTION: Tenter de transférer CV "${statut}" à ${email}`);
@@ -341,11 +290,8 @@ Then('le message {string} s\'affiche', (message: string) => {
   CarteCVPrimitives.verifierMessageToast(VERSION, message);
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// 🗑️ SUPPRIMER
-// ═══════════════════════════════════════════════════════════════════════════════
-// ⚠️ 2 CVs minimum : le bouton n'apparaît pas avec 1 seul CV (v1)
-//    → duplication automatique si nécessaire
+// Suppression
+// En v1, cette action peut nécessiter au moins 2 CV.
 
 When('je supprime un CV avec le statut {string}', (statut: string) => {
   cy.log(`🗑️ INTENTION: Supprimer CV "${statut}"`);
@@ -389,9 +335,7 @@ Then('le CV reste dans ma liste', () => {
   cy.log('✅ CV toujours présent');
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// 💾 ENREGISTRER
-// ═══════════════════════════════════════════════════════════════════════════════
+// Enregistrement
 
 When('j\'enregistre les modifications d\'un CV avec le statut {string}', (statut: string) => {
   cy.log(`💾 INTENTION: Enregistrer CV "${statut}"`);
@@ -405,9 +349,7 @@ Then('les modifications sont sauvegardées', () => {
   cy.log('✅ Modifications sauvegardées');
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// 🔄 CHANGER STATUT
-// ═══════════════════════════════════════════════════════════════════════════════
+// Changer statut
 
 When('je change le statut d\'un CV {string} en {string}', (statutActuel: string, nouveauStatut: string) => {
   cy.log(`🔄 INTENTION: Changer statut "${statutActuel}" → "${nouveauStatut}"`);
@@ -422,9 +364,7 @@ Then('le statut du CV devient {string}', (statutAttendu: string) => {
   cy.log(`✅ Statut: ${statutAttendu}`);
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// 📄 DOWNLOAD JSON (v2 uniquement)
-// ═══════════════════════════════════════════════════════════════════════════════
+// Download JSON (v2)
 
 When('je télécharge le JSON d\'un CV avec le statut {string}', (statut: string) => {
   cy.log(`📄 INTENTION: Download Json CV "${statut}"`);

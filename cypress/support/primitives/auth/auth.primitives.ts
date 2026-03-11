@@ -1,12 +1,6 @@
 /**
- * ═══════════════════════════════════════════════════════════════════════════
- * PRIMITIVES - AUTHENTIFICATION
- * ═══════════════════════════════════════════════════════════════════════════
- * Couche d'abstraction : Actions techniques (COMMENT)
- * Instanciable sur v1 ET v2 via getSelector()
- * 
- * UN SEUL fichier au lieu de 4 (navigation + connexion + déconnexion + vérification)
- * Zéro duplication : les if/else v1/v2 sont remplacés par getSelector()
+ * Primitives d'authentification pour v1 et v2.
+ * Les sélecteurs sont résolus via getSelector() selon la version.
  */
 
 import {
@@ -19,9 +13,7 @@ import {
 
 export class AuthPrimitives {
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // 🌐 NAVIGATION
-  // ═══════════════════════════════════════════════════════════════════════════
+  // Navigation.
 
   /**
    * Naviguer vers la page de connexion
@@ -31,7 +23,7 @@ export class AuthPrimitives {
 
     cy.visit(getSelector(AUTH_URLS.BASE, version));
 
-    // Vérifier que la page de connexion est chargée
+    // Vérifie que la page est bien chargée avant de continuer.
     AuthPrimitives.verifierElement(version, AUTH_SELECTORS.PAGE_LOGIN_VISIBLE, AUTH_SELECTORS.PAGE_LOGIN_TEXT);
   }
 
@@ -46,9 +38,7 @@ export class AuthPrimitives {
     });
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // 🔐 CONNEXION
-  // ═══════════════════════════════════════════════════════════════════════════
+  // Connexion.
 
   /**
    * Saisir email dans le champ de connexion
@@ -107,9 +97,7 @@ export class AuthPrimitives {
     );
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // 🚪 DÉCONNEXION
-  // ═══════════════════════════════════════════════════════════════════════════
+  // Déconnexion.
 
   /**
    * Se déconnecter de l'application
@@ -118,7 +106,7 @@ export class AuthPrimitives {
     cy.log('🚪 Déconnexion');
 
     if (version === 'v1') {
-      // V1 : Ouvrir menu dropdown puis cliquer "Déconnexion"
+      // v1: ouverture du menu puis clic sur "Déconnexion".
       cy.get('mat-icon').contains('keyboard_arrow_down')
         .should('be.visible')
         .click({ force: true });
@@ -126,7 +114,7 @@ export class AuthPrimitives {
         .should('be.visible')
         .click({ force: true });
     } else {
-      // V2 : Menu utilisateur puis bouton déconnexion
+      // v2: ouverture du menu utilisateur puis clic sur déconnexion.
       cy.get(getSelector(AUTH_SELECTORS.MENU_UTILISATEUR, version)).click();
       cy.get(getSelector(AUTH_SELECTORS.BTN_DECONNEXION, version)).click();
     }
@@ -134,14 +122,11 @@ export class AuthPrimitives {
     cy.wait(2000);
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // ✅ VÉRIFICATIONS
-  // ═══════════════════════════════════════════════════════════════════════════
+  // Vérifications.
 
   /**
-   * Helper privé : vérifier un élément par sélecteur OU par texte selon la version
-   * v1 utilise souvent cy.contains() (pas de data-testid)
-   * v2 utilise cy.get() avec data-testid
+   * Méthode interne pour vérifier un élément via sélecteur ou texte.
+   * v1 s'appuie souvent sur du texte, v2 plutôt sur des data-testid.
    */
   private static verifierElement(
     version: Version,
@@ -229,7 +214,7 @@ export class AuthPrimitives {
   }
 
   /**
-   * Vérifier session terminée (pas de token/cookie actif)
+   * Vérifie que la session n'est plus active.
    */
   static verifierSessionTerminee(version: Version): void {
     cy.log('🔒 Vérification session terminée');
