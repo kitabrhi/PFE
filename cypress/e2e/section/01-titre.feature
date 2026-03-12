@@ -12,9 +12,7 @@ Feature: Gérer les titres de mon CV
     And je sélectionne un CV existant
     And je suis sur la section "Titres"
 
-  # ═══════════════════════════════════════════════════════════════
   # AJOUTER UN TITRE
-  # ═══════════════════════════════════════════════════════════════
 
   @SECTION-TITRE-001
   Scenario: Ajouter un titre à mon CV
@@ -29,9 +27,7 @@ Feature: Gérer les titres de mon CV
     Then le titre "Chef de projet" apparaît dans ma liste de titres
     And le titre "Consultant IT" apparaît dans ma liste de titres
 
-  # ═══════════════════════════════════════════════════════════════
   # MODIFIER UN TITRE
-  # ═══════════════════════════════════════════════════════════════
 
   @SECTION-TITRE-003
   Scenario: Modifier un titre existant
@@ -40,9 +36,7 @@ Feature: Gérer les titres de mon CV
     Then le titre "Nouveau titre" apparaît dans ma liste de titres
     And le titre "Ancien titre" n'apparaît plus dans ma liste de titres
 
-  # ═══════════════════════════════════════════════════════════════
   # SUPPRIMER UN TITRE
-  # ═══════════════════════════════════════════════════════════════
 
   @SECTION-TITRE-004
   Scenario: Supprimer un titre de mon CV
@@ -50,9 +44,7 @@ Feature: Gérer les titres de mon CV
     When je supprime le titre "Titre à supprimer"
     Then le titre "Titre à supprimer" n'apparaît plus dans ma liste de titres
 
-  # ═══════════════════════════════════════════════════════════════
   # AFFICHER / MASQUER UN TITRE SUR LE CV
-  # ═══════════════════════════════════════════════════════════════
 
   @SECTION-TITRE-005
   Scenario: Masquer un titre sur le CV généré
@@ -66,9 +58,8 @@ Feature: Gérer les titres de mon CV
     When je rends visible le titre "Consultant Senior" sur le CV
     Then le titre "Consultant Senior" est visible sur le CV
 
-  # ═══════════════════════════════════════════════════════════════
   # RÉORDONNER LES TITRES
-  # ═══════════════════════════════════════════════════════════════
+  
 @SECTION-TITRE-007
 Scenario: Changer l'ordre d'un titre
   Given les titres suivants existent dans l'ordre :

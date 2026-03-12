@@ -1,8 +1,8 @@
 
 
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
-import { Version, getSelector, SECTION_ROW } from '../../config/selectors-sections-cv.config';
-import { SectionsCVPrimitives } from '../../primitives/sections-cv/sections-cv.primitives';
+import { Version, getSelector, SECTION_ROW } from '../../config/section/selectors-titre-cv.config';
+import { SectionsCVPrimitives } from '../../primitives/sections-cv/titre-cv.primitives';
 import { CarteCVPrimitives } from '../../primitives/carte-cv/actions.primitives';
 
 const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';
@@ -13,13 +13,28 @@ Given('je sélectionne un CV existant', () => {
   cy.log('🔍 Sélection d\'un CV existant');
 
   if (VERSION === 'v1') {
-    cy.get('tr.mat-mdc-row', { timeout: 10000 }).first().click();
-    cy.wait(1500);
+    cy.get('tr.mat-mdc-row', { timeout: 10000 }).then($rows => {
+      if ($rows.length === 0) {
+        throw new Error(
+          '❌ Aucun CV trouvé dans la liste. ' +
+          'Veuillez créer au moins un CV avant de lancer les tests de section.'
+        );
+      }
+      cy.wrap($rows).first().click();
+      cy.wait(1500);
+    });
   } else {
-    // En v2, le clic ouvre la page de détail.
-    cy.get('[data-testid="cv-row"]', { timeout: 10000 }).first().click();
-    cy.wait(1500);
-    CarteCVPrimitives.verifierNavigationPageDetail(VERSION);
+    cy.get('[data-testid="cv-row"]', { timeout: 10000 }).then($rows => {
+      if ($rows.length === 0) {
+        throw new Error(
+          '❌ Aucun CV trouvé dans la liste. ' +
+          'Veuillez créer au moins un CV avant de lancer les tests de section.'
+        );
+      }
+      cy.wrap($rows).first().click();
+      cy.wait(1500);
+      CarteCVPrimitives.verifierNavigationPageDetail(VERSION);
+    });
   }
 
   cy.log('✅ CV sélectionné');

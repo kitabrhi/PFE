@@ -7,7 +7,7 @@
  * - Page 2: détail du CV (menu d'actions + sauvegarde + statut).
  */
 
-import { Version, getSelector, CARTE_CV } from '../../config/selectors-carte-cv.config';
+import { Version, getSelector, CARTE_CV } from '../../config/carte-cv/selectors-carte-cv.config';
 
 export class CarteCVPrimitives {
 

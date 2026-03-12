@@ -1,7 +1,7 @@
 import {
   Version, getSelector, getLabelSection,
   SECTION_NAV, SECTION_ROW, SECTION_TITRES
-} from '../../config/selectors-sections-cv.config';
+} from '../../config/section/selectors-titre-cv.config';
 
 export class SectionsCVPrimitives {
 

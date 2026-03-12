@@ -1,6 +1,6 @@
 
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
-import { Version, getSelector, CARTE_CV } from '../../config/selectors-carte-cv.config';
+import { Version, getSelector, CARTE_CV } from '../../config/carte-cv/selectors-carte-cv.config';
 import { CarteCVPrimitives } from '../../primitives/carte-cv/actions.primitives';
 
 const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';

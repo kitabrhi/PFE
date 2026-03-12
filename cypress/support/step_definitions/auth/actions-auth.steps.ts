@@ -4,7 +4,7 @@
  */
 
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
-import { Version, AUTH_CREDENTIALS } from '../../config/selectors-auth.config';
+import { Version, AUTH_CREDENTIALS } from '../../config/auth/selectors-auth.config';
 import { AuthPrimitives } from '../../primitives/auth/auth.primitives';
 
 const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';

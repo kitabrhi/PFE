@@ -9,7 +9,7 @@ import {
   AUTH_URLS,
   AUTH_SELECTORS,
   AUTH_CREDENTIALS
-} from '../../config/selectors-auth.config';
+} from '../../config/auth/selectors-auth.config';
 
 export class AuthPrimitives {
 

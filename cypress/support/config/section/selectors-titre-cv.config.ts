@@ -18,7 +18,7 @@
  *   export const SECTION_LANGUES = { INPUT_LANGUE: {...}, SELECT_NIVEAU: {...} }
  */
 
-import { Version, getSelector } from './selectors-carte-cv.config';
+import { Version, getSelector } from '../carte-cv/selectors-carte-cv.config';
 
 interface SelectorMap {
   v1: string;
