@@ -3,9 +3,7 @@ import {
     SECTION_INFORMATIONS
   } from '../../config/section/selectors-informations.config';
   
-  // ═══════════════════════════════════════════════════════════════════════════
-  // DONNÉES DE TEST — encapsulées ici, jamais exposées au .feature
-  // ═══════════════════════════════════════════════════════════════════════════
+  // Valeurs de test gardées côté primitives pour ne pas charger les fichiers feature.
   
   const FIXTURE_PRENOM        = 'Jean';
   const FIXTURE_NOM           = 'Dupont';
@@ -15,14 +13,14 @@ import {
   
   export class InformationsPrimitives {
   
-    // ─── Utilitaire ───────────────────────────────────────────────────────────
+    // Petit utilitaire commun aux champs de la section.
   
     private static attendreAutoSave(): void {
       cy.log('⏳ Attente sauvegarde automatique...');
       cy.wait(2500);
     }
   
-    // ─── Photo de profil ──────────────────────────────────────────────────────
+    // Photo de profil.
     static uploaderPhoto(version: Version, cheminFichier: string = FIXTURE_PHOTO): void {
         cy.log(`📷 Upload photo : ${cheminFichier}`);
     
@@ -38,8 +36,7 @@ import {
         cy.log('🔍 Vérification présence photo uploadée');
     
         if (version === 'v1') {
-          // Après upload, le span "Ajouter une image" disparaît
-          // et une balise <img> apparaît dans .image-preview
+          // En v1, on confirme l'upload via l'aperçu image.
           cy.get('.image-preview img', { timeout: 10000 })
             .should('exist')
             .and('be.visible');
@@ -50,7 +47,7 @@ import {
         }
       }
   
-    // ─── Email (non éditable) ─────────────────────────────────────────────────
+    // Email non modifiable.
   
     static verifierEmailAffiche(version: Version): void {
         cy.log('🔍 Vérification email affiché');
@@ -70,20 +67,19 @@ import {
       })
         .should('exist')
         .then($el => {
-          // En v1, l'email est dans un <span> → jamais un input ni contenteditable
+          // En v1, l'email est rendu comme texte simple.
           expect($el.is('input')).to.be.false;
           expect($el.attr('contenteditable')).to.not.equal('true');
         });
     }
   
-    // ─── Prénom ───────────────────────────────────────────────────────────────
+    // Prénom.
   
     static modifierPrenom(version: Version, valeur: string = FIXTURE_PRENOM): void {
       cy.log(`✏️ Modification prénom → "${valeur}"`);
   
       if (version === 'v1') {
-        // Le sélecteur pointe sur mat-mdc-form-field-infix (conteneur)
-        // → on descend sur l'input réel
+        // En v1, le sélecteur vise le conteneur ; il faut descendre sur l'input réel.
         cy.get(getSelector(SECTION_INFORMATIONS.INPUT_PRENOM, version), {
           timeout: 10000
         })
@@ -121,7 +117,7 @@ import {
       }
     }
   
-    // ─── Nom ──────────────────────────────────────────────────────────────────
+    // Nom.
   
     static modifierNom(version: Version, valeur: string = FIXTURE_NOM): void {
       cy.log(`✏️ Modification nom → "${valeur}"`);
@@ -164,7 +160,7 @@ import {
       }
     }
   
-    // ─── Date de naissance ────────────────────────────────────────────────────
+    // Dates.
   
     static modifierDateNaissance(version: Version, valeur: string = FIXTURE_DATE_NAISSANCE): void {
         cy.log(`✏️ Modification date de naissance → "${valeur}"`);

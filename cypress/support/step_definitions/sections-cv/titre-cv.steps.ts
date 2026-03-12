@@ -7,7 +7,7 @@ import { CarteCVPrimitives } from '../../primitives/carte-cv/actions.primitives'
 
 const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';
 
-// Navigation
+// Navigation entre la liste et les sections du CV.
 
 Given('je sélectionne un CV existant', () => {
   cy.log('🔍 Sélection d\'un CV existant');
@@ -55,31 +55,31 @@ When('je reviens sur la section {string}', (nomSection: string) => {
   SectionsCVPrimitives.naviguerVersSection(VERSION, nomSection);
 });
 
-// Nettoyage
+// Crochet laissé en place si un nettoyage devient utile.
 
 afterEach(() => {
   cy.log('🧹 Nettoyage après test');
 });
 
-// Ajout
+// Ajout.
 
 When('j\'ajoute le titre {string}', (titre: string) => {
   SectionsCVPrimitives.ajouterTitre(VERSION, titre);
 });
 
-// Modification
+// Modification.
 
 When('je modifie le titre {string} en {string}', (ancien: string, nouveau: string) => {
   SectionsCVPrimitives.modifierTitre(VERSION, ancien, nouveau);
 });
 
-// Suppression
+// Suppression.
 
 When('je supprime le titre {string}', (titre: string) => {
   SectionsCVPrimitives.supprimerLigne(VERSION, titre);
 });
 
-// Afficher / masquer
+// Visibilité.
 
 When('je masque le titre {string} du CV', (titre: string) => {
   SectionsCVPrimitives.toggleVisibilite(VERSION, titre, false);
@@ -89,13 +89,13 @@ When('je rends visible le titre {string} sur le CV', (titre: string) => {
   SectionsCVPrimitives.toggleVisibilite(VERSION, titre, true);
 });
 
-// Réordonner
+// Réorganisation.
 
 When('je place le titre {string} en position {int}', (titre: string, position: number) => {
   SectionsCVPrimitives.changerOrdre(VERSION, titre, position);
 });
 
-// Préparation des données
+// Préparation des données.
 
 Given('un titre {string} existe dans ma liste', (titre: string) => {
   cy.log(`🔧 PRÉPARATION: S'assurer que le titre "${titre}" existe`);
@@ -108,7 +108,7 @@ Given('un titre {string} existe dans ma liste', (titre: string) => {
     if (found.length === 0) {
       cy.log(`➕ Titre "${titre}" inexistant → création`);
       SectionsCVPrimitives.ajouterTitre(VERSION, titre);
-      // Rien à sauvegarder manuellement.
+      // Rien de plus à faire ici, l'écran sauvegarde tout seul.
     } else {
       cy.log(`✅ Titre "${titre}" déjà présent`);
     }
@@ -127,7 +127,7 @@ Given('un titre {string} existe et est visible sur le CV', (titre: string) => {
     }
   });
 
-  // On force l'état visible.
+  // On remet explicitement la ligne en visible pour éviter un état hérité.
   SectionsCVPrimitives.toggleVisibilite(VERSION, titre, true);
 });
 
@@ -143,7 +143,7 @@ Given('un titre {string} existe et est masqué sur le CV', (titre: string) => {
     }
   });
 
-  // On force l'état masqué.
+  // Même idée ici, mais en version masquée.
   SectionsCVPrimitives.toggleVisibilite(VERSION, titre, false);
 });
 
@@ -161,10 +161,10 @@ Given('les titres suivants existent dans l\'ordre :', (dataTable: any) => {
       }
     });
   });
-  // La persistance est gérée par l'auto-save.
+  // L'ordre final est persisté par l'auto-save.
 });
 
-// Vérifications
+// Vérifications.
 
 Then('le titre {string} apparaît dans ma liste de titres', (titre: string) => {
   SectionsCVPrimitives.verifierTitreExiste(VERSION, titre);

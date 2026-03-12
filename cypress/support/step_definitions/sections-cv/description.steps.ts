@@ -4,7 +4,7 @@ import { DescriptionPrimitives } from '../../primitives/sections-cv/description.
 
 const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';
 
-// ─── Saisir ─────────────────────────────────────────────────────────────────
+// Saisie.
 
 When('je renseigne mon résumé de profil', () => {
   DescriptionPrimitives.saisirDescription(VERSION);
@@ -14,7 +14,7 @@ When('j\'efface mon résumé de profil', () => {
   DescriptionPrimitives.effacerDescription(VERSION);
 });
 
-// ─── Vérifications ──────────────────────────────────────────────────────────
+// Vérifications.
 
 Then('mon résumé de profil est enregistré', () => {
   DescriptionPrimitives.verifierDescriptionPresente(VERSION);
@@ -36,7 +36,4 @@ Then('la limite de {int} caractères est respectée', (limite: number) => {
   DescriptionPrimitives.verifierLimiteCaracteresRespectee(VERSION);
 });
 
-// ─── Navigation ─────────────────────────────────────────────────────────────
-// Given 'je suis sur la section {string}'     → défini dans sections-titre-cv.steps.ts
-// When  'je quitte la section {string}'        → défini dans sections-titre-cv.steps.ts
-// When  'je reviens sur la section {string}'   → défini dans sections-titre-cv.steps.ts
+// Les étapes de navigation communes sont définies dans `titre-cv.steps.ts`.

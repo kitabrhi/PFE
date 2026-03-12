@@ -5,7 +5,7 @@ import {
 
 const FIXTURE_DESCRIPTION = 'Expert en gestion de projets digitaux avec plus de 5 ans d\'expérience.';
 
-// Texte de ~1100 caractères pour tester le dépassement de la limite de 1000
+// Texte volontairement trop long pour déclencher la limite des 1000 caractères.
 const FIXTURE_DESCRIPTION_LONGUE =
   'Professionnel passionné et polyvalent avec une solide expérience dans le domaine du développement logiciel et de la gestion de projets digitaux. ' +
   'Fort de plus de cinq années passées à concevoir, développer et déployer des applications web et mobiles complexes, je maîtrise un large éventail de technologies modernes. ' +
@@ -25,7 +25,7 @@ export class DescriptionPrimitives {
     cy.wait(3000);
   }
 
-  // ─── Saisir une description ─────────────────────────────────────────────
+  // Saisie.
 
   static saisirDescription(version: Version, texte: string = FIXTURE_DESCRIPTION): void {
     cy.log(`✏️ Saisie description : "${texte.substring(0, 30)}..."`);
@@ -36,16 +36,16 @@ export class DescriptionPrimitives {
       cy.get(CK_EDITABLE).then(($el) => {
         const editableEl = $el[0] as any;
 
-        // Méthode 1 : .ckeditorInstance (API officielle CKEditor5)
+        // On tente d'abord l'instance exposée directement par CKEditor.
         let editor = editableEl.ckeditorInstance;
 
-        // Méthode 2 : via le tag <ckeditor>
+        // Si besoin, on passe par le composant `ckeditor`.
         if (!editor) {
           const tag = document.querySelector('ckeditor#editor') as any;
           editor = tag?.editorInstance;
         }
 
-        // Méthode 3 : remonter au wrapper .ck-editor
+        // Dernier essai via le wrapper `.ck-editor`.
         if (!editor) {
           const wrapper = editableEl.closest('.ck-editor');
           editor = (wrapper as any)?.ckeditorInstance;
@@ -63,7 +63,7 @@ export class DescriptionPrimitives {
             writer.insert(p, root, 0);
           });
         } else {
-          // Fallback : .type() — les exceptions CKEditor sont catchées par e2e.ts
+          // En repli, on tape dans l'éditeur comme un utilisateur.
           cy.log('⚠️ Fallback .type()');
           cy.get(CK_EDITABLE)
             .click({ force: true })
@@ -83,14 +83,14 @@ export class DescriptionPrimitives {
     cy.log('✅ Description saisie');
   }
 
-  // ─── Saisir une description longue (> 1000 caractères) ───────────────────
+  // Saisie longue.
 
   static saisirDescriptionLongue(version: Version): void {
     cy.log(`✏️ Saisie description longue (${FIXTURE_DESCRIPTION_LONGUE.length} caractères)`);
     DescriptionPrimitives.saisirDescription(version, FIXTURE_DESCRIPTION_LONGUE);
   }
 
-  // ─── Effacer la description ─────────────────────────────────────────────
+  // Effacement.
 
   static effacerDescription(version: Version): void {
     cy.log('🗑️ Effacement de la description');
@@ -130,7 +130,7 @@ export class DescriptionPrimitives {
     cy.log('✅ Description effacée');
   }
 
-  // ─── Vérifier description présente ──────────────────────────────────────
+  // Vérification du contenu.
 
   static verifierDescriptionPresente(version: Version, texte: string = FIXTURE_DESCRIPTION): void {
     cy.log('🔍 Vérification description présente');
@@ -144,7 +144,7 @@ export class DescriptionPrimitives {
     }
   }
 
-  // ─── Vérifier description vide ──────────────────────────────────────────
+  // Vérification du vide.
 
   static verifierDescriptionVide(version: Version): void {
     cy.log('🔍 Vérification description vide');
@@ -159,7 +159,7 @@ export class DescriptionPrimitives {
     }
   }
 
-  // ─── Vérifier compteur de caractères ────────────────────────────────────
+  // Vérification du compteur.
 
   static verifierCompteurCaracteres(version: Version, nombreAttendu: number): void {
     cy.log(`🔍 Vérification compteur = ${nombreAttendu}/1000`);
@@ -169,17 +169,17 @@ export class DescriptionPrimitives {
     }).should('contain.text', `${nombreAttendu}/1000`);
   }
 
-  // ─── Vérifier limite de caractères ──────────────────────────────────────
+  // Vérification de la limite.
 
   static verifierLimiteCaracteresRespectee(version: Version): void {
     cy.log('🔍 Vérification limite 1000 caractères');
   
     if (version === 'v1') {
-      // Vérifier que le message d'erreur "Nombre de caractères autorisés dépassé" est affiché
+      // On vérifie d'abord que le message d'erreur est visible.
       cy.get('[data-cy="summaryProfil-input"]', { timeout: 10000 })
         .should('contain.text', 'Nombre de caractères autorisés');
   
-      // Vérifier aussi que le texte dans l'éditeur dépasse bien 1000
+      // Puis on confirme que le contenu dépasse réellement la limite.
       cy.get(CK_EDITABLE, { timeout: 10000 })
         .invoke('text')
         .then((val) => {

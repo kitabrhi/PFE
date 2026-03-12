@@ -12,27 +12,21 @@ Feature: Gérer les informations personnelles de mon CV
     And je sélectionne un CV existant
     And je suis sur la section "Informations"
 
-  # ═══════════════════════════════════════════════════════════════
-  # PHOTO DE PROFIL
-  # ═══════════════════════════════════════════════════════════════
+  # Cas autour de la photo de profil
 
   @INFO-001
   Scenario: Ajouter une photo de profil à mon CV
     When j'ajoute une photo de profil
     Then ma photo de profil est visible sur mon CV
 
-  # ═══════════════════════════════════════════════════════════════
-  # EMAIL (NON ÉDITABLE)
-  # ═══════════════════════════════════════════════════════════════
+  # Vérification de l'email en lecture seule
 
   @INFO-002
   Scenario: Vérifier que mon email ne peut pas être modifié
     Then mon email est affiché sur ma page de profil
     And je ne peux pas modifier mon email
 
-  # ═══════════════════════════════════════════════════════════════
-  # PRÉNOM ET NOM
-  # ═══════════════════════════════════════════════════════════════
+  # Mise à jour de l'identité
 
   @INFO-003
   Scenario: Modifier mon prénom
@@ -44,9 +38,7 @@ Feature: Gérer les informations personnelles de mon CV
     When je mets à jour mon nom de famille
     Then mon nouveau nom de famille est affiché sur mon profil
 
-  # ═══════════════════════════════════════════════════════════════
-  # DATES
-  # ═══════════════════════════════════════════════════════════════
+  # Saisie des dates
 
   @INFO-005
   Scenario: Renseigner ma date de naissance
@@ -58,9 +50,7 @@ Feature: Gérer les informations personnelles de mon CV
     When je renseigne mon début d'activité professionnelle
     Then mon début d'activité professionnelle est enregistré sur mon profil
 
-  # ═══════════════════════════════════════════════════════════════
-  # PERSISTANCE
-  # ═══════════════════════════════════════════════════════════════
+  # Contrôle de la persistance
 
   @INFO-007
   Scenario: Les modifications sont conservées après avoir navigué vers une autre section

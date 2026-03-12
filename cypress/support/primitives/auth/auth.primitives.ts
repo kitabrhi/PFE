@@ -1,6 +1,6 @@
 /**
- * Primitives d'authentification pour v1 et v2.
- * Les sélecteurs sont résolus via getSelector() selon la version.
+ * Primitives d'authentification partagées entre v1 et v2.
+ * Les sélecteurs sont choisis à partir de la version active.
  */
 
 import {
@@ -16,19 +16,19 @@ export class AuthPrimitives {
   // Navigation.
 
   /**
-   * Naviguer vers la page de connexion
+   * Ouvre la page de connexion.
    */
   static naviguerPageConnexion(version: Version): void {
     cy.log('🌐 Navigation vers page de connexion');
 
     cy.visit(getSelector(AUTH_URLS.BASE, version));
 
-    // Vérifie que la page est bien chargée avant de continuer.
+    // On attend un repère fiable avant d'aller plus loin.
     AuthPrimitives.verifierElement(version, AUTH_SELECTORS.PAGE_LOGIN_VISIBLE, AUTH_SELECTORS.PAGE_LOGIN_TEXT);
   }
 
   /**
-   * Tenter d'accéder à une page protégée sans authentification
+   * Tente d'ouvrir une page protégée sans session active.
    */
   static tenterAccesPageProtegee(version: Version): void {
     cy.log('🚫 Tentative accès page protégée');
@@ -41,7 +41,7 @@ export class AuthPrimitives {
   // Connexion.
 
   /**
-   * Saisir email dans le champ de connexion
+   * Renseigne l'email.
    */
   static saisirEmail(version: Version, email: string): void {
     cy.log(`📧 Saisie email: ${email}`);
@@ -53,7 +53,7 @@ export class AuthPrimitives {
   }
 
   /**
-   * Saisir mot de passe
+   * Renseigne le mot de passe.
    */
   static saisirPassword(version: Version, password: string): void {
     cy.log('🔑 Saisie mot de passe');
@@ -65,7 +65,7 @@ export class AuthPrimitives {
   }
 
   /**
-   * Cliquer sur le bouton de connexion
+   * Clique sur le bouton de connexion.
    */
   static cliquerConnexion(version: Version): void {
     cy.log('🖱️ Clic bouton connexion');
@@ -74,7 +74,7 @@ export class AuthPrimitives {
   }
 
   /**
-   * Connexion complète : saisie email + password + clic
+   * Enchaîne les étapes de connexion.
    */
   static seConnecter(version: Version, email: string, password: string): void {
     cy.log(`🔐 Connexion avec ${email}`);
@@ -86,7 +86,7 @@ export class AuthPrimitives {
   }
 
   /**
-   * Authentification complète : navigation + connexion
+   * Ouvre la page de connexion puis s'authentifie.
    */
   static authentifierComplet(version: Version): void {
     AuthPrimitives.naviguerPageConnexion(version);
@@ -100,13 +100,13 @@ export class AuthPrimitives {
   // Déconnexion.
 
   /**
-   * Se déconnecter de l'application
+   * Ferme la session en cours.
    */
   static seDeconnecter(version: Version): void {
     cy.log('🚪 Déconnexion');
 
     if (version === 'v1') {
-      // v1: ouverture du menu puis clic sur "Déconnexion".
+      // En v1, la déconnexion passe par le menu utilisateur.
       cy.get('mat-icon').contains('keyboard_arrow_down')
         .should('be.visible')
         .click({ force: true });
@@ -114,7 +114,7 @@ export class AuthPrimitives {
         .should('be.visible')
         .click({ force: true });
     } else {
-      // v2: ouverture du menu utilisateur puis clic sur déconnexion.
+      // En v2, on utilise les contrôles dédiés du header.
       cy.get(getSelector(AUTH_SELECTORS.MENU_UTILISATEUR, version)).click();
       cy.get(getSelector(AUTH_SELECTORS.BTN_DECONNEXION, version)).click();
     }
@@ -125,8 +125,8 @@ export class AuthPrimitives {
   // Vérifications.
 
   /**
-   * Méthode interne pour vérifier un élément via sélecteur ou texte.
-   * v1 s'appuie souvent sur du texte, v2 plutôt sur des data-testid.
+   * Vérifie un élément soit par sélecteur, soit par texte.
+   * La v1 s'appuie plus souvent sur du texte, la v2 sur des `data-testid`.
    */
   private static verifierElement(
     version: Version,
@@ -145,7 +145,7 @@ export class AuthPrimitives {
   }
 
   /**
-   * Vérifier authentification réussie
+   * Vérifie que l'utilisateur n'est plus sur l'écran de connexion.
    */
   static verifierAuthentificationReussie(version: Version): void {
     cy.log('✅ Vérification authentification réussie');
@@ -155,7 +155,7 @@ export class AuthPrimitives {
   }
 
   /**
-   * Vérifier espace personnel visible
+   * Vérifie que l'espace personnel est affiché.
    */
   static verifierEspacePersonnel(version: Version): void {
     cy.log('✅ Vérification espace personnel');
@@ -164,7 +164,7 @@ export class AuthPrimitives {
   }
 
   /**
-   * Vérifier erreur identifiants invalides
+   * Vérifie l'erreur liée à des identifiants invalides.
    */
   static verifierErreurIdentifiants(version: Version): void {
     cy.log('❌ Vérification erreur identifiants');
@@ -180,7 +180,7 @@ export class AuthPrimitives {
   }
 
   /**
-   * Vérifier erreur compte inexistant
+   * Vérifie l'erreur liée à un compte inexistant.
    */
   static verifierErreurCompteInexistant(version: Version): void {
     cy.log('❌ Vérification erreur compte inexistant');
@@ -196,7 +196,7 @@ export class AuthPrimitives {
   }
 
   /**
-   * Vérifier qu'on reste sur la page de connexion
+   * Vérifie qu'aucune redirection n'a eu lieu.
    */
   static verifierResteSurPageConnexion(version: Version): void {
     cy.log('❌ Vérification reste sur page connexion');
@@ -205,7 +205,7 @@ export class AuthPrimitives {
   }
 
   /**
-   * Vérifier redirection vers page de connexion
+   * Vérifie le retour vers la page de connexion.
    */
   static verifierRedirectionPageConnexion(version: Version): void {
     cy.log('➡️ Vérification redirection page connexion');
@@ -214,7 +214,7 @@ export class AuthPrimitives {
   }
 
   /**
-   * Vérifie que la session n'est plus active.
+   * Vérifie que la session est bien terminée.
    */
   static verifierSessionTerminee(version: Version): void {
     cy.log('🔒 Vérification session terminée');

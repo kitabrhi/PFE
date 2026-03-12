@@ -5,7 +5,7 @@ import { CarteCVPrimitives } from '../../primitives/carte-cv/actions.primitives'
 
 const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';
 
-// Helpers
+// Fonctions utilitaires pour préparer l'état de la liste.
 
 function genererNomUnique(base: string): string {
   const timestamp = Date.now().toString().slice(-6);
@@ -14,7 +14,7 @@ function genererNomUnique(base: string): string {
 
 let dernierNomGenere = '';
 
-// S'assure qu'on est sur la page liste.
+// Revient sur la liste si le test est resté sur la page détail.
 
 function assurerSurPageListe(): void {
   if (VERSION === 'v2') {
@@ -32,28 +32,28 @@ function assurerSurPageListe(): void {
     });
   }
   cy.get(getSelector(CARTE_CV.TABLE, VERSION), { timeout: 10000 }).should('be.visible');
-  // Attend que les lignes soient bien chargées.
+  // On attend au moins une ligne visible avant de continuer.
   cy.get(getSelector(CARTE_CV.TABLE_ROW, VERSION), { timeout: 10000 }).should('have.length.at.least', 1);
 }
 
-// Garantit un minimum de CV.
+// Ajoute des doublons si le jeu de données est insuffisant.
 
 /**
- * Vérifie qu'on a au moins `nbMin` CV dans la liste.
- * Si ce n'est pas le cas, on duplique automatiquement le premier CV.
+ * Vérifie qu'il y a assez de CV dans la liste.
+ * Si besoin, le premier CV est dupliqué jusqu'au minimum demandé.
  */
 function garantirNbMinCVs(nbMin: number): void {
   cy.log(`🚨 Vérification: au moins ${nbMin} CV(s) requis`);
 
   const rowSelector = getSelector(CARTE_CV.TABLE_ROW, VERSION);
 
-  // On passe par cy.get + timeout pour laisser le tableau se stabiliser.
+  // Le tableau met parfois un peu de temps à se stabiliser.
   cy.get(rowSelector, { timeout: 10000 }).then($rows => {
     const nbActuel = $rows.length;
 
     cy.log(`📊 ${nbActuel} CV(s) trouvé(s)`);
 
-    // Pas assez de CV: duplication automatique.
+    // Si la liste est trop courte, on complète automatiquement.
     if (nbActuel < nbMin) {
       const nbACreer = nbMin - nbActuel;
       cy.log(`⚠️ Seulement ${nbActuel} CV(s) trouvé(s), ${nbMin} requis.`);
@@ -81,8 +81,7 @@ function garantirNbMinCVs(nbMin: number): void {
 }
 
 /**
- * Raccourci: on s'assure d'abord d'être sur la liste,
- * puis on vérifie le nombre minimum demandé.
+ * Petit raccourci utilisé avant les scénarios qui dépendent de la liste.
  */
 function preparerEtVerifier(nbMinCVs: number = 1): void {
   assurerSurPageListe();
@@ -91,7 +90,7 @@ function preparerEtVerifier(nbMinCVs: number = 1): void {
   }
 }
 
-// Navigation
+// Navigation.
 
 Given('je suis sur la page {string}', (pageName: string) => {
   if (pageName === 'Mes CVS') {
@@ -110,7 +109,7 @@ Given('je suis sur la page {string}', (pageName: string) => {
   }
 });
 
-// Préparation: statut
+// Préparation d'un statut.
 
 Given('un CV a le statut {string}', (statut: string) => {
   cy.log(`🔧 PRÉPARATION: S'assurer qu'un CV a le statut "${statut}"`);
@@ -126,7 +125,7 @@ Given('un CV a le statut {string}', (statut: string) => {
   CarteCVPrimitives.retourListeCV(VERSION);
 });
 
-// Préparation: nombre minimum de CV
+// Préparation du nombre de CV.
 
 Given('j\'ai au moins {int} CVs dans ma liste', (nbMin: number) => {
   cy.log(`🔧 PRÉPARATION: Garantir au moins ${nbMin} CVs`);
@@ -135,7 +134,7 @@ Given('j\'ai au moins {int} CVs dans ma liste', (nbMin: number) => {
   garantirNbMinCVs(nbMin);
 });
 
-// Renommer: succès
+// Cas nominal de renommage.
 
 When('je renomme un CV avec le statut {string} en {string}', (statut: string, nouveauNom: string) => {
   dernierNomGenere = genererNomUnique(nouveauNom);
@@ -154,7 +153,7 @@ Then('le CV est renommé en {string}', () => {
   CarteCVPrimitives.verifierNouveauNom(VERSION, dernierNomGenere);
 });
 
-// Renommer: erreur (nom déjà pris)
+// Cas d'erreur quand le nom existe déjà.
 
 Given('un CV porte déjà le nom {string}', (nom: string) => {
   cy.log(`🔧 PRÉPARATION: S'assurer qu'un CV s'appelle "${nom}"`);
@@ -195,7 +194,7 @@ Then('le renommage est refusé', () => {
   CarteCVPrimitives.verifierModaleFermee(VERSION);
 });
 
-// Duplication
+// Duplication.
 
 When('je duplique un CV avec le statut {string}', (statut: string) => {
   cy.log(`📋 INTENTION: Dupliquer CV "${statut}"`);
@@ -221,7 +220,7 @@ Then('la copie apparaît dans ma liste de CV', () => {
   cy.log('✅ Copie visible');
 });
 
-// Vidage
+// Vidage.
 
 When('je vide un CV avec le statut {string}', (statut: string) => {
   cy.log(`🧹 INTENTION: Vider CV "${statut}"`);
@@ -255,8 +254,8 @@ Then('le contenu du CV reste intact', () => {
   cy.log('✅ Contenu intact');
 });
 
-// Changer propriétaire: succès
-// En v1, cette action peut nécessiter au moins 2 CV.
+// Changement de propriétaire.
+// En v1, on garde deux CV disponibles pour éviter les faux négatifs.
 
 When('je transfère un CV avec le statut {string} à {string}', (statut: string, email: string) => {
   cy.log(`👤 INTENTION: Transférer CV "${statut}" à ${email}`);
@@ -273,8 +272,8 @@ Then('le transfert est enregistré avec succès', () => {
   cy.log('✅ Transfert enregistré');
 });
 
-// Changer propriétaire: erreur (email inexistant)
-// En v1, cette action peut nécessiter au moins 2 CV.
+// Variante avec email invalide.
+// En v1, on garde deux CV disponibles pour éviter les faux négatifs.
 
 When('je tente de transférer un CV avec le statut {string} à {string}', (statut: string, email: string) => {
   cy.log(`👤 INTENTION: Tenter de transférer CV "${statut}" à ${email}`);
@@ -290,8 +289,8 @@ Then('le message {string} s\'affiche', (message: string) => {
   CarteCVPrimitives.verifierMessageToast(VERSION, message);
 });
 
-// Suppression
-// En v1, cette action peut nécessiter au moins 2 CV.
+// Suppression.
+// En v1, on garde deux CV disponibles pour éviter les faux négatifs.
 
 When('je supprime un CV avec le statut {string}', (statut: string) => {
   cy.log(`🗑️ INTENTION: Supprimer CV "${statut}"`);
@@ -335,7 +334,7 @@ Then('le CV reste dans ma liste', () => {
   cy.log('✅ CV toujours présent');
 });
 
-// Enregistrement
+// Sauvegarde.
 
 When('j\'enregistre les modifications d\'un CV avec le statut {string}', (statut: string) => {
   cy.log(`💾 INTENTION: Enregistrer CV "${statut}"`);
@@ -349,7 +348,7 @@ Then('les modifications sont sauvegardées', () => {
   cy.log('✅ Modifications sauvegardées');
 });
 
-// Changer statut
+// Changement de statut.
 
 When('je change le statut d\'un CV {string} en {string}', (statutActuel: string, nouveauStatut: string) => {
   cy.log(`🔄 INTENTION: Changer statut "${statutActuel}" → "${nouveauStatut}"`);
@@ -364,7 +363,7 @@ Then('le statut du CV devient {string}', (statutAttendu: string) => {
   cy.log(`✅ Statut: ${statutAttendu}`);
 });
 
-// Download JSON (v2)
+// Téléchargement du JSON en v2.
 
 When('je télécharge le JSON d\'un CV avec le statut {string}', (statut: string) => {
   cy.log(`📄 INTENTION: Download Json CV "${statut}"`);

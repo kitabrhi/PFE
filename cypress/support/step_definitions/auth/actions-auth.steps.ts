@@ -1,6 +1,6 @@
 /**
- * Steps Gherkin liés à l'authentification.
- * Ce fichier sert de point commun pour les scénarios qui ont besoin de login/logout.
+ * Étapes partagées par les scénarios d'authentification.
+ * On centralise ici la connexion, la déconnexion et les vérifications associées.
  */
 
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
@@ -9,7 +9,7 @@ import { AuthPrimitives } from '../../primitives/auth/auth.primitives';
 
 const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';
 
-// Navigation
+// Navigation.
 
 Given('Je suis sur la page de connexion', () => {
   AuthPrimitives.naviguerPageConnexion(VERSION);
@@ -26,7 +26,7 @@ Given('Je suis authentifié dans l\'application', () => {
   AuthPrimitives.verifierAuthentificationReussie(VERSION);
 });
 
-// Connexion
+// Connexion.
 
 When('Je me connecte avec un compte valide', () => {
   AuthPrimitives.seConnecter(
@@ -52,19 +52,19 @@ When('Je tente de me connecter avec un email au format invalide', () => {
   );
 });
 
-// Déconnexion
+// Déconnexion.
 
 When('Je me déconnecte', () => {
   AuthPrimitives.seDeconnecter(VERSION);
 });
 
-// Accès protégé
+// Accès protégé.
 
 When('Je tente d\'accéder à une page protégée', () => {
   AuthPrimitives.tenterAccesPageProtegee(VERSION);
 });
 
-// Vérifications de succès
+// Vérifications de succès.
 
 Then('Je suis authentifié avec succès', () => {
   AuthPrimitives.verifierAuthentificationReussie(VERSION);
@@ -74,7 +74,7 @@ Then('Je vois mon espace personnel', () => {
   AuthPrimitives.verifierEspacePersonnel(VERSION);
 });
 
-// Vérifications d'erreur
+// Vérifications d'erreur.
 
 Then('L\'authentification échoue', () => {
   AuthPrimitives.verifierResteSurPageConnexion(VERSION);
@@ -92,7 +92,7 @@ Then('Je reste sur la page de connexion', () => {
   AuthPrimitives.verifierResteSurPageConnexion(VERSION);
 });
 
-// Vérifications après déconnexion
+// Vérifications après déconnexion.
 
 Then('Je suis redirigé vers la page de connexion', () => {
   AuthPrimitives.verifierRedirectionPageConnexion(VERSION);
@@ -102,7 +102,7 @@ Then('Ma session est terminée', () => {
   AuthPrimitives.verifierSessionTerminee(VERSION);
 });
 
-// Vérification accès protégé
+// Vérification d'un accès refusé.
 
 Then('L\'accès est refusé', () => {
   AuthPrimitives.verifierRedirectionPageConnexion(VERSION);
