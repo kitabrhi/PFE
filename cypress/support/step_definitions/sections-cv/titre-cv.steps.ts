@@ -3,7 +3,7 @@
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
 import { Version, getSelector, SECTION_ROW } from '../../config/section/selectors-titre-cv.config';
 import { SectionsCVPrimitives } from '../../primitives/sections-cv/titre-cv.primitives';
-import { CarteCVPrimitives } from '../../primitives/carte-cv/actions.primitives';
+import { CarteCVPrimitives } from '@support/primitives/carte-cv/actions.primitives';
 
 const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';
 

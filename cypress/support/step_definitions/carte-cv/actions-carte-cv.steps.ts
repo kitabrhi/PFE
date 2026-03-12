@@ -31,9 +31,14 @@ function assurerSurPageListe(): void {
       }
     });
   }
-  cy.get(getSelector(CARTE_CV.TABLE, VERSION), { timeout: 10000 }).should('be.visible');
-  // On attend au moins une ligne visible avant de continuer.
-  cy.get(getSelector(CARTE_CV.TABLE_ROW, VERSION), { timeout: 10000 }).should('have.length.at.least', 1);
+  cy.get(getSelector(CARTE_CV.TABLE, VERSION), { timeout: 10000 })
+  .scrollIntoView()
+  .should('be.visible');
+
+cy.get(getSelector(CARTE_CV.TABLE_ROW, VERSION), { timeout: 10000 })
+  .first()
+  .scrollIntoView()
+  .should('be.visible');
 }
 
 // Ajoute des doublons si le jeu de données est insuffisant.
