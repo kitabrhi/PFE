@@ -1,5 +1,9 @@
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
-import { Version, getSelector, SECTION_DIPLOMES } from '../../config/section/Selectors-diplomes.config';
+import {
+  Version,
+  getSelector,
+  SECTION_DIPLOMES,
+} from '../../config/section/selectors-diplomes.config';
 import { DiplomesPrimitives } from '../../primitives/sections-cv/Diplomes.primitives';
 
 const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';

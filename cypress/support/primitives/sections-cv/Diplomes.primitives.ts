@@ -1,7 +1,8 @@
 import {
-    Version, getSelector,
-    SECTION_DIPLOMES
-  } from '../../config/section/Selectors-diplomes.config';
+    Version,
+    getSelector,
+    SECTION_DIPLOMES,
+  } from '../../config/section/selectors-diplomes.config';
   
   // ─── Fixtures ────────────────────────────────────────────────────────────────
   
