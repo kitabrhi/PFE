@@ -5,12 +5,8 @@ Feature: Gérer les informations personnelles de mon CV
   Afin que mon CV reflète mon identité et mon profil professionnel
 
   Background:
-    Given Je suis sur la page de connexion
-    When Je me connecte avec un compte valide
-    Then Je suis authentifié avec succès
-    And je suis sur la page "Mes CVS"
-    And je sélectionne un CV existant
-    And je suis sur la section "Informations"
+  Given je suis connecté à mon compte
+  And je suis sur la section "Informations" d'un CV existant
 
   # Cas autour de la photo de profil
 

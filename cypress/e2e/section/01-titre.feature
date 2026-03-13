@@ -5,12 +5,8 @@ Feature: Gérer les titres de mon CV
   Afin de présenter mes différents intitulés professionnels
 
   Background:
-    Given Je suis sur la page de connexion
-    When Je me connecte avec un compte valide
-    Then Je suis authentifié avec succès
-    And je suis sur la page "Mes CVS"
-    And je sélectionne un CV existant
-    And je suis sur la section "Titres"
+  Given je suis connecté à mon compte
+  And je suis sur la section "Titres" d'un CV existant
 
   # Ajout de titres
 

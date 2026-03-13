@@ -9,36 +9,44 @@ const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';
 
 // Navigation entre la liste et les sections du CV.
 
-Given('je sélectionne un CV existant', () => {
-  cy.log('🔍 Sélection d\'un CV existant');
+// Given('je sélectionne un CV existant', () => {
+//   cy.log('🔍 Sélection d\'un CV existant');
 
-  if (VERSION === 'v1') {
-    cy.get('tr.mat-mdc-row', { timeout: 10000 }).then($rows => {
-      if ($rows.length === 0) {
-        throw new Error(
-          '❌ Aucun CV trouvé dans la liste. ' +
-          'Veuillez créer au moins un CV avant de lancer les tests de section.'
-        );
-      }
-      cy.wrap($rows).first().click();
-      cy.wait(1500);
-    });
-  } else {
-    cy.get('[data-testid="cv-row"]', { timeout: 10000 }).then($rows => {
-      if ($rows.length === 0) {
-        throw new Error(
-          '❌ Aucun CV trouvé dans la liste. ' +
-          'Veuillez créer au moins un CV avant de lancer les tests de section.'
-        );
-      }
-      cy.wrap($rows).first().click();
-      cy.wait(1500);
-      CarteCVPrimitives.verifierNavigationPageDetail(VERSION);
-    });
-  }
+//   if (VERSION === 'v1') {
+//     cy.get('tr.mat-mdc-row', { timeout: 10000 }).then($rows => {
+//       if ($rows.length === 0) {
+//         throw new Error(
+//           '❌ Aucun CV trouvé dans la liste. ' +
+//           'Veuillez créer au moins un CV avant de lancer les tests de section.'
+//         );
+//       }
+//       cy.wrap($rows).first().click();
+//       cy.wait(1500);
+//     });
+//   } else {
+//     cy.get('[data-testid="cv-row"]', { timeout: 10000 }).then($rows => {
+//       if ($rows.length === 0) {
+//         throw new Error(
+//           '❌ Aucun CV trouvé dans la liste. ' +
+//           'Veuillez créer au moins un CV avant de lancer les tests de section.'
+//         );
+//       }
+//       cy.wrap($rows).first().click();
+//       cy.wait(1500);
+//       CarteCVPrimitives.verifierNavigationPageDetail(VERSION);
+//     });
+//   }
 
-  cy.log('✅ CV sélectionné');
+//   cy.log('✅ CV sélectionné');
+// });
+
+
+
+afterEach(() => {
+  cy.log('🧹 Nettoyage après test');
 });
+
+
 
 Given('je suis sur la section {string}', (nomSection: string) => {
   SectionsCVPrimitives.naviguerVersSection(VERSION, nomSection);
@@ -57,9 +65,6 @@ When('je reviens sur la section {string}', (nomSection: string) => {
 
 // Crochet laissé en place si un nettoyage devient utile.
 
-afterEach(() => {
-  cy.log('🧹 Nettoyage après test');
-});
 
 // Ajout.
 

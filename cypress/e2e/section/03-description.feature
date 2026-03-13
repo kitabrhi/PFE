@@ -5,12 +5,8 @@ Feature: Gérer le résumé de profil de mon CV
   Afin de présenter synthétiquement mon parcours sur mon CV
 
   Background:
-    Given Je suis sur la page de connexion
-    When Je me connecte avec un compte valide
-    Then Je suis authentifié avec succès
-    And je suis sur la page "Mes CVS"
-    And je sélectionne un CV existant
-    And je suis sur la section "Description"
+  Given je suis connecté à mon compte
+   And je suis sur la section "Description" d'un CV existant
 
   # Saisie du résumé
 
