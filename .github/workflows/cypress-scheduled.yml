@@ -27,21 +27,17 @@ jobs:
   cypress-run:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write        # ← obligatoire pour git push
     strategy:
       fail-fast: false
-
     steps:
       - name: 📥 Checkout du code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: 🟢 Installation de Node.js 18
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: npm
 
       - name: 📦 Installation des dépendances
         run: npm install
@@ -54,22 +50,18 @@ jobs:
         env:
           CYPRESS_BASE_URL: ${{ secrets.CYPRESS_BASE_URL }}
 
-      - name: 📝 Créer un commit de log
-        if: always() && github.ref == 'refs/heads/main'
+      - name: 📝 Créer un commit de log   # ← nouvelle étape
+        if: always()
         run: |
           git config user.name "kitabrhi"
-          git config user.email "kitabrhi.youssef.1@gmail.com"
-
-          mkdir -p test-logs
+          git config user.email "kitabrhi.youssef.1@gmail.com" 
           echo "Run #${{ github.run_number }} — $(date -u)" >> test-logs/run-history.log
-
           git add test-logs/run-history.log
-
-          git diff --cached --quiet && echo "Aucun changement à commit" && exit 0
-
           git commit -m "ci: scheduled test run #${{ github.run_number }}"
-          git pull --rebase origin main
-          git push origin main
+          git pull --rebase
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 📊 Upload des rapports
         uses: actions/upload-artifact@v4
