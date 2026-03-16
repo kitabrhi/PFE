@@ -5,9 +5,7 @@ Feature: Enregistrer les modifications d'un CV
   Afin de conserver mon travail
 
   Background:
-    Given Je suis sur la page de connexion
-    When Je me connecte avec un compte valide
-    Then Je suis authentifié avec succès
+    Given je suis connecté à mon compte
     And je suis sur la page "Mes CVS"
 
   @CARTE-008

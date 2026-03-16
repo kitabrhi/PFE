@@ -4,11 +4,9 @@ Feature: Renommer un CV
   Je veux pouvoir renommer mon CV
   Afin de mieux organiser mes différentes versions
 
-  Background:
-    Given Je suis sur la page de connexion
-    When Je me connecte avec un compte valide
-    Then Je suis authentifié avec succès
-    And je suis sur la page "Mes CVS"
+Background:
+  Given je suis connecté à mon compte
+  And je suis sur la page "Mes CVS"
 
   @CARTE-001
   Scenario Outline: Renommer un CV avec succès

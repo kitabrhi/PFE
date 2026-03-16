@@ -5,9 +5,7 @@ Feature: Supprimer un CV
   Afin de nettoyer mes anciennes versions
 
   Background:
-    Given Je suis sur la page de connexion
-    When Je me connecte avec un compte valide
-    Then Je suis authentifié avec succès
+    Given je suis connecté à mon compte
     And je suis sur la page "Mes CVS"
     And j'ai au moins 2 CVs dans ma liste
 

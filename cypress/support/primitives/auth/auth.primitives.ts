@@ -1,7 +1,4 @@
-/**
- * Primitives d'authentification partagées entre v1 et v2.
- * Les sélecteurs sont choisis à partir de la version active.
- */
+// Helpers d'authentification pour les versions v1 et v2.
 
 import {
   Version,
@@ -13,23 +10,16 @@ import {
 
 export class AuthPrimitives {
 
-  // Navigation.
+  // Navigation
 
-  /**
-   * Ouvre la page de connexion.
-   */
   static naviguerPageConnexion(version: Version): void {
     cy.log('🌐 Navigation vers page de connexion');
 
     cy.visit(getSelector(AUTH_URLS.BASE, version));
 
-    // On attend un repère fiable avant d'aller plus loin.
     AuthPrimitives.verifierElement(version, AUTH_SELECTORS.PAGE_LOGIN_VISIBLE, AUTH_SELECTORS.PAGE_LOGIN_TEXT);
   }
 
-  /**
-   * Tente d'ouvrir une page protégée sans session active.
-   */
   static tenterAccesPageProtegee(version: Version): void {
     cy.log('🚫 Tentative accès page protégée');
 
@@ -38,11 +28,18 @@ export class AuthPrimitives {
     });
   }
 
-  // Connexion.
+  // Session
 
-  /**
-   * Renseigne l'email.
-   */
+  // on vide les cookies et le localStorage pour repartir propre
+  static nettoyerSession(): void {
+    cy.log('🧹 Nettoyage session');
+    cy.clearCookies();
+    cy.clearLocalStorage();
+    cy.log('🔒 Session nettoyée');
+  }
+
+  // Connexion
+
   static saisirEmail(version: Version, email: string): void {
     cy.log(`📧 Saisie email: ${email}`);
 
@@ -52,9 +49,6 @@ export class AuthPrimitives {
       .type(email);
   }
 
-  /**
-   * Renseigne le mot de passe.
-   */
   static saisirPassword(version: Version, password: string): void {
     cy.log('🔑 Saisie mot de passe');
 
@@ -64,18 +58,12 @@ export class AuthPrimitives {
       .type(password);
   }
 
-  /**
-   * Clique sur le bouton de connexion.
-   */
   static cliquerConnexion(version: Version): void {
     cy.log('🖱️ Clic bouton connexion');
 
     cy.get(getSelector(AUTH_SELECTORS.BTN_CONNEXION, version)).click();
   }
 
-  /**
-   * Enchaîne les étapes de connexion.
-   */
   static seConnecter(version: Version, email: string, password: string): void {
     cy.log(`🔐 Connexion avec ${email}`);
 
@@ -85,11 +73,9 @@ export class AuthPrimitives {
     cy.wait(3000);
   }
 
-  /**
-   * Ouvre la page de connexion puis s'authentifie.
-   */
-  static authentifierComplet(version: Version): void {
-    AuthPrimitives.naviguerPageConnexion(version);
+  // Scénarios prêts à l'emploi
+
+  static seConnecterCompteValide(version: Version): void {
     AuthPrimitives.seConnecter(
       version,
       AUTH_CREDENTIALS.VALID.email,
@@ -97,16 +83,33 @@ export class AuthPrimitives {
     );
   }
 
-  // Déconnexion.
+  static seConnecterIdentifiantsIncorrects(version: Version): void {
+    AuthPrimitives.seConnecter(
+      version,
+      AUTH_CREDENTIALS.INVALID.email,
+      AUTH_CREDENTIALS.INVALID.password
+    );
+  }
 
-  /**
-   * Ferme la session en cours.
-   */
+  static seConnecterEmailInexistant(version: Version): void {
+    AuthPrimitives.seConnecter(
+      version,
+      AUTH_CREDENTIALS.EMAIL_INVALIDE.email,
+      AUTH_CREDENTIALS.EMAIL_INVALIDE.password
+    );
+  }
+
+  static authentifierComplet(version: Version): void {
+    AuthPrimitives.naviguerPageConnexion(version);
+    AuthPrimitives.seConnecterCompteValide(version);
+  }
+
+  // Déconnexion
+
   static seDeconnecter(version: Version): void {
     cy.log('🚪 Déconnexion');
 
     if (version === 'v1') {
-      // En v1, la déconnexion passe par le menu utilisateur.
       cy.get('mat-icon').contains('keyboard_arrow_down')
         .should('be.visible')
         .click({ force: true });
@@ -114,7 +117,6 @@ export class AuthPrimitives {
         .should('be.visible')
         .click({ force: true });
     } else {
-      // En v2, on utilise les contrôles dédiés du header.
       cy.get(getSelector(AUTH_SELECTORS.MENU_UTILISATEUR, version)).click();
       cy.get(getSelector(AUTH_SELECTORS.BTN_DECONNEXION, version)).click();
     }
@@ -122,12 +124,9 @@ export class AuthPrimitives {
     cy.wait(2000);
   }
 
-  // Vérifications.
+  // Vérifications — helpers internes
 
-  /**
-   * Vérifie un élément soit par sélecteur, soit par texte.
-   * La v1 s'appuie plus souvent sur du texte, la v2 sur des `data-testid`.
-   */
+  // vérifie un élément soit par sélecteur soit par texte selon la version
   private static verifierElement(
     version: Version,
     selectorMap: { v1: string; v2: string },
@@ -144,9 +143,25 @@ export class AuthPrimitives {
     }
   }
 
-  /**
-   * Vérifie que l'utilisateur n'est plus sur l'écran de connexion.
-   */
+  // factorise la logique commune à toutes les erreurs de connexion
+  private static verifierErreur(
+    version: Version,
+    selectorMap: { v1: string; v2: string },
+    textMap: { v1: string; v2: string },
+    timeout: number = 5000
+  ): void {
+    const selector = getSelector(selectorMap, version);
+    const text = getSelector(textMap, version);
+
+    if (selector) {
+      cy.get(selector, { timeout }).should('contain', text);
+    } else {
+      cy.contains(text, { timeout }).should('be.visible');
+    }
+  }
+
+  // Vérifications — succès
+
   static verifierAuthentificationReussie(version: Version): void {
     cy.log('✅ Vérification authentification réussie');
 
@@ -154,71 +169,40 @@ export class AuthPrimitives {
     AuthPrimitives.verifierElement(version, AUTH_SELECTORS.APP_LOADED, AUTH_SELECTORS.APP_LOADED_TEXT);
   }
 
-  /**
-   * Vérifie que l'espace personnel est affiché.
-   */
   static verifierEspacePersonnel(version: Version): void {
     cy.log('✅ Vérification espace personnel');
 
     AuthPrimitives.verifierElement(version, AUTH_SELECTORS.ESPACE_PERSONNEL, AUTH_SELECTORS.ESPACE_PERSONNEL_TEXT);
   }
 
-  /**
-   * Vérifie l'erreur liée à des identifiants invalides.
-   */
+  // Vérifications — erreurs
+
   static verifierErreurIdentifiants(version: Version): void {
     cy.log('❌ Vérification erreur identifiants');
 
-    const selector = getSelector(AUTH_SELECTORS.ERROR_IDENTIFIANTS, version);
-    const text = getSelector(AUTH_SELECTORS.ERROR_IDENTIFIANTS_TEXT, version);
-
-    if (selector) {
-      cy.get(selector, { timeout: 5000 }).should('contain', text);
-    } else {
-      cy.contains(text, { timeout: 5000 }).should('be.visible');
-    }
+    AuthPrimitives.verifierErreur(
+      version,
+      AUTH_SELECTORS.ERROR_IDENTIFIANTS,
+      AUTH_SELECTORS.ERROR_IDENTIFIANTS_TEXT
+    );
   }
 
-  /**
-   * Vérifie l'erreur liée à un compte inexistant.
-   */
   static verifierErreurCompteInexistant(version: Version): void {
     cy.log('❌ Vérification erreur compte inexistant');
 
-    const selector = getSelector(AUTH_SELECTORS.ERROR_COMPTE_INEXISTANT, version);
-    const text = getSelector(AUTH_SELECTORS.ERROR_COMPTE_INEXISTANT_TEXT, version);
-
-    if (selector) {
-      cy.get(selector, { timeout: 5000 }).should('contain', text);
-    } else {
-      cy.contains(text, { timeout: 5000 }).should('be.visible');
-    }
+    AuthPrimitives.verifierErreur(
+      version,
+      AUTH_SELECTORS.ERROR_COMPTE_INEXISTANT,
+      AUTH_SELECTORS.ERROR_COMPTE_INEXISTANT_TEXT
+    );
   }
 
-  /**
-   * Vérifie qu'aucune redirection n'a eu lieu.
-   */
-  static verifierResteSurPageConnexion(version: Version): void {
-    cy.log('❌ Vérification reste sur page connexion');
+  // Vérifications — navigation / session
 
-    cy.url().should('include', getSelector(AUTH_URLS.URL_LOGIN, version));
-  }
+  // couvre : reste sur la page de connexion, redirigé, session terminée, accès refusé
+  static verifierSurPageConnexion(version: Version, timeout: number = 10000): void {
+    cy.log('🔒 Vérification présence sur page de connexion');
 
-  /**
-   * Vérifie le retour vers la page de connexion.
-   */
-  static verifierRedirectionPageConnexion(version: Version): void {
-    cy.log('➡️ Vérification redirection page connexion');
-
-    cy.url({ timeout: 10000 }).should('include', getSelector(AUTH_URLS.URL_LOGIN, version));
-  }
-
-  /**
-   * Vérifie que la session est bien terminée.
-   */
-  static verifierSessionTerminee(version: Version): void {
-    cy.log('🔒 Vérification session terminée');
-
-    cy.url().should('include', getSelector(AUTH_URLS.URL_LOGIN, version));
+    cy.url({ timeout }).should('include', getSelector(AUTH_URLS.URL_LOGIN, version));
   }
 }

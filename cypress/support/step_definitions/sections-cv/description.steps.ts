@@ -4,7 +4,7 @@ import { DescriptionPrimitives } from '../../primitives/sections-cv/description.
 
 const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';
 
-// Saisie.
+// Saisie
 
 When('je renseigne mon résumé de profil', () => {
   DescriptionPrimitives.saisirDescription(VERSION);
@@ -14,7 +14,7 @@ When('j\'efface mon résumé de profil', () => {
   DescriptionPrimitives.effacerDescription(VERSION);
 });
 
-// Vérifications.
+// Vérifications
 
 Then('mon résumé de profil est enregistré', () => {
   DescriptionPrimitives.verifierDescriptionPresente(VERSION);
@@ -36,4 +36,4 @@ Then('la limite de {int} caractères est respectée', (limite: number) => {
   DescriptionPrimitives.verifierLimiteCaracteresRespectee(VERSION);
 });
 
-// Les étapes de navigation communes sont définies dans `titre-cv.steps.ts`.
+// les étapes de navigation communes sont dans titre-cv.steps.ts

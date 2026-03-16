@@ -6,8 +6,7 @@ Feature: Dupliquer un CV
 
   Background:
     Given Je suis sur la page de connexion
-    When Je me connecte avec un compte valide
-    Then Je suis authentifié avec succès
+    Given je suis connecté à mon compte
     And je suis sur la page "Mes CVS"
 
   @CARTE-002

@@ -1,24 +1,20 @@
-/**
- * Étapes partagées par les scénarios d'authentification.
- * On centralise ici la connexion, la déconnexion et les vérifications associées.
- */
+// Steps pour l'authentification — connexion, déconnexion et vérifications.
+// Les steps n'importent rien de la config, tout passe par les primitives.
 
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
-import { Version, AUTH_CREDENTIALS } from '../../config/auth/selectors-auth.config';
+import { Version } from '../../config/auth/selectors-auth.config';
 import { AuthPrimitives } from '../../primitives/auth/auth.primitives';
 
 const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';
 
-// Navigation.
+// Navigation / session
 
 Given('Je suis sur la page de connexion', () => {
   AuthPrimitives.naviguerPageConnexion(VERSION);
 });
 
 Given('Je ne suis pas authentifié', () => {
-  cy.clearCookies();
-  cy.clearLocalStorage();
-  cy.log('🔒 Session nettoyée');
+  AuthPrimitives.nettoyerSession();
 });
 
 Given('Je suis authentifié dans l\'application', () => {
@@ -26,45 +22,33 @@ Given('Je suis authentifié dans l\'application', () => {
   AuthPrimitives.verifierAuthentificationReussie(VERSION);
 });
 
-// Connexion.
+// Connexion
 
 When('Je me connecte avec un compte valide', () => {
-  AuthPrimitives.seConnecter(
-    VERSION,
-    AUTH_CREDENTIALS.VALID.email,
-    AUTH_CREDENTIALS.VALID.password
-  );
+  AuthPrimitives.seConnecterCompteValide(VERSION);
 });
 
 When('Je tente de me connecter avec des identifiants incorrects', () => {
-  AuthPrimitives.seConnecter(
-    VERSION,
-    AUTH_CREDENTIALS.INVALID.email,
-    AUTH_CREDENTIALS.INVALID.password
-  );
+  AuthPrimitives.seConnecterIdentifiantsIncorrects(VERSION);
 });
 
 When('Je tente de me connecter avec un email au format invalide', () => {
-  AuthPrimitives.seConnecter(
-    VERSION,
-    AUTH_CREDENTIALS.EMAIL_INVALIDE.email,
-    AUTH_CREDENTIALS.EMAIL_INVALIDE.password
-  );
+  AuthPrimitives.seConnecterEmailInexistant(VERSION);
 });
 
-// Déconnexion.
+// Déconnexion
 
 When('Je me déconnecte', () => {
   AuthPrimitives.seDeconnecter(VERSION);
 });
 
-// Accès protégé.
+// Accès protégé
 
 When('Je tente d\'accéder à une page protégée', () => {
   AuthPrimitives.tenterAccesPageProtegee(VERSION);
 });
 
-// Vérifications de succès.
+// Vérifications — succès
 
 Then('Je suis authentifié avec succès', () => {
   AuthPrimitives.verifierAuthentificationReussie(VERSION);
@@ -74,10 +58,10 @@ Then('Je vois mon espace personnel', () => {
   AuthPrimitives.verifierEspacePersonnel(VERSION);
 });
 
-// Vérifications d'erreur.
+// Vérifications — erreurs
 
 Then('L\'authentification échoue', () => {
-  AuthPrimitives.verifierResteSurPageConnexion(VERSION);
+  AuthPrimitives.verifierSurPageConnexion(VERSION);
 });
 
 Then('Je vois un message d\'erreur indiquant que les identifiants sont invalides', () => {
@@ -89,21 +73,19 @@ Then('Je vois un message indiquant que le compte n\'existe pas', () => {
 });
 
 Then('Je reste sur la page de connexion', () => {
-  AuthPrimitives.verifierResteSurPageConnexion(VERSION);
+  AuthPrimitives.verifierSurPageConnexion(VERSION);
 });
 
-// Vérifications après déconnexion.
+// Vérifications — déconnexion / accès refusé
 
 Then('Je suis redirigé vers la page de connexion', () => {
-  AuthPrimitives.verifierRedirectionPageConnexion(VERSION);
+  AuthPrimitives.verifierSurPageConnexion(VERSION);
 });
 
 Then('Ma session est terminée', () => {
-  AuthPrimitives.verifierSessionTerminee(VERSION);
+  AuthPrimitives.verifierSurPageConnexion(VERSION);
 });
 
-// Vérification d'un accès refusé.
-
 Then('L\'accès est refusé', () => {
-  AuthPrimitives.verifierRedirectionPageConnexion(VERSION);
+  AuthPrimitives.verifierSurPageConnexion(VERSION);
 });

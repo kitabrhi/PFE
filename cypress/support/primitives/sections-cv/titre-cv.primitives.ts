@@ -5,14 +5,31 @@ import {
 
 export class SectionsCVPrimitives {
 
-  // L'auto-save n'est pas instantané, on lui laisse un peu de marge.
+  // Helpers
 
   private static attendreAutoSave(): void {
     cy.log('⏳ Attente sauvegarde automatique...');
     cy.wait(2500);
   }
 
-  // Navigation entre sections.
+  // retourne vrai via callback si le titre existe déjà, sans lever d'assertion Cypress
+  private static titreExiste(version: Version, titre: string, callback: (existe: boolean) => void): void {
+    const rowSelector = getSelector(SECTION_ROW.ROW, version);
+    const inputSelector = getSelector(SECTION_TITRES.INPUT_TITRE, version);
+
+    if (version === 'v1') {
+      cy.get(`${rowSelector} ${inputSelector}`).then($inputs => {
+        const found = $inputs.filter((_i, el) => (el as HTMLInputElement).value === titre);
+        callback(found.length > 0);
+      });
+    } else {
+      cy.get('body').then($body => {
+        callback($body.find(`${rowSelector}:contains("${titre}")`).length > 0);
+      });
+    }
+  }
+
+  // Navigation
 
   static naviguerVersSection(version: Version, nomSection: string): void {
     const label = getLabelSection(nomSection, version);
@@ -28,13 +45,13 @@ export class SectionsCVPrimitives {
     cy.log(`✅ Sur la section "${nomSection}"`);
   }
 
-  // Recherche et manipulation des lignes.
+  // Recherche
 
   static trouverLigneParTexte(version: Version, texte: string): void {
     cy.log(`🔍 Recherche ligne contenant "${texte}"`);
     const rowSelector = getSelector(SECTION_ROW.ROW, version);
     const inputSelector = getSelector(SECTION_TITRES.INPUT_TITRE, version);
-  
+
     if (version === 'v1') {
       cy.get(`${rowSelector} ${inputSelector}`, { timeout: 10000 })
         .filter((_index, el) => (el as HTMLInputElement).value === texte)
@@ -78,22 +95,37 @@ export class SectionsCVPrimitives {
       .should('have.length.greaterThan', 0);
   }
 
-  // Suppression.
+  // Préparation
+
+  // crée le titre s'il n'est pas encore là
+  static garantirTitreExiste(version: Version, titre: string): void {
+    cy.log(`🔧 PRÉPARATION: Garantir titre "${titre}"`);
+
+    SectionsCVPrimitives.titreExiste(version, titre, (existe) => {
+      if (!existe) {
+        cy.log(`➕ Titre "${titre}" inexistant → création`);
+        SectionsCVPrimitives.ajouterTitre(version, titre);
+      } else {
+        cy.log(`✅ Titre "${titre}" déjà présent`);
+      }
+    });
+  }
+
+  // Suppression
 
   static supprimerLigne(version: Version, texte: string): void {
     cy.log(`🗑️ Suppression de la ligne "${texte}"`);
-  
+
     const rowSelector = getSelector(SECTION_ROW.ROW, version);
     const inputSelector = getSelector(SECTION_TITRES.INPUT_TITRE, version);
-  
+
     if (version === 'v1') {
-      // En v1, le plus fiable reste de supprimer chaque occurrence l'une après l'autre.
       const supprimerSiExiste = () => {
         cy.get(`${rowSelector} ${inputSelector}`).then($inputs => {
           const found = $inputs.filter((_i, el) =>
             (el as HTMLInputElement).value === texte
           );
-  
+
           if (found.length > 0) {
             cy.wrap(found.first())
               .closest('.custom-form-item')
@@ -101,21 +133,21 @@ export class SectionsCVPrimitives {
               .within(() => {
                 cy.get(getSelector(SECTION_ROW.BTN_SUPPRIMER_LIGNE, version)).click();
               });
-  
+
             cy.get('.mat-mdc-menu-panel')
               .should('be.visible')
               .contains('button', 'Supprimer')
               .click();
-  
+
             cy.wait(2500).then(() => supprimerSiExiste());
           } else {
             cy.log(`✅ Toutes les occurrences de "${texte}" supprimées`);
           }
         });
       };
-  
+
       supprimerSiExiste();
-  
+
     } else {
       SectionsCVPrimitives.trouverLigneParTexte(version, texte);
       cy.get('@ligneTrouvee').within(() => {
@@ -124,7 +156,8 @@ export class SectionsCVPrimitives {
       SectionsCVPrimitives.attendreAutoSave();
     }
   }
-  // Affichage et masquage.
+
+  // Visibilité
 
   static toggleVisibilite(version: Version, texte: string, activer: boolean): void {
     const action = activer ? 'Rendre visible' : 'Masquer';
@@ -158,7 +191,7 @@ export class SectionsCVPrimitives {
     });
   }
 
-  // Réordonnancement.
+  // Réordonnancement
 
   static changerOrdre(version: Version, texte: string, nouvelOrdre: number): void {
     cy.log(`🔢 Changer ordre "${texte}" → position ${nouvelOrdre}`);
@@ -201,7 +234,7 @@ export class SectionsCVPrimitives {
     });
   }
 
-  // Actions propres à la section Titres.
+  // Titres — ajout / modification
 
   static ajouterTitre(version: Version, titre: string): void {
     cy.log(`➕ Ajout du titre "${titre}"`);
@@ -210,7 +243,6 @@ export class SectionsCVPrimitives {
     const inputSelector = getSelector(SECTION_TITRES.INPUT_TITRE, version);
 
     if (version === 'v1') {
-      // En v1, on réutilise le premier champ encore vide.
       cy.get(`${rowSelector} ${inputSelector}`)
         .filter((_index, el) => (el as HTMLInputElement).value === '')
         .first()
@@ -218,7 +250,6 @@ export class SectionsCVPrimitives {
         .type(titre)
         .blur();
 
-      // Vérification légère pour éviter une saisie silencieusement perdue.
       cy.get(`${rowSelector} ${inputSelector}`, { timeout: 10000 })
         .filter((_index, el) => (el as HTMLInputElement).value === titre)
         .should('have.length.greaterThan', 0);
@@ -241,7 +272,6 @@ export class SectionsCVPrimitives {
     const inputSelector = getSelector(SECTION_TITRES.INPUT_TITRE, version);
 
     if (version === 'v1') {
-      // On cible directement le champ qui contient déjà l'ancien titre.
       cy.get(`${rowSelector} ${inputSelector}`, { timeout: 10000 })
         .filter((_index, el) => (el as HTMLInputElement).value === ancienTitre)
         .first()
@@ -249,7 +279,6 @@ export class SectionsCVPrimitives {
         .type(nouveauTitre)
         .blur();
 
-      // Même contrôle rapide après modification.
       cy.get(`${rowSelector} ${inputSelector}`, { timeout: 10000 })
         .filter((_index, el) => (el as HTMLInputElement).value === nouveauTitre)
         .should('have.length.greaterThan', 0);
@@ -264,6 +293,8 @@ export class SectionsCVPrimitives {
 
     cy.log(`✅ Titre modifié`);
   }
+
+  // Titres — vérifications
 
   static verifierTitreExiste(version: Version, titre: string): void {
     cy.log(`🔍 Vérification existence "${titre}"`);
@@ -283,16 +314,15 @@ export class SectionsCVPrimitives {
     cy.log(`🔍 Vérification absence "${titre}"`);
     const rowSelector = getSelector(SECTION_ROW.ROW, version);
     const inputSelector = getSelector(SECTION_TITRES.INPUT_TITRE, version);
-  
+
     if (version === 'v1') {
-      cy.wait(3000); // Le DOM prend parfois un peu de temps à se remettre d'aplomb.
+      cy.wait(3000);
       cy.get(`${rowSelector} ${inputSelector}`)
         .then($inputs => {
-          // Ce log aide à voir rapidement ce qu'il reste réellement dans la liste.
           $inputs.each((_i, el) => {
             cy.log(`📋 Input value: "${(el as HTMLInputElement).value}"`);
           });
-  
+
           const found = $inputs.filter((_i, el) =>
             (el as HTMLInputElement).value === titre
           );

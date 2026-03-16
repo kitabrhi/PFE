@@ -5,9 +5,7 @@ Feature: Transférer la propriété d'un CV
   Afin de déléguer sa gestion
 
   Background:
-    Given Je suis sur la page de connexion
-    When Je me connecte avec un compte valide
-    Then Je suis authentifié avec succès
+    Given je suis connecté à mon compte
     And je suis sur la page "Mes CVS"
     And j'ai au moins 2 CVs dans ma liste
 

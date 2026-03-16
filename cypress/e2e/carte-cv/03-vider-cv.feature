@@ -5,11 +5,9 @@ Feature: Vider le contenu d'un CV
   Afin de repartir sur une base vierge
 
   Background:
-    Given Je suis sur la page de connexion
-    When Je me connecte avec un compte valide
-    Then Je suis authentifié avec succès
+    Given je suis connecté à mon compte
     And je suis sur la page "Mes CVS"
-
+    
   @CARTE-003
   Scenario Outline: Vider le contenu d'un CV avec succès
     Given un CV a le statut "<statut>"
