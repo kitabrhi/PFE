@@ -62,6 +62,8 @@ export class NavigationPrimitives {
     cy.log('✅ CV sélectionné');
   }
 
+  
+
   // Parcours complets
 
   // Mes CVS → premier CV → section demandée

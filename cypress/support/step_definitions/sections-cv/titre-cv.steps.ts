@@ -11,22 +11,7 @@ afterEach(() => {
   cy.log('🧹 Nettoyage après test');
 });
 
-// Navigation entre sections
 
-Given('je suis sur la section {string}', (nomSection: string) => {
-  SectionsCVPrimitives.naviguerVersSection(VERSION, nomSection);
-});
-
-When('je quitte la section {string}', (nomSection: string) => {
-  cy.log(`🚪 Quitter la section "${nomSection}"`);
-  const autreSection = nomSection === 'Informations' ? 'Titres' : 'Informations';
-  SectionsCVPrimitives.naviguerVersSection(VERSION, autreSection);
-});
-
-When('je reviens sur la section {string}', (nomSection: string) => {
-  cy.log(`🔙 Retour sur la section "${nomSection}"`);
-  SectionsCVPrimitives.naviguerVersSection(VERSION, nomSection);
-});
 
 // Préparation
 
