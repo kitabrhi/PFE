@@ -1,4 +1,7 @@
-// Steps pour la section Points Forts — tout passe par les primitives.
+/**
+ * Étapes pour la section Points Forts.
+ * Pattern : le Given mémorise l'élément, le When utilise "ce point fort".
+ */
 
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
 import { Version } from '../../config/section/selectors-points-forts.config';
@@ -6,51 +9,60 @@ import { PointsFortsPrimitives } from '../../primitives/sections-cv/points-forts
 
 const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';
 
-// Préparation
+let dernierPointFort = '';
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  PRÉPARATION
+// ═══════════════════════════════════════════════════════════════════════════════
 
 Given('un point fort {string} existe dans ma liste', (texte: string) => {
+  dernierPointFort = texte;
   PointsFortsPrimitives.garantirPointFortExiste(VERSION, texte);
 });
 
 Given('un point fort {string} existe et est visible sur le CV', (texte: string) => {
+  dernierPointFort = texte;
   PointsFortsPrimitives.garantirPointFortExiste(VERSION, texte);
   PointsFortsPrimitives.toggleVisibilite(VERSION, texte, true);
 });
 
 Given('un point fort {string} existe et est masqué sur le CV', (texte: string) => {
+  dernierPointFort = texte;
   PointsFortsPrimitives.garantirPointFortExiste(VERSION, texte);
   PointsFortsPrimitives.toggleVisibilite(VERSION, texte, false);
 });
 
-// Ajout
+// ═══════════════════════════════════════════════════════════════════════════════
+//  AJOUT
+// ═══════════════════════════════════════════════════════════════════════════════
 
 When('j\'ajoute le point fort {string}', (texte: string) => {
   PointsFortsPrimitives.ajouterPointFort(VERSION, texte);
 });
 
-// Modification
+// ═══════════════════════════════════════════════════════════════════════════════
+//  MODIFICATION / SUPPRESSION / VISIBILITÉ — "ce point fort"
+// ═══════════════════════════════════════════════════════════════════════════════
 
-When('je modifie le point fort {string} en {string}', (ancien: string, nouveau: string) => {
-  PointsFortsPrimitives.modifierPointFort(VERSION, ancien, nouveau);
+When('je modifie ce point fort en {string}', (nouveau: string) => {
+  PointsFortsPrimitives.modifierPointFort(VERSION, dernierPointFort, nouveau);
 });
 
-// Suppression
-
-When('je supprime le point fort {string}', (texte: string) => {
-  PointsFortsPrimitives.supprimerPointFort(VERSION, texte);
+When('je supprime ce point fort', () => {
+  PointsFortsPrimitives.supprimerPointFort(VERSION, dernierPointFort);
 });
 
-// Visibilité
-
-When('je masque le point fort {string} du CV', (texte: string) => {
-  PointsFortsPrimitives.toggleVisibilite(VERSION, texte, false);
+When('je masque ce point fort du CV', () => {
+  PointsFortsPrimitives.toggleVisibilite(VERSION, dernierPointFort, false);
 });
 
-When('je rends visible le point fort {string} sur le CV', (texte: string) => {
-  PointsFortsPrimitives.toggleVisibilite(VERSION, texte, true);
+When('je rends visible ce point fort sur le CV', () => {
+  PointsFortsPrimitives.toggleVisibilite(VERSION, dernierPointFort, true);
 });
 
-// Vérifications
+// ═══════════════════════════════════════════════════════════════════════════════
+//  VÉRIFICATIONS
+// ═══════════════════════════════════════════════════════════════════════════════
 
 Then('le point fort {string} apparaît dans ma liste', (texte: string) => {
   PointsFortsPrimitives.verifierExiste(VERSION, texte);

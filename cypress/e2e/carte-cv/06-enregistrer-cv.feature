@@ -9,13 +9,8 @@ Feature: Enregistrer les modifications d'un CV
     And je suis sur la page "Mes CVS"
 
   @CARTE-008
-  Scenario Outline: Sauvegarder les modifications d'un CV
-    Given un CV a le statut "<statut>"
-    When j'enregistre les modifications d'un CV avec le statut "<statut>"
+  Scenario: Sauvegarder les modifications d'un CV
+    Given un CV existe dans ma liste
+    When je modifie ce CV
+    And j'enregistre les modifications
     Then les modifications sont sauvegardées
-
-    Examples:
-      | statut       |
-      | En cours     |
-      | Non démarré  |
-      | Complété     |

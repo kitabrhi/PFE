@@ -125,6 +125,13 @@ export class CarteCVPrimitives {
     }
   }
 
+  // static preparerEtVerifier2(version: Version, nbMinCVs: number = 2): void {
+  //   CarteCVPrimitives.assurerSurPageListe(version);
+  //   if (nbMinCVs > 2) {
+  //     CarteCVPrimitives.garantirNbMinCVs(version, nbMinCVs);
+  //   }
+  // }
+
   // Sélection de CV
 
   static selectionnerCVEtNaviguer(version: Version, statut: string): void {

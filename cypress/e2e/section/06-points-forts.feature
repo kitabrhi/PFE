@@ -16,25 +16,25 @@ Feature: Gérer mes points forts
   @PF-002
   Scenario: Modifier un point fort
     Given un point fort "Cadrage stratégique" existe dans ma liste
-    When je modifie le point fort "Cadrage stratégique" en "Gestion de projet Agile"
+    When je modifie ce point fort en "Gestion de projet Agile"
     Then le point fort "Gestion de projet Agile" apparaît dans ma liste
 
   @PF-003
   Scenario: Supprimer un point fort
     Given un point fort "Cadrage stratégique" existe dans ma liste
-    When je supprime le point fort "Cadrage stratégique"
+    When je supprime ce point fort
     Then le point fort "Cadrage stratégique" n'apparaît plus dans ma liste
 
   @PF-004
   Scenario: Masquer un point fort du CV
     Given un point fort "Cadrage stratégique" existe et est visible sur le CV
-    When je masque le point fort "Cadrage stratégique" du CV
+    When je masque ce point fort du CV
     Then le point fort "Cadrage stratégique" est masqué sur le CV
 
   @PF-005
   Scenario: Rendre visible un point fort masqué
     Given un point fort "Cadrage stratégique" existe et est masqué sur le CV
-    When je rends visible le point fort "Cadrage stratégique" sur le CV
+    When je rends visible ce point fort sur le CV
     Then le point fort "Cadrage stratégique" est visible sur le CV
 
   @PF-006

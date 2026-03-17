@@ -25,3 +25,5 @@ backup-*/
 
 # Temporaire
 *.tmp
+
+quality-audit.sh

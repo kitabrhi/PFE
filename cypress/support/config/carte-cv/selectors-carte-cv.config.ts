@@ -1,14 +1,9 @@
 /**
- * ═══════════════════════════════════════════════════════════════════════════
- * CONFIGURATION SÉLECTEURS - CARTE CV ACTIVE
- * ═══════════════════════════════════════════════════════════════════════════
- * Centralisation des sélecteurs v1/v2 avec résolution dynamique
- * via getSelector() — CŒUR de la couche d'abstraction
+ * Sélecteurs de la carte CV.
+ * On regroupe ici les variantes v1 et v2, puis on récupère la bonne valeur
+ * avec `getSelector()`.
  *
- * v2 : 2 pages distinctes
- *   - Page 1 (Mes CV) : Tableau avec actions en ligne (Dupliquer, Télécharger, ⋮→Renommer/Vider)
- *   - Page 2 (Détail)  : Fiche CV avec actions (⋮→Renommer/Vider/Changer propriétaire/Download Json/Supprimer,
- *                         Sauvegarder, Télécharger le CV, Statut)
+ * En v2, les actions sont réparties entre la liste des CV et la page de détail.
  */
 
 export type Version = 'v1' | 'v2';
@@ -18,19 +13,17 @@ interface SelectorMap {
   v2: string;
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// CARTE CV ACTIVE - SÉLECTEURS
-// ═══════════════════════════════════════════════════════════════════════════════
+// Sélecteurs principaux de la carte CV
 
 export const CARTE_CV = {
 
-  // ─── Carte active (v1 uniquement) ──────────────────────────────────────────
+  // Carte active
   CARD: {
     v1: '.mat-mdc-card.cv-detail-card',
     v2: 'div[data-testid="cv-active-card"]'
   } as SelectorMap,
 
-  // ─── Tableau des CV (Page 1 v2 / page unique v1) ──────────────────────────
+  // Tableau des CV
   TABLE: {
     v1: '.mat-mdc-table',
     v2: 'table[data-testid="cv-table"]'
@@ -41,7 +34,7 @@ export const CARTE_CV = {
     v2: 'tr[data-testid="cv-row"]'
   } as SelectorMap,
 
-  // ─── Statut ────────────────────────────────────────────────────────────────
+  // Gestion du statut
   SELECT_STATUS: {
     v1: '.mat-mdc-form-field mat-select',
     v2: 'select[data-testid="cv-status"]'
@@ -57,7 +50,7 @@ export const CARTE_CV = {
     v2: 'span[data-testid="status-label"]'
   } as SelectorMap,
 
-  // ─── 6 Boutons d'action (carte rouge v1 / barre actions v2) ───────────────
+  // Boutons d'action
   BTN_RENOMMER: {
     v1: 'button[title="Renommer"]',
     v2: 'button[data-testid="btn-renommer"]'
@@ -88,7 +81,7 @@ export const CARTE_CV = {
     v2: 'button[data-testid="btn-enregistrer"]'
   } as SelectorMap,
 
-  // ─── Modales de confirmation ───────────────────────────────────────────────
+  // Eléments des modales
   MODAL: {
     v1: '.mat-mdc-dialog-container',
     v2: 'div[role="dialog"]'
@@ -109,55 +102,53 @@ export const CARTE_CV = {
     v2: 'div[role="dialog"] button[data-testid="modal-cancel"]'
   } as SelectorMap,
 
-  // ─── Messages d'erreur ─────────────────────────────────────────────────────
+  // Message d'erreur affiché dans la modale
   ERROR_MESSAGE: {
     v1: '.mat-mdc-dialog-container .mat-error, .mat-mdc-dialog-container mat-error',
     v2: 'div[role="dialog"] .error-message'
   } as SelectorMap,
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // V2 SPÉCIFIQUE
-  // ═══════════════════════════════════════════════════════════════════════════
+  // Eléments spécifiques a la v2
 
-  // ─── Menu contextuel ⋮ — Page 2 (Détail du CV) ────────────────────────────
+  // Menu d'actions sur la page détail
   MENU_CONTEXTUEL: {
-    v1: '',  // N/A en v1, boutons directs
+    v1: '',  // En v1, les actions sont deja visibles
     v2: 'button[data-testid="menu-actions-detail"]'
   } as SelectorMap,
 
-  // ─── Menu contextuel ⋮ — Page 1 (Ligne du tableau) ────────────────────────
-  // ⚠️ Ce sélecteur est utilisé DANS un cy.within() sur la ligne trouvée
+  // Menu d'actions dans une ligne du tableau
+  // Ce sélecteur est utilise dans un `cy.within()` sur la ligne ciblee
   ROW_MENU_CONTEXTUEL: {
-    v1: '',  // N/A en v1
+    v1: '',  // Pas utilise en v1
     v2: 'button[data-testid="row-menu-actions"]'
   } as SelectorMap,
 
-  // ─── Boutons d'action en ligne — Page 1 (v2) ──────────────────────────────
-  // ⚠️ Ces sélecteurs sont utilisés DANS un cy.within() sur la ligne trouvée
+  // Boutons d'action disponibles directement dans une ligne
+  // Ces sélecteurs sont utilises dans un `cy.within()` sur la ligne ciblee
   ROW_BTN_DUPLIQUER: {
-    v1: '',  // N/A en v1
+    v1: '',  // Pas utilise en v1
     v2: 'button[data-testid="row-btn-dupliquer"]'
   } as SelectorMap,
 
   ROW_BTN_TELECHARGER: {
-    v1: '',  // N/A en v1
+    v1: '',  // Pas utilise en v1
     v2: 'button[data-testid="row-btn-telecharger"]'
   } as SelectorMap,
 
-  // ─── Navigation v2 ────────────────────────────────────────────────────────
-  // Bouton retour ← sur la page 2 (Détail)
+  // Navigation v2
+  // Bouton retour sur la page detail
   BTN_RETOUR: {
-    v1: '',  // N/A en v1
+    v1: '',  // Pas utilise en v1
     v2: 'button[data-testid="btn-retour"], a[data-testid="btn-retour"]'
   } as SelectorMap,
 
-  // Indicateur qu'on est bien sur la page Détail (Page 2)
+  // Indicateur de presence sur la page detail
   PAGE_DETAIL: {
-    v1: '',  // N/A en v1
+    v1: '',  // Pas utilise en v1
     v2: '[data-testid="cv-detail-page"]'
   } as SelectorMap,
 
-  // Titre du CV sur la page Détail
+  // Titre du CV sur la page detail
   DETAIL_TITRE: {
     v1: '',
     v2: '[data-testid="cv-detail-titre"]'
@@ -169,18 +160,13 @@ export const CARTE_CV = {
   } as SelectorMap,
 
   BTN_TELECHARGER: {
-    v1: '',  // N/A en v1
+    v1: '',  // Pas utilise en v1
     v2: 'button[data-testid="btn-telecharger"]'
   } as SelectorMap,
 };
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// FONCTION UTILITAIRE - Résolution dynamique v1/v2
-// ═══════════════════════════════════════════════════════════════════════════════
-
 /**
- * Récupère le sélecteur correspondant à la version courante.
- * CŒUR de l'abstraction : un seul point de résolution v1/v2.
+ * Retourne le sélecteur correspondant a la version demandee.
  */
 export function getSelector(selectorMap: SelectorMap, version: Version): string {
   const selector = selectorMap[version];

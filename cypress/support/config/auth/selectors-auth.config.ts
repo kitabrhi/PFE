@@ -1,9 +1,7 @@
 /**
- * ═══════════════════════════════════════════════════════════════════════════
- * CONFIGURATION SÉLECTEURS - AUTHENTIFICATION
- * ═══════════════════════════════════════════════════════════════════════════
- * Centralisation des sélecteurs v1/v2 avec résolution dynamique
- * via getSelector() — même pattern que selectors-carte-cv.config.ts
+ * Sélecteurs utilisés pour l'authentification.
+ * On garde ici les variantes v1 et v2, puis on récupère la bonne valeur
+ * avec `getSelector()`.
  */
 
 export type Version = 'v1' | 'v2';
@@ -13,9 +11,7 @@ interface SelectorMap {
   v2: string;
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// URLs
-// ═══════════════════════════════════════════════════════════════════════════════
+// URLs utiles pour les tests d'authentification
 
 export const AUTH_URLS = {
   BASE: {
@@ -28,7 +24,7 @@ export const AUTH_URLS = {
     v2: 'https://redsume-v2.example.com/dashboard'
   } as SelectorMap,
 
-  // Fragments d'URL pour vérifications
+  // Morceaux d'URL utilisés dans les assertions
   URL_LOGIN: {
     v1: 'b2clogin.com',
     v2: '/login'
@@ -40,24 +36,22 @@ export const AUTH_URLS = {
   } as SelectorMap,
 };
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// SÉLECTEURS - PAGE DE CONNEXION
-// ═══════════════════════════════════════════════════════════════════════════════
+// Sélecteurs de la page de connexion
 
 export const AUTH_SELECTORS = {
 
-  // ─── Page de connexion ─────────────────────────────────────────────────────
+  // Éléments qui permettent de valider qu'on est bien sur la page de connexion
   PAGE_LOGIN_VISIBLE: {
-    v1: '',  // Vérification par texte (cy.contains)
+    v1: '',  // En v1, la présence de la page est vérifiée via le texte affiché
     v2: '[data-testid="login-page"]'
   } as SelectorMap,
 
   PAGE_LOGIN_TEXT: {
     v1: 'Sign in with your email address',
-    v2: ''  // Vérification par sélecteur
+    v2: ''  // En v2, la vérification passe par le sélecteur dédié
   } as SelectorMap,
 
-  // ─── Champs de saisie ─────────────────────────────────────────────────────
+  // Champs du formulaire
   INPUT_EMAIL: {
     v1: 'input[id=signInName]',
     v2: '[data-testid="email-input"]'
@@ -68,52 +62,52 @@ export const AUTH_SELECTORS = {
     v2: '[data-testid="password-input"]'
   } as SelectorMap,
 
-  // ─── Boutons ──────────────────────────────────────────────────────────────
+  // Actions principales
   BTN_CONNEXION: {
     v1: 'button[id=next]',
     v2: '[data-testid="login-button"]'
   } as SelectorMap,
 
-  // ─── Menu utilisateur / Déconnexion ────────────────────────────────────────
+  // Menu utilisateur et déconnexion
   MENU_UTILISATEUR: {
     v1: 'mat-icon:contains("keyboard_arrow_down")',
     v2: '[data-testid="user-menu"]'
   } as SelectorMap,
 
   BTN_DECONNEXION: {
-    v1: '',  // Vérification par texte (cy.contains('Déconnexion'))
+    v1: '',  // En v1, on cible le libellé visible dans le menu
     v2: '[data-testid="logout-button"]'
   } as SelectorMap,
 
   DECONNEXION_TEXT: {
     v1: 'Déconnexion',
-    v2: ''  // Vérification par sélecteur
+    v2: ''  // En v2, la vérification se fait directement avec le sélecteur
   } as SelectorMap,
 
-  // ─── Vérifications post-connexion ──────────────────────────────────────────
+  // Éléments attendus après une connexion réussie
   APP_LOADED: {
-    v1: '',  // Vérification par texte (cy.contains('ReDsume'))
+    v1: '',  // En v1, on confirme le chargement avec le texte visible
     v2: '[data-testid="dashboard"]'
   } as SelectorMap,
 
   APP_LOADED_TEXT: {
     v1: 'ReDsume',
-    v2: ''  // Vérification par sélecteur
+    v2: ''  // En v2, le sélecteur suffit
   } as SelectorMap,
 
   ESPACE_PERSONNEL: {
-    v1: '',  // Vérification par texte (cy.contains('Mon Dashboard'))
+    v1: '',  // En v1, on s'appuie sur le texte affiché
     v2: '[data-testid="personal-space"]'
   } as SelectorMap,
 
   ESPACE_PERSONNEL_TEXT: {
     v1: 'Mon Dashboard',
-    v2: ''  // Vérification par sélecteur
+    v2: ''  // En v2, on utilise le sélecteur dédié
   } as SelectorMap,
 
-  // ─── Messages d'erreur ─────────────────────────────────────────────────────
+  // Messages affichés en cas d'erreur
   ERROR_IDENTIFIANTS: {
-    v1: '',  // Vérification par texte
+    v1: '',  // En v1, l'erreur est validée à partir du texte
     v2: '[data-testid="error-message"]'
   } as SelectorMap,
 
@@ -123,7 +117,7 @@ export const AUTH_SELECTORS = {
   } as SelectorMap,
 
   ERROR_COMPTE_INEXISTANT: {
-    v1: '',  // Vérification par texte
+    v1: '',  // En v1, l'erreur est validée à partir du texte
     v2: '[data-testid="error-message"]'
   } as SelectorMap,
 
@@ -133,9 +127,7 @@ export const AUTH_SELECTORS = {
   } as SelectorMap,
 };
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// CREDENTIALS DE TEST
-// ═══════════════════════════════════════════════════════════════════════════════
+// Identifiants utilisés dans les scénarios de test
 
 export const AUTH_CREDENTIALS = {
   VALID: {
@@ -152,9 +144,7 @@ export const AUTH_CREDENTIALS = {
   }
 };
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// FONCTION UTILITAIRE - Résolution dynamique v1/v2
-// ═══════════════════════════════════════════════════════════════════════════════
+// Retourne le sélecteur correspondant à la version testée
 
 export function getSelector(selectorMap: SelectorMap, version: Version): string {
   return selectorMap[version];

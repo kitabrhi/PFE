@@ -1,12 +1,7 @@
-// cypress/support/config/section/selectors-competences.config.ts
-
 export type Version = 'v1' | 'v2';
 
-// Compétences v1 DOM :
-//   Titre      : input (dans le row, placeholder probable "Compétence")
-//   Expérience : mat-select (options: 2 ANS, 3 ANS, 4 ANS, > 5 ANS, > 10 ANS, > 15 ANS)
-//   Checkbox   : mat-checkbox[formcontrolname="includIntoResumeDefault"]
-//   Tri        : mat-select[placeholder="Tri"]
+// En v1, une ligne contient le nom de la compétence, le niveau d'expérience,
+// l'option d'affichage sur le CV et le tri.
 
 export const SECTION_COMPETENCES = {
   ROW: {

@@ -1,59 +1,68 @@
-// Steps pour la section Diplômes — tout passe par les primitives.
+/**
+ * Étapes pour la section Diplômes.
+ * Pattern : le Given mémorise l'élément, le When utilise "ce diplôme".
+ */
 
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
 import { Version } from '../../config/section/selectors-diplomes.config';
-import { DiplomesPrimitives } from '../../primitives/sections-cv/Diplomes.primitives';
+import { DiplomesPrimitives } from '../../primitives/sections-cv/diplomes.primitives';
 
 const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';
 
-// Préparation
+let dernierDiplome = '';
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  PRÉPARATION
+// ═══════════════════════════════════════════════════════════════════════════════
 
 Given('un diplôme {string} existe dans ma liste', (nom: string) => {
+  dernierDiplome = nom;
   DiplomesPrimitives.garantirDiplomeExiste(VERSION, nom);
 });
 
 Given('un diplôme {string} existe et est visible sur le CV', (nom: string) => {
+  dernierDiplome = nom;
   DiplomesPrimitives.garantirDiplomeExiste(VERSION, nom);
   DiplomesPrimitives.toggleVisibilite(VERSION, nom, true);
 });
 
 Given('un diplôme {string} existe et est masqué sur le CV', (nom: string) => {
+  dernierDiplome = nom;
   DiplomesPrimitives.garantirDiplomeExiste(VERSION, nom);
   DiplomesPrimitives.toggleVisibilite(VERSION, nom, false);
 });
 
-// Ajout
+// ═══════════════════════════════════════════════════════════════════════════════
+//  AJOUT
+// ═══════════════════════════════════════════════════════════════════════════════
 
 When('j\'ajoute un diplôme {string} à {string} en {string}', (nom: string, lieu: string, annee: string) => {
   DiplomesPrimitives.ajouterDiplome(VERSION, nom, lieu, annee);
 });
 
-// Modification
+// ═══════════════════════════════════════════════════════════════════════════════
+//  MODIFICATION / SUPPRESSION / VISIBILITÉ — "ce diplôme"
+// ═══════════════════════════════════════════════════════════════════════════════
 
-When(
-  'je modifie le diplôme {string} en {string} à {string} en {string}',
-  (ancienNom: string, nouveauNom: string, nouveauLieu: string, nouvelleAnnee: string) => {
-    DiplomesPrimitives.modifierDiplome(VERSION, ancienNom, nouveauNom, nouveauLieu, nouvelleAnnee);
-  }
-);
-
-// Suppression
-
-When('je supprime le diplôme {string}', (nom: string) => {
-  DiplomesPrimitives.supprimerDiplome(VERSION, nom);
+When('je modifie ce diplôme en {string} à {string} en {string}', (nouveauNom: string, nouveauLieu: string, nouvelleAnnee: string) => {
+  DiplomesPrimitives.modifierDiplome(VERSION, dernierDiplome, nouveauNom, nouveauLieu, nouvelleAnnee);
 });
 
-// Visibilité
-
-When('je masque le diplôme {string} du CV', (nom: string) => {
-  DiplomesPrimitives.toggleVisibilite(VERSION, nom, false);
+When('je supprime ce diplôme', () => {
+  DiplomesPrimitives.supprimerDiplome(VERSION, dernierDiplome);
 });
 
-When('je rends visible le diplôme {string} sur le CV', (nom: string) => {
-  DiplomesPrimitives.toggleVisibilite(VERSION, nom, true);
+When('je masque ce diplôme du CV', () => {
+  DiplomesPrimitives.toggleVisibilite(VERSION, dernierDiplome, false);
 });
 
-// Vérifications
+When('je rends visible ce diplôme sur le CV', () => {
+  DiplomesPrimitives.toggleVisibilite(VERSION, dernierDiplome, true);
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  VÉRIFICATIONS
+// ═══════════════════════════════════════════════════════════════════════════════
 
 Then('le diplôme {string} apparaît dans ma liste', (nom: string) => {
   DiplomesPrimitives.verifierDiplomeExiste(VERSION, nom);

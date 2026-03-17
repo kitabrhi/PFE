@@ -1,16 +1,6 @@
 /**
- * ═══════════════════════════════════════════════════════════════════════════
- * CONFIGURATION SÉLECTEURS - SECTION INFORMATIONS
- * ═══════════════════════════════════════════════════════════════════════════
- * Champs présents :
- *   - Photo de profil (upload, max 1,4 MB)
- *   - Email (affiché, NON éditable)
- *   - Prénom, Nom
- *   - Date de naissance (JJ/MM/AAAA)
- *   - Début activité professionnelle (JJ/MM/AAAA)
- *
- * v1 : sidebar gauche, autosave, inputs matInput
- * v2 : onglets horizontaux, bouton Sauvegarder, inputs Angular
+ * Sélecteurs de la section informations.
+ * On y retrouve la photo, l'email affiche, l'identite et les dates.
  */
 
 import { Version, getSelector } from '../carte-cv/selectors-carte-cv.config';
@@ -20,9 +10,8 @@ interface SelectorMap {
   v2: string;
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// SECTION INFORMATIONS — Champs
-// ═══════════════════════════════════════════════════════════════════════════
+// Champs de la section informations
+
 export const SECTION_INFORMATIONS = {
 
     PHOTO_UPLOAD_ZONE: {

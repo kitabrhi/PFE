@@ -1,5 +1,7 @@
-// Steps pour la section Titres et la navigation entre sections.
-// Les steps n'importent rien de la config — tout passe par les primitives.
+/**
+ * Étapes pour la section Titres et navigation entre sections.
+ * Pattern : le Given mémorise l'élément, le When utilise "ce titre".
+ */
 
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
 import { Version } from '../../config/section/selectors-titre-cv.config';
@@ -7,24 +9,29 @@ import { SectionsCVPrimitives } from '../../primitives/sections-cv/titre-cv.prim
 
 const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';
 
+let dernierTitre = '';
+
 afterEach(() => {
   cy.log('🧹 Nettoyage après test');
 });
 
-
-
-// Préparation
+// ═══════════════════════════════════════════════════════════════════════════════
+//  PRÉPARATION
+// ═══════════════════════════════════════════════════════════════════════════════
 
 Given('un titre {string} existe dans ma liste', (titre: string) => {
+  dernierTitre = titre;
   SectionsCVPrimitives.garantirTitreExiste(VERSION, titre);
 });
 
 Given('un titre {string} existe et est visible sur le CV', (titre: string) => {
+  dernierTitre = titre;
   SectionsCVPrimitives.garantirTitreExiste(VERSION, titre);
   SectionsCVPrimitives.toggleVisibilite(VERSION, titre, true);
 });
 
 Given('un titre {string} existe et est masqué sur le CV', (titre: string) => {
+  dernierTitre = titre;
   SectionsCVPrimitives.garantirTitreExiste(VERSION, titre);
   SectionsCVPrimitives.toggleVisibilite(VERSION, titre, false);
 });
@@ -38,41 +45,45 @@ Given('les titres suivants existent dans l\'ordre :', (dataTable: any) => {
   });
 });
 
-// Ajout
+// ═══════════════════════════════════════════════════════════════════════════════
+//  AJOUT
+// ═══════════════════════════════════════════════════════════════════════════════
 
 When('j\'ajoute le titre {string}', (titre: string) => {
   SectionsCVPrimitives.ajouterTitre(VERSION, titre);
 });
 
-// Modification
+// ═══════════════════════════════════════════════════════════════════════════════
+//  MODIFICATION / SUPPRESSION / VISIBILITÉ — "ce titre"
+// ═══════════════════════════════════════════════════════════════════════════════
 
-When('je modifie le titre {string} en {string}', (ancien: string, nouveau: string) => {
-  SectionsCVPrimitives.modifierTitre(VERSION, ancien, nouveau);
+When('je modifie ce titre en {string}', (nouveauTitre: string) => {
+  SectionsCVPrimitives.modifierTitre(VERSION, dernierTitre, nouveauTitre);
 });
 
-// Suppression
-
-When('je supprime le titre {string}', (titre: string) => {
-  SectionsCVPrimitives.supprimerLigne(VERSION, titre);
+When('je supprime ce titre', () => {
+  SectionsCVPrimitives.supprimerLigne(VERSION, dernierTitre);
 });
 
-// Visibilité
-
-When('je masque le titre {string} du CV', (titre: string) => {
-  SectionsCVPrimitives.toggleVisibilite(VERSION, titre, false);
+When('je masque ce titre du CV', () => {
+  SectionsCVPrimitives.toggleVisibilite(VERSION, dernierTitre, false);
 });
 
-When('je rends visible le titre {string} sur le CV', (titre: string) => {
-  SectionsCVPrimitives.toggleVisibilite(VERSION, titre, true);
+When('je rends visible ce titre sur le CV', () => {
+  SectionsCVPrimitives.toggleVisibilite(VERSION, dernierTitre, true);
 });
 
-// Réorganisation
+// ═══════════════════════════════════════════════════════════════════════════════
+//  RÉORGANISATION (garde les noms — ce sont des données métier distinctes)
+// ═══════════════════════════════════════════════════════════════════════════════
 
 When('je place le titre {string} en position {int}', (titre: string, position: number) => {
   SectionsCVPrimitives.changerOrdre(VERSION, titre, position);
 });
 
-// Vérifications
+// ═══════════════════════════════════════════════════════════════════════════════
+//  VÉRIFICATIONS
+// ═══════════════════════════════════════════════════════════════════════════════
 
 Then('le titre {string} apparaît dans ma liste de titres', (titre: string) => {
   SectionsCVPrimitives.verifierTitreExiste(VERSION, titre);

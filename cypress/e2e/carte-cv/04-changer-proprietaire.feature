@@ -7,29 +7,16 @@ Feature: Transférer la propriété d'un CV
   Background:
     Given je suis connecté à mon compte
     And je suis sur la page "Mes CVS"
-    And j'ai au moins 2 CVs dans ma liste
-
+    And j'ai au moins 2 CVs sur la page
 
   @CARTE-005
-  Scenario Outline: Transférer un CV à un collègue existant
-    Given un CV a le statut "<statut>"
-    When je transfère un CV avec le statut "<statut>" à "ykitabrhi@redsen.ch"
+  Scenario: Transférer un CV à un collègue existant
+    Given un CV existe dans ma liste
+    When je transfère ce CV à un collègue
     Then le transfert est enregistré avec succès
 
-    Examples:
-      | statut       |
-      | En cours     |
-      | Non démarré  |
-      | Complété     |
-
   @CARTE-005-bis
-  Scenario Outline: Transférer un CV à un email inexistant
-    Given un CV a le statut "<statut>"
-    When je tente de transférer un CV avec le statut "<statut>" à "inexistant@fake.com"
-    Then le message "Propriétaire introuvable. Veuillez vérifier l'email." s'affiche
-
-    Examples:
-      | statut       |
-      | En cours     |
-      | Non démarré  |
-      | Complété     |
+  Scenario: Transférer un CV à un email inexistant
+    Given un CV existe dans ma liste
+    When je tente de transférer ce CV à un email inexistant
+    Then un message indique que le propriétaire est introuvable

@@ -1,4 +1,7 @@
-// Steps pour la section Langues — tout passe par les primitives.
+/**
+ * Étapes pour la section Langues.
+ * Pattern : le Given mémorise l'élément, le When utilise "cette langue".
+ */
 
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
 import { Version } from '../../config/section/selectors-langues.config';
@@ -6,54 +9,60 @@ import { LanguesPrimitives } from '../../primitives/sections-cv/Langues.primitiv
 
 const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';
 
-// Préparation
+let derniereLangue = '';
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  PRÉPARATION
+// ═══════════════════════════════════════════════════════════════════════════════
 
 Given('une langue {string} existe dans ma liste', (nom: string) => {
+  derniereLangue = nom;
   LanguesPrimitives.garantirLangueExiste(VERSION, nom);
 });
 
 Given('une langue {string} existe et est visible sur le CV', (nom: string) => {
+  derniereLangue = nom;
   LanguesPrimitives.garantirLangueExiste(VERSION, nom);
   LanguesPrimitives.toggleVisibilite(VERSION, nom, true);
 });
 
 Given('une langue {string} existe et est masquée sur le CV', (nom: string) => {
+  derniereLangue = nom;
   LanguesPrimitives.garantirLangueExiste(VERSION, nom);
   LanguesPrimitives.toggleVisibilite(VERSION, nom, false);
 });
 
-// Ajout
+// ═══════════════════════════════════════════════════════════════════════════════
+//  AJOUT
+// ═══════════════════════════════════════════════════════════════════════════════
 
 When('j\'ajoute la langue {string} avec le niveau {string}', (nom: string, niveau: string) => {
   LanguesPrimitives.ajouterLangue(VERSION, nom, niveau);
 });
 
-// Modification
+// ═══════════════════════════════════════════════════════════════════════════════
+//  MODIFICATION / SUPPRESSION / VISIBILITÉ — "cette langue"
+// ═══════════════════════════════════════════════════════════════════════════════
 
-When(
-  'je modifie la langue {string} en {string} avec le niveau {string}',
-  (ancienNom: string, nouveauNom: string, nouveauNiveau: string) => {
-    LanguesPrimitives.modifierLangue(VERSION, ancienNom, nouveauNom, nouveauNiveau);
-  }
-);
-
-// Suppression
-
-When('je supprime la langue {string}', (nom: string) => {
-  LanguesPrimitives.supprimerLangue(VERSION, nom);
+When('je modifie cette langue en {string} avec le niveau {string}', (nouveauNom: string, nouveauNiveau: string) => {
+  LanguesPrimitives.modifierLangue(VERSION, derniereLangue, nouveauNom, nouveauNiveau);
 });
 
-// Visibilité
-
-When('je masque la langue {string} du CV', (nom: string) => {
-  LanguesPrimitives.toggleVisibilite(VERSION, nom, false);
+When('je supprime cette langue', () => {
+  LanguesPrimitives.supprimerLangue(VERSION, derniereLangue);
 });
 
-When('je rends visible la langue {string} sur le CV', (nom: string) => {
-  LanguesPrimitives.toggleVisibilite(VERSION, nom, true);
+When('je masque cette langue du CV', () => {
+  LanguesPrimitives.toggleVisibilite(VERSION, derniereLangue, false);
 });
 
-// Vérifications
+When('je rends visible cette langue sur le CV', () => {
+  LanguesPrimitives.toggleVisibilite(VERSION, derniereLangue, true);
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  VÉRIFICATIONS
+// ═══════════════════════════════════════════════════════════════════════════════
 
 Then('la langue {string} apparaît dans ma liste', (nom: string) => {
   LanguesPrimitives.verifierLangueExiste(VERSION, nom);

@@ -1,5 +1,3 @@
-// cypress/support/config/section/selectors-points-forts.config.ts
-
 export type Version = 'v1' | 'v2';
 
 export const SECTION_POINTS_FORTS = {

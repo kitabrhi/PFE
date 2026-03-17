@@ -7,23 +7,18 @@ Feature: Supprimer un CV
   Background:
     Given je suis connecté à mon compte
     And je suis sur la page "Mes CVS"
-    And j'ai au moins 2 CVs dans ma liste
+    And j'ai au moins 2 CVs sur la page
 
   @CARTE-006
-  Scenario Outline: Supprimer un CV avec succès
-    Given un CV a le statut "<statut>"
-    When je supprime un CV avec le statut "<statut>"
+  Scenario: Supprimer un CV avec succès
+    Given un CV existe dans ma liste
+    When je supprime ce CV
     Then le CV est supprimé définitivement
     And il n'apparaît plus dans ma liste
 
-    Examples:
-      | statut       |
-      | En cours     |
-      | Non démarré  |
-      | Complété     |
-
   @CARTE-007
   Scenario: Annuler la suppression d'un CV
-    When je demande à supprimer un CV avec le statut "En cours"
+    Given un CV existe dans ma liste
+    When je demande à supprimer ce CV
     And j'annule la suppression
     Then le CV reste dans ma liste

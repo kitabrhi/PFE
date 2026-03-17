@@ -1,4 +1,4 @@
-    @section @langues
+@section @langues
 Feature: Gérer mes langues
   En tant qu'utilisateur de ReDsume
   Je veux pouvoir ajouter, modifier et supprimer mes langues
@@ -16,25 +16,25 @@ Feature: Gérer mes langues
   @LANG-002
   Scenario: Modifier une langue existante
     Given une langue "Anglais" existe dans ma liste
-    When je modifie la langue "Anglais" en "Espagnol" avec le niveau "B2"
+    When je modifie cette langue en "Espagnol" avec le niveau "B2"
     Then la langue "Espagnol" apparaît dans ma liste
 
   @LANG-003
   Scenario: Supprimer une langue
     Given une langue "Anglais" existe dans ma liste
-    When je supprime la langue "Anglais"
+    When je supprime cette langue
     Then la langue "Anglais" n'apparaît plus dans ma liste
 
   @LANG-004
   Scenario: Masquer une langue du CV
     Given une langue "Français" existe et est visible sur le CV
-    When je masque la langue "Français" du CV
+    When je masque cette langue du CV
     Then la langue "Français" est masquée sur le CV
 
   @LANG-005
   Scenario: Rendre visible une langue masquée
     Given une langue "Français" existe et est masquée sur le CV
-    When je rends visible la langue "Français" sur le CV
+    When je rends visible cette langue sur le CV
     Then la langue "Français" est visible sur le CV
 
   @LANG-006

@@ -1,21 +1,7 @@
 /**
- * ═══════════════════════════════════════════════════════════════════════════
- * CONFIGURATION SÉLECTEURS - SECTIONS DU CV
- * ═══════════════════════════════════════════════════════════════════════════
- * Gère les différences v1/v2 :
- *   - Navigation : sidebar gauche (v1) vs tabs horizontaux (v2)
- *   - Colonnes : Tri/CV/⋮ (v1) vs Ordre/Afficher/🗑 (v2)
- *   - Noms de sections différents entre v1 et v2
- *   - Sauvegarde automatique (pas de bouton sauvegarder pour les sections)
- *   - Nouvelle ligne vide auto-créée quand on remplit la précédente
- *
- * Ce fichier contient :
- *   1. SECTION_NAV    → Navigation (sidebar v1 / tabs v2)
- *   2. SECTION_ROW    → Structure commune à TOUTES les sections à liste
- *   3. SECTION_TITRES → Champs spécifiques à la section Titres
- *
- * Pour ajouter une nouvelle section (ex: Langues), il suffit d'ajouter :
- *   export const SECTION_LANGUES = { INPUT_LANGUE: {...}, SELECT_NIVEAU: {...} }
+ * Sélecteurs communs aux sections du CV.
+ * Ce fichier couvre la navigation entre sections, la structure des lignes
+ * partagées, ainsi que les champs propres a la section Titres.
  */
 
 import { Version, getSelector } from '../carte-cv/selectors-carte-cv.config';
@@ -25,13 +11,10 @@ interface SelectorMap {
   v2: string;
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// MAPPING DES NOMS DE SECTIONS (sidebar v1 → tab v2)
-// ═══════════════════════════════════════════════════════════════════════════════
+// Associe le nom metier d'une section a son libelle dans l'interface
 
 /**
- * Retourne le label exact utilisé dans la sidebar (v1) ou le tab (v2).
- * Le nom métier (Gherkin) est traduit en label technique UI.
+ * Retourne le libelle utilise dans la navigation pour la version demandee.
  */
 export function getLabelSection(nomSection: string, version: Version): string {
   const labels: Record<string, { v1: string; v2: string }> = {
@@ -59,30 +42,24 @@ export function getLabelSection(nomSection: string, version: Version): string {
   return section[version];
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// NAVIGATION — Sidebar (v1) / Tabs (v2)
-// ═══════════════════════════════════════════════════════════════════════════════
+// Navigation entre les sections
 
 export const SECTION_NAV = {
 
-  // Conteneur de navigation
+  // Conteneur principal de navigation
   NAV_CONTAINER: {
     v1: '.mat-sidenav',
     v2: '[data-testid="cv-section-tabs"]'
   } as SelectorMap,
 
-  // Lien/tab individuel (utilisé avec cy.contains())
+  // Lien ou onglet d'une section
   NAV_LINK: {
     v1: '.mat-sidenav a',
     v2: '[data-testid="cv-section-tabs"] [role="tab"]'
   } as SelectorMap,
 };
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// STRUCTURE COMMUNE — Lignes de tableau (toutes sections à liste)
-// ═══════════════════════════════════════════════════════════════════════════════
-// Utilisé par : Titres, Diplômes, Langues, Points forts, Compétences,
-//               Domaines d'activité, Hashtags, Expériences
+// Structure commune aux sections composees de lignes
 
 export const SECTION_ROW = {
 
@@ -92,17 +69,17 @@ export const SECTION_ROW = {
   } as SelectorMap,
 
   ROW: {
-    v1: '.custom-form-item',  // ✅ vraie ligne
+    v1: '.custom-form-item',  // En v1, chaque element est une vraie ligne de formulaire
     v2: '[data-testid="section-row"]'
   } as SelectorMap,
 
   COL_ORDRE: {
-    v1: '.sort mat-select',  // ✅ .sort pas div.sort
+    v1: '.sort mat-select',  // En v1, le select de tri est dans `.sort`
     v2: '[data-testid="col-ordre"] select'
   } as SelectorMap,
   
   COL_AFFICHER: {
-    v1: 'input.mdc-checkbox__native-control',  // ✅ sans div.selected
+    v1: 'input.mdc-checkbox__native-control',  // On cible directement l'input de la case a cocher
     v2: '[data-testid="col-afficher"] input[type="checkbox"]'
   } as SelectorMap,
 
@@ -114,13 +91,11 @@ export const SECTION_ROW = {
 
 export const SECTION_TITRES = {
   INPUT_TITRE: {
-    v1: '[data-cy="titreName"] input[matinput]',  // ✅ plus besoin de red-input
+    v1: '[data-cy="titreName"] input[matinput]',  // Le champ utile est l'input interne
     v2: '[data-testid="input-titre"]'
   } as SelectorMap,
 };
-// ═══════════════════════════════════════════════════════════════════════════════
-// RE-EXPORT
-// ═══════════════════════════════════════════════════════════════════════════════
+// Re-export
 
 export { getSelector };
 export type { Version, SelectorMap };

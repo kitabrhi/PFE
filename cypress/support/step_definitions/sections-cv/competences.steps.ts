@@ -1,4 +1,7 @@
-// Steps pour la section Compétences — tout passe par les primitives.
+/**
+ * Étapes pour la section Compétences.
+ * Pattern : le Given mémorise l'élément, le When utilise "cette compétence".
+ */
 
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
 import { Version } from '../../config/section/selectors-competences.config';
@@ -6,54 +9,60 @@ import { CompetencesPrimitives } from '../../primitives/sections-cv/competences.
 
 const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';
 
-// Préparation
+let derniereCompetence = '';
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  PRÉPARATION
+// ═══════════════════════════════════════════════════════════════════════════════
 
 Given('une compétence {string} existe dans ma liste', (nom: string) => {
+  derniereCompetence = nom;
   CompetencesPrimitives.garantirCompetenceExiste(VERSION, nom);
 });
 
 Given('une compétence {string} existe et est visible sur le CV', (nom: string) => {
+  derniereCompetence = nom;
   CompetencesPrimitives.garantirCompetenceExiste(VERSION, nom);
   CompetencesPrimitives.toggleVisibilite(VERSION, nom, true);
 });
 
 Given('une compétence {string} existe et est masquée sur le CV', (nom: string) => {
+  derniereCompetence = nom;
   CompetencesPrimitives.garantirCompetenceExiste(VERSION, nom);
   CompetencesPrimitives.toggleVisibilite(VERSION, nom, false);
 });
 
-// Ajout
+// ═══════════════════════════════════════════════════════════════════════════════
+//  AJOUT
+// ═══════════════════════════════════════════════════════════════════════════════
 
 When('j\'ajoute la compétence {string} avec {string} d\'expérience', (nom: string, exp: string) => {
   CompetencesPrimitives.ajouterCompetence(VERSION, nom, exp);
 });
 
-// Modification
+// ═══════════════════════════════════════════════════════════════════════════════
+//  MODIFICATION / SUPPRESSION / VISIBILITÉ — "cette compétence"
+// ═══════════════════════════════════════════════════════════════════════════════
 
-When(
-  'je modifie la compétence {string} en {string} avec {string} d\'expérience',
-  (ancienNom: string, nouveauNom: string, nouvelleExp: string) => {
-    CompetencesPrimitives.modifierCompetence(VERSION, ancienNom, nouveauNom, nouvelleExp);
-  }
-);
-
-// Suppression
-
-When('je supprime la compétence {string}', (nom: string) => {
-  CompetencesPrimitives.supprimerCompetence(VERSION, nom);
+When('je modifie cette compétence en {string} avec {string} d\'expérience', (nouveauNom: string, nouvelleExp: string) => {
+  CompetencesPrimitives.modifierCompetence(VERSION, derniereCompetence, nouveauNom, nouvelleExp);
 });
 
-// Visibilité
-
-When('je masque la compétence {string} du CV', (nom: string) => {
-  CompetencesPrimitives.toggleVisibilite(VERSION, nom, false);
+When('je supprime cette compétence', () => {
+  CompetencesPrimitives.supprimerCompetence(VERSION, derniereCompetence);
 });
 
-When('je rends visible la compétence {string} sur le CV', (nom: string) => {
-  CompetencesPrimitives.toggleVisibilite(VERSION, nom, true);
+When('je masque cette compétence du CV', () => {
+  CompetencesPrimitives.toggleVisibilite(VERSION, derniereCompetence, false);
 });
 
-// Vérifications
+When('je rends visible cette compétence sur le CV', () => {
+  CompetencesPrimitives.toggleVisibilite(VERSION, derniereCompetence, true);
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  VÉRIFICATIONS
+// ═══════════════════════════════════════════════════════════════════════════════
 
 Then('la compétence {string} apparaît dans ma liste', (nom: string) => {
   CompetencesPrimitives.verifierExiste(VERSION, nom);

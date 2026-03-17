@@ -16,25 +16,25 @@ Feature: Gérer mes compétences
   @COMP-002
   Scenario: Modifier une compétence existante
     Given une compétence "Angular" existe dans ma liste
-    When je modifie la compétence "Angular" en "React" avec "> 5 ANS" d'expérience
+    When je modifie cette compétence en "React" avec "> 5 ANS" d'expérience
     Then la compétence "React" apparaît dans ma liste
 
   @COMP-003
   Scenario: Supprimer une compétence
     Given une compétence "Angular" existe dans ma liste
-    When je supprime la compétence "Angular"
+    When je supprime cette compétence
     Then la compétence "Angular" n'apparaît plus dans ma liste
 
   @COMP-004
   Scenario: Masquer une compétence du CV
     Given une compétence "Angular" existe et est visible sur le CV
-    When je masque la compétence "Angular" du CV
+    When je masque cette compétence du CV
     Then la compétence "Angular" est masquée sur le CV
 
   @COMP-005
   Scenario: Rendre visible une compétence masquée
     Given une compétence "Angular" existe et est masquée sur le CV
-    When je rends visible la compétence "Angular" sur le CV
+    When je rends visible cette compétence sur le CV
     Then la compétence "Angular" est visible sur le CV
 
   @COMP-006
