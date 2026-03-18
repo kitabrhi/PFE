@@ -13,7 +13,7 @@ export class AuthPrimitives {
   // Navigation
 
   static naviguerPageConnexion(version: Version): void {
-    cy.log('🌐 Navigation vers page de connexion');
+    cy.log('Navigation vers page de connexion');
 
     cy.visit(getSelector(AUTH_URLS.BASE, version));
 
@@ -21,7 +21,7 @@ export class AuthPrimitives {
   }
 
   static tenterAccesPageProtegee(version: Version): void {
-    cy.log('🚫 Tentative accès page protégée');
+    cy.log('Tentative accès page protégée');
 
     cy.visit(getSelector(AUTH_URLS.PAGE_PROTEGEE, version), {
       failOnStatusCode: false
@@ -32,16 +32,16 @@ export class AuthPrimitives {
 
   // on vide les cookies et le localStorage pour repartir propre
   static nettoyerSession(): void {
-    cy.log('🧹 Nettoyage session');
+    cy.log('Nettoyage session');
     cy.clearCookies();
     cy.clearLocalStorage();
-    cy.log('🔒 Session nettoyée');
+    cy.log('Session nettoyée');
   }
 
   // Connexion
 
   static saisirEmail(version: Version, email: string): void {
-    cy.log(`📧 Saisie email: ${email}`);
+    cy.log(`Saisie email: ${email}`);
 
     cy.get(getSelector(AUTH_SELECTORS.INPUT_EMAIL, version), { timeout: 10000 })
       .should('be.visible')
@@ -50,7 +50,7 @@ export class AuthPrimitives {
   }
 
   static saisirPassword(version: Version, password: string): void {
-    cy.log('🔑 Saisie mot de passe');
+    cy.log('Saisie mot de passe');
 
     cy.get(getSelector(AUTH_SELECTORS.INPUT_PASSWORD, version))
       .should('be.visible')
@@ -59,13 +59,13 @@ export class AuthPrimitives {
   }
 
   static cliquerConnexion(version: Version): void {
-    cy.log('🖱️ Clic bouton connexion');
+    cy.log('Clic bouton connexion');
 
     cy.get(getSelector(AUTH_SELECTORS.BTN_CONNEXION, version)).click();
   }
 
   static seConnecter(version: Version, email: string, password: string): void {
-    cy.log(`🔐 Connexion avec ${email}`);
+    cy.log(`Connexion avec ${email}`);
 
     AuthPrimitives.saisirEmail(version, email);
     AuthPrimitives.saisirPassword(version, password);
@@ -107,7 +107,7 @@ export class AuthPrimitives {
   // Déconnexion
 
   static seDeconnecter(version: Version): void {
-    cy.log('🚪 Déconnexion');
+    cy.log('Déconnexion');
 
     if (version === 'v1') {
       cy.get('mat-icon').contains('keyboard_arrow_down')
@@ -163,14 +163,14 @@ export class AuthPrimitives {
   // Vérifications — succès
 
   static verifierAuthentificationReussie(version: Version): void {
-    cy.log('✅ Vérification authentification réussie');
+    cy.log('Vérification authentification réussie');
 
     cy.url({ timeout: 20000 }).should('not.include', getSelector(AUTH_URLS.URL_LOGIN, version));
     AuthPrimitives.verifierElement(version, AUTH_SELECTORS.APP_LOADED, AUTH_SELECTORS.APP_LOADED_TEXT);
   }
 
   static verifierEspacePersonnel(version: Version): void {
-    cy.log('✅ Vérification espace personnel');
+    cy.log('Vérification espace personnel');
 
     AuthPrimitives.verifierElement(version, AUTH_SELECTORS.ESPACE_PERSONNEL, AUTH_SELECTORS.ESPACE_PERSONNEL_TEXT);
   }
@@ -178,7 +178,7 @@ export class AuthPrimitives {
   // Vérifications — erreurs
 
   static verifierErreurIdentifiants(version: Version): void {
-    cy.log('❌ Vérification erreur identifiants');
+    cy.log('Vérification erreur identifiants');
 
     AuthPrimitives.verifierErreur(
       version,
@@ -188,7 +188,7 @@ export class AuthPrimitives {
   }
 
   static verifierErreurCompteInexistant(version: Version): void {
-    cy.log('❌ Vérification erreur compte inexistant');
+    cy.log('Vérification erreur compte inexistant');
 
     AuthPrimitives.verifierErreur(
       version,
@@ -201,7 +201,7 @@ export class AuthPrimitives {
 
   // couvre : reste sur la page de connexion, redirigé, session terminée, accès refusé
   static verifierSurPageConnexion(version: Version, timeout: number = 10000): void {
-    cy.log('🔒 Vérification présence sur page de connexion');
+    cy.log('Vérification présence sur page de connexion');
 
     cy.url({ timeout }).should('include', getSelector(AUTH_URLS.URL_LOGIN, version));
   }

@@ -1,8 +1,6 @@
 export type Version = 'v1' | 'v2';
 
-// Sélecteurs de la section diplômes, certifications et formations.
-// En v1, une ligne contient les champs diplôme, lieu, année, l'option
-// d'affichage sur le CV et le tri.
+
 
 export const SECTION_DIPLOMES = {
 

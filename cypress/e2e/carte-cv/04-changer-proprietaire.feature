@@ -1,4 +1,4 @@
-@carte-cv @proprietaire
+@carte-cv 
 Feature: Transférer la propriété d'un CV
   En tant qu'utilisateur de ReDsume
   Je veux pouvoir transférer mon CV à un collègue

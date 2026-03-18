@@ -1,7 +1,6 @@
 export type Version = 'v1' | 'v2';
 
-// En v1, une ligne contient le nom de la compétence, le niveau d'expérience,
-// l'option d'affichage sur le CV et le tri.
+
 
 export const SECTION_COMPETENCES = {
   ROW: {

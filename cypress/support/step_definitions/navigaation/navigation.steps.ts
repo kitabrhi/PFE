@@ -1,5 +1,5 @@
-// Steps de navigation globale : connexion, accès à Mes CVS,
-// sélection d'un CV et ouverture d'une section.
+// Etapes de navigation communes : connexion, acces a Mes CV,
+// ouverture d'un CV et passage d'une section a une autre.
 
 import { Given, When } from '@badeball/cypress-cucumber-preprocessor';
 import { Version } from '../../config/carte-cv/selectors-carte-cv.config';
@@ -14,31 +14,31 @@ Given('je suis connecté à mon compte', () => {
   NavigationPrimitives.seConnecterEtVerifier(VERSION);
 });
 
-// Navigation vers une section d'un CV
+// Aller sur une section d'un CV existant
 
 Given('je suis sur la section {string} d\'un CV existant', (nomSection: string) => {
   NavigationPrimitives.naviguerVersSectionCVExistant(VERSION, nomSection);
 });
 
-// Navigation vers Mes CVS
+// Aller sur une page de navigation
 
 Given('je suis sur la page {string}', (pageName: string) => {
   NavigationPrimitives.naviguerVersPage(VERSION, pageName);
 });
 
-// Navigation entre sections
+// Passer d'une section a une autre
 
 Given('je suis sur la section {string}', (nomSection: string) => {
   SectionsCVPrimitives.naviguerVersSection(VERSION, nomSection);
 });
 
 When('je quitte la section {string}', (nomSection: string) => {
-  cy.log(`🚪 Quitter la section "${nomSection}"`);
+  cy.log(`Quitter la section "${nomSection}"`);
   const autreSection = nomSection === 'Informations' ? 'Titres' : 'Informations';
   SectionsCVPrimitives.naviguerVersSection(VERSION, autreSection);
 });
 
 When('je reviens sur la section {string}', (nomSection: string) => {
-  cy.log(`🔙 Retour sur la section "${nomSection}"`);
+  cy.log(`Retour sur la section "${nomSection}"`);
   SectionsCVPrimitives.naviguerVersSection(VERSION, nomSection);
 });

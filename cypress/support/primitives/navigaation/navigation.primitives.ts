@@ -14,10 +14,10 @@ export class NavigationPrimitives {
     AuthPrimitives.verifierAuthentificationReussie(version);
   }
 
-  // Navigation vers Mes CV
+  // Acces a la page "Mes CV"
 
   static naviguerVersPageMesCVs(version: Version): void {
-    cy.log('🗺️ Navigation vers Mes CVS');
+    cy.log('Navigation vers Mes CVS');
 
     if (version === 'v1') {
       cy.get('.mat-sidenav', { timeout: 10000 }).should('be.visible');
@@ -28,29 +28,28 @@ export class NavigationPrimitives {
     }
 
     CarteCVPrimitives.assurerTableVisible(version);
-    cy.log('✅ Sur la page: Mes CVS');
+    cy.log('Sur la page: Mes CVS');
   }
 
   static naviguerVersPage(version: Version, pageName: string): void {
     if (pageName === 'Mes CVS') {
       NavigationPrimitives.naviguerVersPageMesCVs(version);
     } else {
-      throw new Error(`❌ Page inconnue : "${pageName}"`);
+      throw new Error(`Page inconnue : "${pageName}"`);
     }
   }
 
-  // Sélection d'un CV
-
-  // sélectionne le premier CV et ouvre son détail — lève une erreur si la liste est vide
+  // Ouvre le premier CV de la liste.
+  // Si la liste est vide, on stoppe le test avec une erreur claire.
   static selectionnerPremierCV(version: Version): void {
-    cy.log('🔍 Sélection du premier CV');
+    cy.log('Sélection du premier CV');
 
     const rowSelector = getSelector(CARTE_CV.TABLE_ROW, version);
 
     cy.get(rowSelector, { timeout: 10000 }).then($rows => {
       if ($rows.length === 0) {
         throw new Error(
-          '❌ Aucun CV trouvé dans la liste. ' +
+          'Aucun CV trouvé dans la liste. ' +
           'Veuillez créer au moins un CV avant de lancer les tests de section.'
         );
       }
@@ -59,18 +58,13 @@ export class NavigationPrimitives {
       CarteCVPrimitives.verifierNavigationPageDetail(version);
     });
 
-    cy.log('✅ CV sélectionné');
+    cy.log('CV sélectionné');
   }
-
-  
-
-  // Parcours complets
-
-  // Mes CVS → premier CV → section demandée
+  // Enchaine la navigation complete jusqu'a la section demandee.
   static naviguerVersSectionCVExistant(version: Version, nomSection: string): void {
     NavigationPrimitives.naviguerVersPageMesCVs(version);
     NavigationPrimitives.selectionnerPremierCV(version);
     SectionsCVPrimitives.naviguerVersSection(version, nomSection);
-    cy.log(`✅ Sur la section "${nomSection}" d'un CV existant`);
+    cy.log(`Sur la section "${nomSection}" d'un CV existant`);
   }
 }

@@ -11,9 +11,7 @@ const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';
 
 let dernierPointFort = '';
 
-// ═══════════════════════════════════════════════════════════════════════════════
 //  PRÉPARATION
-// ═══════════════════════════════════════════════════════════════════════════════
 
 Given('un point fort {string} existe dans ma liste', (texte: string) => {
   dernierPointFort = texte;
@@ -32,17 +30,13 @@ Given('un point fort {string} existe et est masqué sur le CV', (texte: string) 
   PointsFortsPrimitives.toggleVisibilite(VERSION, texte, false);
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
 //  AJOUT
-// ═══════════════════════════════════════════════════════════════════════════════
 
 When('j\'ajoute le point fort {string}', (texte: string) => {
   PointsFortsPrimitives.ajouterPointFort(VERSION, texte);
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
 //  MODIFICATION / SUPPRESSION / VISIBILITÉ — "ce point fort"
-// ═══════════════════════════════════════════════════════════════════════════════
 
 When('je modifie ce point fort en {string}', (nouveau: string) => {
   PointsFortsPrimitives.modifierPointFort(VERSION, dernierPointFort, nouveau);
@@ -60,9 +54,7 @@ When('je rends visible ce point fort sur le CV', () => {
   PointsFortsPrimitives.toggleVisibilite(VERSION, dernierPointFort, true);
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
 //  VÉRIFICATIONS
-// ═══════════════════════════════════════════════════════════════════════════════
 
 Then('le point fort {string} apparaît dans ma liste', (texte: string) => {
   PointsFortsPrimitives.verifierExiste(VERSION, texte);

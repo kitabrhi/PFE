@@ -11,7 +11,7 @@ export class PointsFortsPrimitives {
   // Helpers
 
   private static attendreAutoSave(): void {
-    cy.log('⏳ Attente sauvegarde automatique...');
+    cy.log('Attente sauvegarde automatique...');
     cy.wait(2500);
   }
 
@@ -35,7 +35,7 @@ export class PointsFortsPrimitives {
   // Recherche
 
   static trouverLigneParTexte(version: Version, texte: string): void {
-    cy.log(`🔍 Recherche ligne point fort "${texte}"`);
+    cy.log(`Recherche ligne point fort "${texte}"`);
 
     const rowSelector = getSelector(SECTION_POINTS_FORTS.ROW, version);
     const inputSelector = getSelector(SECTION_POINTS_FORTS.INPUT_POINT_FORT, version);
@@ -57,14 +57,14 @@ export class PointsFortsPrimitives {
 
   // ajoute le point fort s'il n'est pas déjà là
   static garantirPointFortExiste(version: Version, texte: string): void {
-    cy.log(`🔧 PRÉPARATION: Garantir point fort "${texte}"`);
+    cy.log(`PRÉPARATION: Garantir point fort "${texte}"`);
 
     PointsFortsPrimitives.pointFortExiste(version, texte, (existe) => {
       if (!existe) {
-        cy.log(`➕ Point fort "${texte}" inexistant → création`);
+        cy.log(`Point fort "${texte}" inexistant → création`);
         PointsFortsPrimitives.ajouterPointFort(version, texte);
       } else {
-        cy.log(`✅ Point fort "${texte}" déjà présent`);
+        cy.log(`Point fort "${texte}" déjà présent`);
       }
     });
   }
@@ -72,7 +72,7 @@ export class PointsFortsPrimitives {
   // Ajout
 
   static ajouterPointFort(version: Version, texte: string = FIXTURE_POINT_FORT): void {
-    cy.log(`➕ Ajout point fort "${texte}"`);
+    cy.log(`Ajout point fort "${texte}"`);
 
     const rowSelector = getSelector(SECTION_POINTS_FORTS.ROW, version);
     const inputSelector = getSelector(SECTION_POINTS_FORTS.INPUT_POINT_FORT, version);
@@ -96,13 +96,13 @@ export class PointsFortsPrimitives {
     }
 
     PointsFortsPrimitives.attendreAutoSave();
-    cy.log(`✅ Point fort "${texte}" ajouté`);
+    cy.log(`Point fort "${texte}" ajouté`);
   }
 
   // Modification
 
   static modifierPointFort(version: Version, ancien: string, nouveau: string = FIXTURE_POINT_FORT_MODIFIE): void {
-    cy.log(`✏️ Modification "${ancien}" → "${nouveau}"`);
+    cy.log(`Modification "${ancien}" → "${nouveau}"`);
 
     const rowSelector = getSelector(SECTION_POINTS_FORTS.ROW, version);
     const inputSelector = getSelector(SECTION_POINTS_FORTS.INPUT_POINT_FORT, version);
@@ -123,13 +123,13 @@ export class PointsFortsPrimitives {
     }
 
     PointsFortsPrimitives.attendreAutoSave();
-    cy.log(`✅ Point fort modifié`);
+    cy.log(`Point fort modifié`);
   }
 
   // Suppression
 
   static supprimerPointFort(version: Version, texte: string): void {
-    cy.log(`🗑️ Suppression point fort "${texte}"`);
+    cy.log(`Suppression point fort "${texte}"`);
 
     const rowSelector = getSelector(SECTION_POINTS_FORTS.ROW, version);
     const inputSelector = getSelector(SECTION_POINTS_FORTS.INPUT_POINT_FORT, version);
@@ -145,7 +145,7 @@ export class PointsFortsPrimitives {
             cy.get('.mat-mdc-menu-panel').should('be.visible').contains('button', 'Supprimer').click();
             cy.wait(2500).then(() => supprimerSiExiste());
           } else {
-            cy.log(`✅ "${texte}" supprimé`);
+            cy.log(`"${texte}" supprimé`);
           }
         });
       };
@@ -162,7 +162,7 @@ export class PointsFortsPrimitives {
   // Visibilité
 
   static toggleVisibilite(version: Version, texte: string, activer: boolean): void {
-    cy.log(`${activer ? '✅' : '⬜'} ${activer ? 'Rendre visible' : 'Masquer'} "${texte}"`);
+    cy.log(`${activer ? '' : ''} ${activer ? 'Rendre visible' : 'Masquer'} "${texte}"`);
 
     PointsFortsPrimitives.trouverLigneParTexte(version, texte);
 

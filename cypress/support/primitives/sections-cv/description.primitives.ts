@@ -18,7 +18,7 @@ const FIXTURE_DESCRIPTION_LONGUE =
 export class DescriptionPrimitives {
 
   private static attendreAutoSave(): void {
-    cy.log('⏳ Attente sauvegarde automatique...');
+    cy.log('Attente sauvegarde automatique...');
     cy.wait(3000);
   }
 
@@ -79,7 +79,7 @@ export class DescriptionPrimitives {
   // Saisie
 
   static saisirDescription(version: Version, texte: string = FIXTURE_DESCRIPTION): void {
-    cy.log(`✏️ Saisie description : "${texte.substring(0, 30)}..."`);
+    cy.log(`Saisie description : "${texte.substring(0, 30)}..."`);
 
     const inputSelector = getSelector(SECTION_DESCRIPTION.INPUT_DESCRIPTION, version);
 
@@ -90,10 +90,10 @@ export class DescriptionPrimitives {
         const editor = DescriptionPrimitives.obtenirInstanceCKEditor($el[0]);
 
         if (editor) {
-          cy.log('✅ Instance CKEditor trouvée — écriture via API');
+          cy.log('Instance CKEditor trouvée — écriture via API');
           DescriptionPrimitives.ecrireViaCKEditorAPI(editor, texte);
         } else {
-          cy.log('⚠️ Fallback .type()');
+          cy.log('Fallback .type()');
           cy.get(inputSelector)
             .click({ force: true })
             .type('{selectall}', { force: true })
@@ -109,25 +109,25 @@ export class DescriptionPrimitives {
       DescriptionPrimitives.attendreAutoSave();
     }
 
-    cy.log('✅ Description saisie');
+    cy.log('Description saisie');
   }
 
   static saisirDescriptionLongue(version: Version): void {
-    cy.log(`✏️ Saisie description longue (${FIXTURE_DESCRIPTION_LONGUE.length} caractères)`);
+    cy.log(`Saisie description longue (${FIXTURE_DESCRIPTION_LONGUE.length} caractères)`);
     DescriptionPrimitives.saisirDescription(version, FIXTURE_DESCRIPTION_LONGUE);
   }
 
   // Effacement
 
   static effacerDescription(version: Version): void {
-    cy.log('🗑️ Effacement de la description');
+    cy.log('Effacement de la description');
 
     const inputSelector = getSelector(SECTION_DESCRIPTION.INPUT_DESCRIPTION, version);
 
     if (version === 'v1') {
       cy.get('body').then(($body) => {
         if ($body.find(inputSelector).length === 0) {
-          cy.log('⚠️ Éditeur absent — nettoyage ignoré');
+          cy.log('Éditeur absent — nettoyage ignoré');
           return;
         }
 
@@ -151,13 +151,13 @@ export class DescriptionPrimitives {
       DescriptionPrimitives.attendreAutoSave();
     }
 
-    cy.log('✅ Description effacée');
+    cy.log('Description effacée');
   }
 
   // Vérifications
 
   static verifierDescriptionPresente(version: Version, texte: string = FIXTURE_DESCRIPTION): void {
-    cy.log('🔍 Vérification description présente');
+    cy.log('Vérification description présente');
 
     const inputSelector = getSelector(SECTION_DESCRIPTION.INPUT_DESCRIPTION, version);
 
@@ -171,7 +171,7 @@ export class DescriptionPrimitives {
   }
 
   static verifierDescriptionVide(version: Version): void {
-    cy.log('🔍 Vérification description vide');
+    cy.log('Vérification description vide');
 
     const inputSelector = getSelector(SECTION_DESCRIPTION.INPUT_DESCRIPTION, version);
 
@@ -186,7 +186,7 @@ export class DescriptionPrimitives {
   }
 
   static verifierCompteurCaracteres(version: Version, nombreAttendu: number): void {
-    cy.log(`🔍 Vérification compteur = ${nombreAttendu}/1000`);
+    cy.log(`Vérification compteur = ${nombreAttendu}/1000`);
 
     cy.get(getSelector(SECTION_DESCRIPTION.COMPTEUR_CARACTERES, version), {
       timeout: 10000
@@ -194,7 +194,7 @@ export class DescriptionPrimitives {
   }
 
   static verifierLimiteCaracteresRespectee(version: Version): void {
-    cy.log('🔍 Vérification limite 1000 caractères');
+    cy.log('Vérification limite 1000 caractères');
 
     const inputSelector = getSelector(SECTION_DESCRIPTION.INPUT_DESCRIPTION, version);
     const conteneurSelector = getSelector(SECTION_DESCRIPTION.CONTENEUR, version);
@@ -206,7 +206,7 @@ export class DescriptionPrimitives {
       cy.get(inputSelector, { timeout: 10000 })
         .invoke('text')
         .then((val) => {
-          cy.log(`📏 Longueur saisie : ${val.length} caractères`);
+          cy.log(`Longueur saisie : ${val.length} caractères`);
           expect(val.length).to.be.greaterThan(1000);
         });
     } else {

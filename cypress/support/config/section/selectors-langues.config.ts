@@ -1,7 +1,5 @@
 export type Version = 'v1' | 'v2';
 
-// En v1, une ligne contient la langue, le niveau, l'option d'affichage
-// sur le CV, le tri et le menu d'actions.
 
 export const SECTION_LANGUES = {
 

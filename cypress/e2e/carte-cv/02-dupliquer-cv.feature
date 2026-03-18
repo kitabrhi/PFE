@@ -1,4 +1,4 @@
-@carte-cv @dupliquer @prioritaire
+@carte-cv @dupliquer 
 Feature: Dupliquer un CV
   En tant qu'utilisateur de ReDsume
   Je veux pouvoir dupliquer mon CV

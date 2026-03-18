@@ -11,7 +11,7 @@ export class CompetencesPrimitives {
   // Helpers
 
   private static attendreAutoSave(): void {
-    cy.log('⏳ Attente sauvegarde automatique...');
+    cy.log('Attente sauvegarde automatique...');
     cy.wait(2500);
   }
 
@@ -38,7 +38,7 @@ export class CompetencesPrimitives {
   // Recherche
 
   static trouverLigneParNom(version: Version, nom: string): void {
-    cy.log(`🔍 Recherche ligne compétence "${nom}"`);
+    cy.log(`Recherche ligne compétence "${nom}"`);
 
     const rowSelector = getSelector(SECTION_COMPETENCES.ROW, version);
     const inputSelector = getSelector(SECTION_COMPETENCES.INPUT_COMPETENCE, version);
@@ -81,13 +81,13 @@ export class CompetencesPrimitives {
     nom: string,
     experience: string = '3 ANS'
   ): void {
-    cy.log(`🔧 PRÉPARATION: Garantir compétence "${nom}"`);
+    cy.log(`PRÉPARATION: Garantir compétence "${nom}"`);
 
     CompetencesPrimitives.competenceExiste(version, nom, (existe) => {
       if (!existe) {
         CompetencesPrimitives.ajouterCompetence(version, nom, experience);
       } else {
-        cy.log(`✅ Compétence "${nom}" déjà présente`);
+        cy.log(`Compétence "${nom}" déjà présente`);
       }
     });
   }
@@ -99,7 +99,7 @@ export class CompetencesPrimitives {
     nom: string = FIXTURE_COMPETENCE.nom,
     experience: string = FIXTURE_COMPETENCE.experience
   ): void {
-    cy.log(`➕ Ajout compétence "${nom}" — ${experience}`);
+    cy.log(`Ajout compétence "${nom}" — ${experience}`);
 
     const rowSelector = getSelector(SECTION_COMPETENCES.ROW, version);
     const inputComp = getSelector(SECTION_COMPETENCES.INPUT_COMPETENCE, version);
@@ -131,7 +131,7 @@ export class CompetencesPrimitives {
       CompetencesPrimitives.attendreAutoSave();
     }
 
-    cy.log(`✅ Compétence "${nom}" ajoutée`);
+    cy.log(`Compétence "${nom}" ajoutée`);
   }
 
   // Modification
@@ -142,7 +142,7 @@ export class CompetencesPrimitives {
     nouveauNom: string = FIXTURE_COMPETENCE_MODIFIE.nom,
     nouvelleExp: string = FIXTURE_COMPETENCE_MODIFIE.experience
   ): void {
-    cy.log(`✏️ Modification "${ancienNom}" → "${nouveauNom}" (${nouvelleExp})`);
+    cy.log(`Modification "${ancienNom}" → "${nouveauNom}" (${nouvelleExp})`);
 
     const rowSelector = getSelector(SECTION_COMPETENCES.ROW, version);
     const inputComp = getSelector(SECTION_COMPETENCES.INPUT_COMPETENCE, version);
@@ -171,13 +171,13 @@ export class CompetencesPrimitives {
       CompetencesPrimitives.attendreAutoSave();
     }
 
-    cy.log(`✅ Compétence modifiée`);
+    cy.log(`Compétence modifiée`);
   }
 
   // Suppression
 
   static supprimerCompetence(version: Version, nom: string): void {
-    cy.log(`🗑️ Suppression compétence "${nom}"`);
+    cy.log(`Suppression compétence "${nom}"`);
 
     const rowSelector = getSelector(SECTION_COMPETENCES.ROW, version);
     const inputComp = getSelector(SECTION_COMPETENCES.INPUT_COMPETENCE, version);
@@ -193,7 +193,7 @@ export class CompetencesPrimitives {
             cy.get('.mat-mdc-menu-panel').should('be.visible').contains('button', 'Supprimer').click();
             cy.wait(2500).then(() => supprimerSiExiste());
           } else {
-            cy.log(`✅ "${nom}" supprimé`);
+            cy.log(`"${nom}" supprimé`);
           }
         });
       };
@@ -210,7 +210,7 @@ export class CompetencesPrimitives {
   // Visibilité
 
   static toggleVisibilite(version: Version, nom: string, activer: boolean): void {
-    cy.log(`${activer ? '✅' : '⬜'} ${activer ? 'Rendre visible' : 'Masquer'} "${nom}"`);
+    cy.log(`${activer ? '' : ''} ${activer ? 'Rendre visible' : 'Masquer'} "${nom}"`);
 
     CompetencesPrimitives.trouverLigneParNom(version, nom);
 

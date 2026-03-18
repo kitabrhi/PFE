@@ -1,10 +1,4 @@
-/**
- * Sélecteurs de la carte CV.
- * On regroupe ici les variantes v1 et v2, puis on récupère la bonne valeur
- * avec `getSelector()`.
- *
- * En v2, les actions sont réparties entre la liste des CV et la page de détail.
- */
+
 
 export type Version = 'v1' | 'v2';
 
@@ -12,9 +6,6 @@ interface SelectorMap {
   v1: string;
   v2: string;
 }
-
-// Sélecteurs principaux de la carte CV
-
 export const CARTE_CV = {
 
   // Carte active
@@ -172,7 +163,7 @@ export function getSelector(selectorMap: SelectorMap, version: Version): string 
   const selector = selectorMap[version];
   if (!selector) {
     throw new Error(
-      `❌ Sélecteur non disponible en ${version}. ` +
+      `Sélecteur non disponible en ${version}. ` +
       `Vérifiez que cette fonctionnalité existe pour cette version.`
     );
   }

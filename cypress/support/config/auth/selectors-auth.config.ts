@@ -1,8 +1,4 @@
-/**
- * Sélecteurs utilisés pour l'authentification.
- * On garde ici les variantes v1 et v2, puis on récupère la bonne valeur
- * avec `getSelector()`.
- */
+
 
 export type Version = 'v1' | 'v2';
 

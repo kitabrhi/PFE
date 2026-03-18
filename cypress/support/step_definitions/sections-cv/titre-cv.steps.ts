@@ -12,12 +12,10 @@ const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';
 let dernierTitre = '';
 
 afterEach(() => {
-  cy.log('🧹 Nettoyage après test');
+  cy.log('Nettoyage après test');
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
 //  PRÉPARATION
-// ═══════════════════════════════════════════════════════════════════════════════
 
 Given('un titre {string} existe dans ma liste', (titre: string) => {
   dernierTitre = titre;
@@ -37,7 +35,7 @@ Given('un titre {string} existe et est masqué sur le CV', (titre: string) => {
 });
 
 Given('les titres suivants existent dans l\'ordre :', (dataTable: any) => {
-  cy.log('🔧 PRÉPARATION: Créer les titres dans l\'ordre donné');
+  cy.log('PRÉPARATION: Créer les titres dans l\'ordre donné');
 
   const titres = dataTable.hashes();
   titres.forEach((row: { ordre: string; titre: string }) => {
@@ -45,9 +43,8 @@ Given('les titres suivants existent dans l\'ordre :', (dataTable: any) => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
 //  AJOUT
-// ═══════════════════════════════════════════════════════════════════════════════
+
 
 When('j\'ajoute le titre {string}', (titre: string) => {
   SectionsCVPrimitives.ajouterTitre(VERSION, titre);

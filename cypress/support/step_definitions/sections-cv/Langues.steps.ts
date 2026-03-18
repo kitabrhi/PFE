@@ -11,9 +11,7 @@ const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';
 
 let derniereLangue = '';
 
-// ═══════════════════════════════════════════════════════════════════════════════
 //  PRÉPARATION
-// ═══════════════════════════════════════════════════════════════════════════════
 
 Given('une langue {string} existe dans ma liste', (nom: string) => {
   derniereLangue = nom;
@@ -32,17 +30,13 @@ Given('une langue {string} existe et est masquée sur le CV', (nom: string) => {
   LanguesPrimitives.toggleVisibilite(VERSION, nom, false);
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
 //  AJOUT
-// ═══════════════════════════════════════════════════════════════════════════════
 
 When('j\'ajoute la langue {string} avec le niveau {string}', (nom: string, niveau: string) => {
   LanguesPrimitives.ajouterLangue(VERSION, nom, niveau);
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
 //  MODIFICATION / SUPPRESSION / VISIBILITÉ — "cette langue"
-// ═══════════════════════════════════════════════════════════════════════════════
 
 When('je modifie cette langue en {string} avec le niveau {string}', (nouveauNom: string, nouveauNiveau: string) => {
   LanguesPrimitives.modifierLangue(VERSION, derniereLangue, nouveauNom, nouveauNiveau);
@@ -60,9 +54,7 @@ When('je rends visible cette langue sur le CV', () => {
   LanguesPrimitives.toggleVisibilite(VERSION, derniereLangue, true);
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
 //  VÉRIFICATIONS
-// ═══════════════════════════════════════════════════════════════════════════════
 
 Then('la langue {string} apparaît dans ma liste', (nom: string) => {
   LanguesPrimitives.verifierLangueExiste(VERSION, nom);

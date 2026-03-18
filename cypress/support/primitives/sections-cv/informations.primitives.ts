@@ -14,7 +14,7 @@ export class InformationsPrimitives {
   // Helpers
 
   private static attendreAutoSave(): void {
-    cy.log('⏳ Attente sauvegarde automatique...');
+    cy.log('Attente sauvegarde automatique...');
     cy.wait(2500);
   }
 
@@ -87,18 +87,18 @@ export class InformationsPrimitives {
   // Photo de profil
 
   static uploaderPhoto(version: Version, cheminFichier: string = FIXTURE_PHOTO): void {
-    cy.log(`📷 Upload photo : ${cheminFichier}`);
+    cy.log(`Upload photo : ${cheminFichier}`);
 
     cy.get(getSelector(SECTION_INFORMATIONS.PHOTO_UPLOAD_ZONE, version), {
       timeout: 10000
     }).selectFile(cheminFichier, { force: true });
 
     InformationsPrimitives.attendreAutoSave();
-    cy.log('✅ Photo uploadée');
+    cy.log('Photo uploadée');
   }
 
   static verifierPhotoPresente(version: Version): void {
-    cy.log('🔍 Vérification présence photo uploadée');
+    cy.log('Vérification présence photo uploadée');
 
     const previewSelector = getSelector(SECTION_INFORMATIONS.PHOTO_PREVIEW, version);
 
@@ -117,7 +117,7 @@ export class InformationsPrimitives {
   // Email (lecture seule)
 
   static verifierEmailAffiche(version: Version): void {
-    cy.log('🔍 Vérification email affiché');
+    cy.log('Vérification email affiché');
 
     cy.get(getSelector(SECTION_INFORMATIONS.EMAIL_DISPLAY, version), {
       timeout: 10000
@@ -127,7 +127,7 @@ export class InformationsPrimitives {
   }
 
   static verifierEmailNonEditable(version: Version): void {
-    cy.log('🔍 Vérification email non éditable');
+    cy.log('Vérification email non éditable');
 
     cy.get(getSelector(SECTION_INFORMATIONS.EMAIL_DISPLAY, version), {
       timeout: 10000
@@ -142,52 +142,52 @@ export class InformationsPrimitives {
   // Prénom
 
   static modifierPrenom(version: Version, valeur: string = FIXTURE_PRENOM): void {
-    cy.log(`✏️ Modification prénom → "${valeur}"`);
+    cy.log(`Modification prénom → "${valeur}"`);
     InformationsPrimitives.saisirChampTexte(version, SECTION_INFORMATIONS.INPUT_PRENOM, valeur);
-    cy.log('✅ Prénom modifié');
+    cy.log('Prénom modifié');
   }
 
   static verifierPrenom(version: Version, valeur: string = FIXTURE_PRENOM): void {
-    cy.log(`🔍 Vérification prénom = "${valeur}"`);
+    cy.log(`Vérification prénom = "${valeur}"`);
     InformationsPrimitives.verifierChampTexte(version, SECTION_INFORMATIONS.INPUT_PRENOM, valeur);
   }
 
   // Nom
 
   static modifierNom(version: Version, valeur: string = FIXTURE_NOM): void {
-    cy.log(`✏️ Modification nom → "${valeur}"`);
+    cy.log(`Modification nom → "${valeur}"`);
     InformationsPrimitives.saisirChampTexte(version, SECTION_INFORMATIONS.INPUT_NOM, valeur);
-    cy.log('✅ Nom modifié');
+    cy.log('Nom modifié');
   }
 
   static verifierNom(version: Version, valeur: string = FIXTURE_NOM): void {
-    cy.log(`🔍 Vérification nom = "${valeur}"`);
+    cy.log(`Vérification nom = "${valeur}"`);
     InformationsPrimitives.verifierChampTexte(version, SECTION_INFORMATIONS.INPUT_NOM, valeur);
   }
 
   // Date de naissance
 
   static modifierDateNaissance(version: Version, valeur: string = FIXTURE_DATE_NAISSANCE): void {
-    cy.log(`✏️ Modification date de naissance → "${valeur}"`);
+    cy.log(`Modification date de naissance → "${valeur}"`);
     InformationsPrimitives.saisirChampDate(version, SECTION_INFORMATIONS.INPUT_DATE_NAISSANCE, valeur);
-    cy.log('✅ Date de naissance modifiée');
+    cy.log('Date de naissance modifiée');
   }
 
   static verifierDateNaissance(version: Version, valeur: string = FIXTURE_DATE_NAISSANCE): void {
-    cy.log(`🔍 Vérification date de naissance = "${valeur}"`);
+    cy.log(`Vérification date de naissance = "${valeur}"`);
     InformationsPrimitives.verifierChampDate(version, SECTION_INFORMATIONS.INPUT_DATE_NAISSANCE, valeur);
   }
 
   // Début d'activité
 
   static modifierDebutActivite(version: Version, valeur: string = FIXTURE_DEBUT_ACTIVITE): void {
-    cy.log(`✏️ Modification début activité → "${valeur}"`);
+    cy.log(`Modification début activité → "${valeur}"`);
     InformationsPrimitives.saisirChampDate(version, SECTION_INFORMATIONS.INPUT_DEBUT_ACTIVITE, valeur);
-    cy.log('✅ Début activité modifié');
+    cy.log('Début activité modifié');
   }
 
   static verifierDebutActivite(version: Version, valeur: string = FIXTURE_DEBUT_ACTIVITE): void {
-    cy.log(`🔍 Vérification début activité = "${valeur}"`);
+    cy.log(`Vérification début activité = "${valeur}"`);
     InformationsPrimitives.verifierChampDate(version, SECTION_INFORMATIONS.INPUT_DEBUT_ACTIVITE, valeur);
   }
 }

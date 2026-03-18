@@ -1,8 +1,3 @@
-/**
- * Sélecteurs communs aux sections du CV.
- * Ce fichier couvre la navigation entre sections, la structure des lignes
- * partagées, ainsi que les champs propres a la section Titres.
- */
 
 import { Version, getSelector } from '../carte-cv/selectors-carte-cv.config';
 
@@ -11,11 +6,7 @@ interface SelectorMap {
   v2: string;
 }
 
-// Associe le nom metier d'une section a son libelle dans l'interface
 
-/**
- * Retourne le libelle utilise dans la navigation pour la version demandee.
- */
 export function getLabelSection(nomSection: string, version: Version): string {
   const labels: Record<string, { v1: string; v2: string }> = {
     'Informations':         { v1: 'Informations',            v2: 'Informations' },
@@ -35,7 +26,7 @@ export function getLabelSection(nomSection: string, version: Version): string {
   const section = labels[nomSection];
   if (!section) {
     throw new Error(
-      `❌ Section inconnue : "${nomSection}". ` +
+      `Section inconnue : "${nomSection}". ` +
       `Sections disponibles : ${Object.keys(labels).join(', ')}`
     );
   }

@@ -13,7 +13,7 @@ export class LanguesPrimitives {
   // Helpers
 
   private static attendreAutoSave(): void {
-    cy.log('⏳ Attente sauvegarde automatique...');
+    cy.log('Attente sauvegarde automatique...');
     cy.wait(2500);
   }
 
@@ -57,7 +57,7 @@ export class LanguesPrimitives {
   // Recherche
 
   static trouverLigneParNom(version: Version, nom: string): void {
-    cy.log(`🔍 Recherche ligne langue "${nom}"`);
+    cy.log(`Recherche ligne langue "${nom}"`);
 
     const rowSelector = getSelector(SECTION_LANGUES.ROW, version);
     const inputSelector = getSelector(SECTION_LANGUES.INPUT_LANGUE, version);
@@ -76,7 +76,7 @@ export class LanguesPrimitives {
   }
 
   static trouverDerniereLigneVide(version: Version): void {
-    cy.log('🔍 Recherche dernière ligne vide');
+    cy.log('Recherche dernière ligne vide');
 
     const rowSelector = getSelector(SECTION_LANGUES.ROW, version);
     const inputSelector = getSelector(SECTION_LANGUES.INPUT_LANGUE, version);
@@ -101,14 +101,14 @@ export class LanguesPrimitives {
     nom: string,
     niveau: string = 'B2'
   ): void {
-    cy.log(`🔧 PRÉPARATION: Garantir langue "${nom}"`);
+    cy.log(`PRÉPARATION: Garantir langue "${nom}"`);
 
     LanguesPrimitives.langueExiste(version, nom, (existe) => {
       if (!existe) {
-        cy.log(`➕ Langue "${nom}" inexistante → création`);
+        cy.log(`Langue "${nom}" inexistante → création`);
         LanguesPrimitives.ajouterLangue(version, nom, niveau);
       } else {
-        cy.log(`✅ Langue "${nom}" déjà présente`);
+        cy.log(`Langue "${nom}" déjà présente`);
       }
     });
   }
@@ -120,7 +120,7 @@ export class LanguesPrimitives {
     nom: string = FIXTURE_LANGUE.nom,
     niveau: string = FIXTURE_LANGUE.niveau
   ): void {
-    cy.log(`➕ Ajout langue "${nom}" — niveau ${niveau}`);
+    cy.log(`Ajout langue "${nom}" — niveau ${niveau}`);
 
     const rowSelector = getSelector(SECTION_LANGUES.ROW, version);
     const inputLangue = getSelector(SECTION_LANGUES.INPUT_LANGUE, version);
@@ -153,7 +153,7 @@ export class LanguesPrimitives {
       LanguesPrimitives.attendreAutoSave();
     }
 
-    cy.log(`✅ Langue "${nom}" ajoutée`);
+    cy.log(`Langue "${nom}" ajoutée`);
   }
 
   // Modification
@@ -164,7 +164,7 @@ export class LanguesPrimitives {
     nouveauNom: string,
     nouveauNiveau: string
   ): void {
-    cy.log(`✏️ Modification "${ancienNom}" → "${nouveauNom}" (${nouveauNiveau})`);
+    cy.log(`Modification "${ancienNom}" → "${nouveauNom}" (${nouveauNiveau})`);
 
     const rowSelector = getSelector(SECTION_LANGUES.ROW, version);
     const inputLangue = getSelector(SECTION_LANGUES.INPUT_LANGUE, version);
@@ -193,13 +193,13 @@ export class LanguesPrimitives {
       LanguesPrimitives.attendreAutoSave();
     }
 
-    cy.log(`✅ Langue modifiée`);
+    cy.log(`Langue modifiée`);
   }
 
   // Suppression
 
   static supprimerLangue(version: Version, nom: string): void {
-    cy.log(`🗑️ Suppression langue "${nom}"`);
+    cy.log(`Suppression langue "${nom}"`);
 
     const rowSelector = getSelector(SECTION_LANGUES.ROW, version);
     const inputLangue = getSelector(SECTION_LANGUES.INPUT_LANGUE, version);
@@ -228,7 +228,7 @@ export class LanguesPrimitives {
 
             cy.wait(2500).then(() => supprimerSiExiste());
           } else {
-            cy.log(`✅ Toutes les occurrences de "${nom}" supprimées`);
+            cy.log(`Toutes les occurrences de "${nom}" supprimées`);
           }
         });
       };
@@ -248,7 +248,7 @@ export class LanguesPrimitives {
 
   static toggleVisibilite(version: Version, nom: string, activer: boolean): void {
     const action = activer ? 'Rendre visible' : 'Masquer';
-    cy.log(`${activer ? '✅' : '⬜'} ${action} langue "${nom}"`);
+    cy.log(`${activer ? '' : ''} ${action} langue "${nom}"`);
 
     LanguesPrimitives.trouverLigneParNom(version, nom);
 
@@ -274,7 +274,7 @@ export class LanguesPrimitives {
   // Ordre
 
   static changerOrdre(version: Version, nom: string, nouvelOrdre: number): void {
-    cy.log(`🔢 Changer ordre langue "${nom}" → position ${nouvelOrdre}`);
+    cy.log(`Changer ordre langue "${nom}" → position ${nouvelOrdre}`);
 
     LanguesPrimitives.trouverLigneParNom(version, nom);
 
@@ -300,7 +300,7 @@ export class LanguesPrimitives {
   // Vérifications
 
   static verifierLangueExiste(version: Version, nom: string): void {
-    cy.log(`🔍 Vérification existence langue "${nom}"`);
+    cy.log(`Vérification existence langue "${nom}"`);
 
     const rowSelector = getSelector(SECTION_LANGUES.ROW, version);
     const inputLangue = getSelector(SECTION_LANGUES.INPUT_LANGUE, version);
@@ -315,7 +315,7 @@ export class LanguesPrimitives {
   }
 
   static verifierLangueAbsente(version: Version, nom: string): void {
-    cy.log(`🔍 Vérification absence langue "${nom}"`);
+    cy.log(`Vérification absence langue "${nom}"`);
 
     const rowSelector = getSelector(SECTION_LANGUES.ROW, version);
     const inputLangue = getSelector(SECTION_LANGUES.INPUT_LANGUE, version);
@@ -335,7 +335,7 @@ export class LanguesPrimitives {
   }
 
   static verifierVisibilite(version: Version, nom: string, attenduVisible: boolean): void {
-    cy.log(`🔍 Vérification visibilité langue "${nom}" = ${attenduVisible}`);
+    cy.log(`Vérification visibilité langue "${nom}" = ${attenduVisible}`);
 
     LanguesPrimitives.trouverLigneParNom(version, nom);
 
@@ -349,7 +349,7 @@ export class LanguesPrimitives {
   }
 
   static verifierNiveau(version: Version, nom: string, niveauAttendu: string): void {
-    cy.log(`🔍 Vérification niveau langue "${nom}" = "${niveauAttendu}"`);
+    cy.log(`Vérification niveau langue "${nom}" = "${niveauAttendu}"`);
 
     LanguesPrimitives.trouverLigneParNom(version, nom);
 
@@ -366,7 +366,7 @@ export class LanguesPrimitives {
   }
 
   static verifierOrdre(version: Version, nom: string, ordreAttendu: number): void {
-    cy.log(`🔍 Vérification ordre langue "${nom}" = ${ordreAttendu}`);
+    cy.log(`Vérification ordre langue "${nom}" = ${ordreAttendu}`);
 
     LanguesPrimitives.trouverLigneParNom(version, nom);
 

@@ -1,36 +1,32 @@
-// Primitives pour manipuler la carte CV (v1 et v2).
-// v1 : liste et détail sur la même page.
-// v2 : liste sur Page 1, détail sur Page 2.
+
 
 import { Version, getSelector, CARTE_CV } from '../../config/carte-cv/selectors-carte-cv.config';
 
 export class CarteCVPrimitives {
 
-  // Navigation
-
-  // en v2 on attend que la page détail soit prête ; en v1 rien à faire
+  // En v2, on attend que la page detail soit vraiment chargee.
   static verifierNavigationPageDetail(version: Version): void {
     if (version === 'v2') {
-      cy.log('🧭 Attente navigation vers Page 2 (Détail)');
+      cy.log('Attente navigation vers Page 2 (Détail)');
       cy.get(
         `${getSelector(CARTE_CV.PAGE_DETAIL, version)}, ${getSelector(CARTE_CV.BTN_SAUVEGARDER, version)}`,
         { timeout: 10000 }
       ).should('exist');
-      cy.log('✅ Page Détail chargée');
+      cy.log('Page Détail chargée');
     }
   }
 
-  // v1 : scroll vers la table ; v2 : clic sur le bouton retour
+  // Revient sur la liste des CV.
   static retourListeCV(version: Version): void {
     if (version === 'v1') {
-      cy.log('🧭 Retour vers la table (scroll haut)');
+      cy.log('Retour vers la table (scroll haut)');
       cy.get(getSelector(CARTE_CV.TABLE, version), { timeout: 10000 })
         .first()
         .scrollIntoView();
       cy.wait(500);
-      cy.log('✅ Table visible');
+      cy.log('Table visible');
     } else {
-      cy.log('🧭 Retour vers Page 1 (Mes CV)');
+      cy.log('Retour vers Page 1 (Mes CV)');
       cy.get('body').then($body => {
         const btnRetour = getSelector(CARTE_CV.BTN_RETOUR, version);
         if ($body.find(btnRetour).length > 0) {
@@ -44,7 +40,7 @@ export class CarteCVPrimitives {
         .scrollIntoView()
         .should('be.visible');
       cy.wait(500);
-      cy.log('✅ Retour sur Page 1');
+      cy.log('Retour sur Page 1');
     }
   }
 
@@ -55,9 +51,7 @@ export class CarteCVPrimitives {
       .should('be.visible');
   }
 
-  // Préparation de la liste
-
-  // revient sur la liste si on est resté sur le détail, puis vérifie que la table est visible
+  // Revient sur la liste si besoin, puis verifie que le tableau est bien visible.
   static assurerSurPageListe(version: Version): void {
     if (version === 'v2') {
       cy.get('body').then($body => {
@@ -68,7 +62,7 @@ export class CarteCVPrimitives {
           $body.find(detailSelector).length > 0 ||
           $body.find(sauvegarderSelector).length > 0
         ) {
-          cy.log('🧭 Détecté sur Page 2 → retour à Page 1');
+          cy.log('Détecté sur Page 2 → retour à Page 1');
           CarteCVPrimitives.retourListeCV(version);
         }
       });
@@ -84,19 +78,19 @@ export class CarteCVPrimitives {
       .should('be.visible');
   }
 
-  // duplique le premier CV jusqu'à atteindre le minimum demandé
+  // Ajoute des copies du premier CV jusqu'a atteindre le minimum voulu.
   static garantirNbMinCVs(version: Version, nbMin: number): void {
-    cy.log(`🚨 Vérification: au moins ${nbMin} CV(s) requis`);
+    cy.log(`Vérification: au moins ${nbMin} CV(s) requis`);
 
     const rowSelector = getSelector(CARTE_CV.TABLE_ROW, version);
 
     cy.get(rowSelector, { timeout: 10000 }).then($rows => {
       const nbActuel = $rows.length;
-      cy.log(`📊 ${nbActuel} CV(s) trouvé(s)`);
+      cy.log(`${nbActuel} CV(s) trouvé(s)`);
 
       if (nbActuel < nbMin) {
         const nbACreer = nbMin - nbActuel;
-        cy.log(`⚠️ Seulement ${nbActuel} CV(s), ${nbMin} requis → création de ${nbACreer}`);
+        cy.log(`Seulement ${nbActuel} CV(s), ${nbMin} requis → création de ${nbACreer}`);
 
         for (let i = 0; i < nbACreer; i++) {
           if (version === 'v1') {
@@ -111,9 +105,9 @@ export class CarteCVPrimitives {
           }
         }
 
-        cy.log(`✅ DUPLICATION TERMINÉE: ${nbMin} CV(s) disponibles`);
+        cy.log(`DUPLICATION TERMINÉE: ${nbMin} CV(s) disponibles`);
       } else {
-        cy.log(`✅ ${nbActuel} CV(s) trouvé(s) (minimum requis: ${nbMin})`);
+        cy.log(`${nbActuel} CV(s) trouvé(s) (minimum requis: ${nbMin})`);
       }
     });
   }
@@ -132,10 +126,10 @@ export class CarteCVPrimitives {
   //   }
   // }
 
-  // Sélection de CV
+  // Selection d'un CV
 
   static selectionnerCVEtNaviguer(version: Version, statut: string): void {
-    cy.log(`🔍 Sélection CV "${statut}" + navigation`);
+    cy.log(`Sélection CV "${statut}" + navigation`);
 
     CarteCVPrimitives.assurerTableVisible(version);
 
@@ -145,7 +139,7 @@ export class CarteCVPrimitives {
       const found = $body.find(rowSelector).filter(`:contains("${statut}")`);
 
       if (found.length === 0) {
-        cy.log(`⚠️ Aucun CV "${statut}" trouvé — sélection du premier CV`);
+        cy.log(`Aucun CV "${statut}" trouvé — sélection du premier CV`);
         cy.get(rowSelector).first().scrollIntoView().click();
       } else {
         cy.contains(rowSelector, statut).first().scrollIntoView().click();
@@ -157,7 +151,7 @@ export class CarteCVPrimitives {
   }
 
   static selectionnerCVParIndex(version: Version, index: number): void {
-    cy.log(`🔍 Sélection CV index ${index} + navigation`);
+    cy.log(`Sélection CV index ${index} + navigation`);
 
     CarteCVPrimitives.assurerTableVisible(version);
 
@@ -168,9 +162,10 @@ export class CarteCVPrimitives {
     CarteCVPrimitives.verifierNavigationPageDetail(version);
   }
 
-  // trouve la ligne sans naviguer — si statut vide, prend la première ligne
+  // Garde en memoire une ligne du tableau sans ouvrir le detail.
+  // Si aucun statut n'est donne, on prend simplement la premiere ligne.
   static trouverLigneCV(version: Version, statut: string): void {
-    cy.log(`🔍 Recherche ligne CV "${statut || '(première ligne)'}" (sans navigation)`);
+    cy.log(`Recherche ligne CV "${statut || '(première ligne)'}" (sans navigation)`);
 
     CarteCVPrimitives.assurerTableVisible(version);
 
@@ -185,7 +180,7 @@ export class CarteCVPrimitives {
       const found = $body.find(rowSelector).filter(`:contains("${statut}")`);
 
       if (found.length === 0) {
-        cy.log(`⚠️ Aucun CV "${statut}" trouvé — utilisation première ligne`);
+        cy.log(`Aucun CV "${statut}" trouvé — utilisation première ligne`);
         cy.get(rowSelector).first().scrollIntoView().as('ligneCVTrouvee');
       } else {
         cy.contains(rowSelector, statut).first().scrollIntoView().as('ligneCVTrouvee');
@@ -193,9 +188,8 @@ export class CarteCVPrimitives {
     });
   }
 
-  // Helpers internes
-
-  // ouvre une action : directement en v1, via le menu du détail en v2
+  // Ouvre une action sur le CV courant.
+  // En v1 le bouton est direct, en v2 il passe par le menu de la page detail.
   private static ouvrirActionPage2(version: Version, selectorBoutonV1: string, labelV2: string): void {
     if (version === 'v1') {
       cy.get(selectorBoutonV1).first().scrollIntoView().click({ force: true });
@@ -207,11 +201,11 @@ export class CarteCVPrimitives {
     cy.wait(500);
   }
 
-  // ouvre une action depuis le menu contextuel d'une ligne (v2 seulement)
+  // Ouvre une action depuis le menu d'une ligne du tableau en v2.
   private static ouvrirActionLignePage1(version: Version, labelV2: string): void {
     if (version !== 'v2') return;
 
-    cy.log(`📂 Ouverture action ligne Page 1 : "${labelV2}"`);
+    cy.log(`Ouverture action ligne Page 1 : "${labelV2}"`);
     cy.get('@ligneCVTrouvee').scrollIntoView().within(() => {
       cy.get(getSelector(CARTE_CV.ROW_MENU_CONTEXTUEL, version)).click();
     });
@@ -221,14 +215,14 @@ export class CarteCVPrimitives {
   }
 
   static verifierMessageToast(version: Version, message: string): void {
-    cy.log(`🔍 Vérification toast: "${message}"`);
+    cy.log(`Vérification toast: "${message}"`);
     cy.contains(message, { timeout: 5000 }).should('be.visible');
   }
 
-  // Modale — actions génériques
+  // Actions communes sur les modales
 
   static annulerActionModale(version: Version): void {
-    cy.log('❌ Annulation action modale');
+    cy.log('Annulation action modale');
     cy.get(getSelector(CARTE_CV.MODAL, version)).within(() => {
       cy.contains('button', 'Annuler').click();
     });
@@ -240,7 +234,7 @@ export class CarteCVPrimitives {
   }
 
   static verifierMessageErreur(version: Version, message: string): void {
-    cy.log(`🔍 Vérification erreur: "${message}"`);
+    cy.log(`Vérification erreur: "${message}"`);
     cy.get(getSelector(CARTE_CV.MODAL, version)).should('be.visible');
     cy.get(getSelector(CARTE_CV.MODAL, version)).within(() => {
       cy.contains(message).should('be.visible');
@@ -250,7 +244,7 @@ export class CarteCVPrimitives {
   // Renommage
 
   static ouvrirModaleRenommer(version: Version): void {
-    cy.log('📂 Ouverture modale renommage');
+    cy.log('Ouverture modale renommage');
     CarteCVPrimitives.ouvrirActionPage2(
       version,
       getSelector(CARTE_CV.BTN_RENOMMER, version),
@@ -260,12 +254,12 @@ export class CarteCVPrimitives {
   }
 
   static saisirNouveauNom(version: Version, nouveauNom: string): void {
-    cy.log(`⌨️ Saisie: "${nouveauNom}"`);
+    cy.log(`Saisie: "${nouveauNom}"`);
     cy.get(getSelector(CARTE_CV.MODAL_INPUT, version)).clear().type(nouveauNom);
   }
 
   static confirmerRenommage(version: Version): void {
-    cy.log('✔️ Confirmation renommage');
+    cy.log('Confirmation renommage');
     cy.get(getSelector(CARTE_CV.MODAL, version)).within(() => {
       cy.contains('button', 'Valider').click();
     });
@@ -273,22 +267,22 @@ export class CarteCVPrimitives {
   }
 
   static annulerRenommage(version: Version): void {
-    cy.log('❌ Annulation renommage');
+    cy.log('Annulation renommage');
     CarteCVPrimitives.annulerActionModale(version);
   }
 
   static verifierNouveauNom(version: Version, nouveauNom: string): void {
-    cy.log(`✅ Vérification nom: "${nouveauNom}"`);
+    cy.log(`Vérification nom: "${nouveauNom}"`);
     cy.contains(nouveauNom).scrollIntoView();
     cy.wait(500);
     cy.contains(nouveauNom).should('be.visible');
-    cy.log(`✅ Nom "${nouveauNom}" visible`);
+    cy.log(`Nom "${nouveauNom}" visible`);
   }
 
   // Duplication
 
   static dupliquerCV(version: Version, nomDuplication?: string): void {
-    cy.log('📋 Dupliquer le CV');
+    cy.log('Dupliquer le CV');
 
     if (version === 'v1') {
       cy.get(getSelector(CARTE_CV.BTN_DUPLIQUER, version)).first().scrollIntoView().click({ force: true });
@@ -309,13 +303,13 @@ export class CarteCVPrimitives {
       });
     }
 
-    cy.log('✅ CV dupliqué');
+    cy.log('CV dupliqué');
   }
 
   // Vidage
 
   static ouvrirConfirmationVider(version: Version): void {
-    cy.log('🧹 Ouverture confirmation vidage');
+    cy.log('Ouverture confirmation vidage');
     CarteCVPrimitives.ouvrirActionPage2(
       version,
       getSelector(CARTE_CV.BTN_VIDER, version),
@@ -324,7 +318,7 @@ export class CarteCVPrimitives {
   }
 
   static viderCV(version: Version, confirmer: boolean = true): void {
-    cy.log('🧹 Vider le CV');
+    cy.log('Vider le CV');
     CarteCVPrimitives.ouvrirConfirmationVider(version);
 
     if (confirmer) {
@@ -334,13 +328,13 @@ export class CarteCVPrimitives {
     }
     cy.wait(1000);
 
-    cy.log(`✅ ${confirmer ? 'CV vidé' : 'Vidage annulé'}`);
+    cy.log(`${confirmer ? 'CV vidé' : 'Vidage annulé'}`);
   }
 
-  // Changement de propriétaire
+  // Changement de proprietaire
 
   static ouvrirModaleChangerProprietaire(version: Version): void {
-    cy.log('👤 Ouverture modale changer propriétaire');
+    cy.log('Ouverture modale changer propriétaire');
     CarteCVPrimitives.ouvrirActionPage2(
       version,
       getSelector(CARTE_CV.BTN_CHANGER_PROPRIETAIRE, version),
@@ -350,12 +344,12 @@ export class CarteCVPrimitives {
   }
 
   static saisirEmailProprietaire(version: Version, email: string): void {
-    cy.log(`📧 Saisie email: ${email}`);
+    cy.log(`Saisie email: ${email}`);
     cy.get(getSelector(CARTE_CV.MODAL_INPUT, version)).clear().type(email);
   }
 
   static confirmerChangementProprietaire(version: Version): void {
-    cy.log('✔️ Confirmation changement propriétaire');
+    cy.log('Confirmation changement propriétaire');
     cy.get(getSelector(CARTE_CV.MODAL, version)).within(() => {
       cy.contains('button', 'Valider').click();
     });
@@ -363,14 +357,14 @@ export class CarteCVPrimitives {
   }
 
   static annulerChangementProprietaire(version: Version): void {
-    cy.log('❌ Annulation changement propriétaire');
+    cy.log('Annulation changement propriétaire');
     CarteCVPrimitives.annulerActionModale(version);
   }
 
   // Suppression
 
   static ouvrirConfirmationSupprimer(version: Version): void {
-    cy.log('🗑️ Ouverture confirmation suppression');
+    cy.log('Ouverture confirmation suppression');
     CarteCVPrimitives.ouvrirActionPage2(
       version,
       getSelector(CARTE_CV.BTN_SUPPRIMER, version),
@@ -379,7 +373,7 @@ export class CarteCVPrimitives {
   }
 
   static supprimerCV(version: Version, confirmer: boolean = true): void {
-    cy.log('🗑️ Supprimer le CV');
+    cy.log('Supprimer le CV');
     CarteCVPrimitives.ouvrirConfirmationSupprimer(version);
 
     if (confirmer) {
@@ -389,13 +383,13 @@ export class CarteCVPrimitives {
     }
     cy.wait(1000);
 
-    cy.log(`✅ ${confirmer ? 'CV supprimé' : 'Suppression annulée'}`);
+    cy.log(`${confirmer ? 'CV supprimé' : 'Suppression annulée'}`);
   }
 
   // Sauvegarde
 
   static enregistrerCV(version: Version): void {
-    cy.log('💾 Enregistrer');
+    cy.log('Enregistrer');
 
     if (version === 'v1') {
       cy.get(getSelector(CARTE_CV.BTN_ENREGISTRER, version))
@@ -410,13 +404,13 @@ export class CarteCVPrimitives {
     }
     cy.wait(2000);
 
-    cy.log('✅ CV enregistré');
+    cy.log('CV enregistré');
   }
 
   // Changement de statut
 
   static changerStatut(version: Version, nouveauStatut: string): void {
-    cy.log(`🔄 Changer statut → "${nouveauStatut}"`);
+    cy.log(`Changer statut → "${nouveauStatut}"`);
 
     if (version === 'v1') {
       cy.get(getSelector(CARTE_CV.SELECT_STATUS, version))
@@ -433,13 +427,13 @@ export class CarteCVPrimitives {
     }
     cy.wait(1000);
 
-    cy.log(`✅ Statut → "${nouveauStatut}"`);
+    cy.log(`Statut → "${nouveauStatut}"`);
   }
 
-  // Téléchargement
+  // Telechargement
 
   static telechargerCV(version: Version): void {
-    cy.log('📥 Télécharger CV');
+    cy.log('Télécharger CV');
 
     if (version === 'v2') {
       cy.get(getSelector(CARTE_CV.BTN_TELECHARGER, version))
@@ -448,12 +442,12 @@ export class CarteCVPrimitives {
         .click();
       cy.wait(1000);
     } else {
-      cy.log('⚠️ Téléchargement non disponible en v1 depuis cette page');
+      cy.log('Téléchargement non disponible en v1 depuis cette page');
     }
   }
 
   static downloadJson(version: Version): void {
-    cy.log('📄 Download Json');
+    cy.log('Download Json');
 
     if (version === 'v2') {
       cy.get(getSelector(CARTE_CV.MENU_CONTEXTUEL, version))
@@ -464,14 +458,14 @@ export class CarteCVPrimitives {
       cy.contains('button', 'Download Json').click();
       cy.wait(1000);
     } else {
-      cy.log('⚠️ Download Json non disponible en v1');
+      cy.log('Download Json non disponible en v1');
     }
   }
 
-  // Vérification du statut
+  // Verification du statut
 
   static verifierStatutVisible(statutAttendu: string): void {
     cy.contains(statutAttendu).should('be.visible');
-    cy.log(`✅ Statut: ${statutAttendu}`);
+    cy.log(`Statut: ${statutAttendu}`);
   }
 }

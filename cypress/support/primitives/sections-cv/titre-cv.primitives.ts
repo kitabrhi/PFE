@@ -8,7 +8,7 @@ export class SectionsCVPrimitives {
   // Helpers
 
   private static attendreAutoSave(): void {
-    cy.log('⏳ Attente sauvegarde automatique...');
+    cy.log('Attente sauvegarde automatique...');
     cy.wait(2500);
   }
 
@@ -33,7 +33,7 @@ export class SectionsCVPrimitives {
 
   static naviguerVersSection(version: Version, nomSection: string): void {
     const label = getLabelSection(nomSection, version);
-    cy.log(`🧭 Navigation vers section "${nomSection}" (label: "${label}")`);
+    cy.log(`Navigation vers section "${nomSection}" (label: "${label}")`);
 
     cy.get(getSelector(SECTION_NAV.NAV_CONTAINER, version), { timeout: 10000 })
       .should('be.visible');
@@ -42,13 +42,13 @@ export class SectionsCVPrimitives {
       .click({ force: true });
 
     cy.wait(1000);
-    cy.log(`✅ Sur la section "${nomSection}"`);
+    cy.log(`Sur la section "${nomSection}"`);
   }
 
   // Recherche
 
   static trouverLigneParTexte(version: Version, texte: string): void {
-    cy.log(`🔍 Recherche ligne contenant "${texte}"`);
+    cy.log(`Recherche ligne contenant "${texte}"`);
     const rowSelector = getSelector(SECTION_ROW.ROW, version);
     const inputSelector = getSelector(SECTION_TITRES.INPUT_TITRE, version);
 
@@ -65,7 +65,7 @@ export class SectionsCVPrimitives {
   }
 
   static trouverDerniereLigne(version: Version): void {
-    cy.log('🔍 Recherche dernière ligne (vide)');
+    cy.log('Recherche dernière ligne (vide)');
     const rowSelector = getSelector(SECTION_ROW.ROW, version);
     const inputSelector = getSelector(SECTION_TITRES.INPUT_TITRE, version);
 
@@ -81,10 +81,10 @@ export class SectionsCVPrimitives {
   }
 
   static verifierNouvelleLigneVide(version: Version): void {
-    cy.log('🔍 Vérification nouvelle ligne vide');
+    cy.log('Vérification nouvelle ligne vide');
 
     if (version === 'v1') {
-      cy.log('ℹ️ v1 : pas de nouvelle ligne vide auto-créée');
+      cy.log('v1 : pas de nouvelle ligne vide auto-créée');
       return;
     }
 
@@ -99,14 +99,14 @@ export class SectionsCVPrimitives {
 
   // crée le titre s'il n'est pas encore là
   static garantirTitreExiste(version: Version, titre: string): void {
-    cy.log(`🔧 PRÉPARATION: Garantir titre "${titre}"`);
+    cy.log(`PRÉPARATION: Garantir titre "${titre}"`);
 
     SectionsCVPrimitives.titreExiste(version, titre, (existe) => {
       if (!existe) {
-        cy.log(`➕ Titre "${titre}" inexistant → création`);
+        cy.log(`Titre "${titre}" inexistant → création`);
         SectionsCVPrimitives.ajouterTitre(version, titre);
       } else {
-        cy.log(`✅ Titre "${titre}" déjà présent`);
+        cy.log(`Titre "${titre}" déjà présent`);
       }
     });
   }
@@ -114,7 +114,7 @@ export class SectionsCVPrimitives {
   // Suppression
 
   static supprimerLigne(version: Version, texte: string): void {
-    cy.log(`🗑️ Suppression de la ligne "${texte}"`);
+    cy.log(`Suppression de la ligne "${texte}"`);
 
     const rowSelector = getSelector(SECTION_ROW.ROW, version);
     const inputSelector = getSelector(SECTION_TITRES.INPUT_TITRE, version);
@@ -141,7 +141,7 @@ export class SectionsCVPrimitives {
 
             cy.wait(2500).then(() => supprimerSiExiste());
           } else {
-            cy.log(`✅ Toutes les occurrences de "${texte}" supprimées`);
+            cy.log(`Toutes les occurrences de "${texte}" supprimées`);
           }
         });
       };
@@ -161,7 +161,7 @@ export class SectionsCVPrimitives {
 
   static toggleVisibilite(version: Version, texte: string, activer: boolean): void {
     const action = activer ? 'Rendre visible' : 'Masquer';
-    cy.log(`${activer ? '✅' : '⬜'} ${action} "${texte}"`);
+    cy.log(`${activer ? '' : ''} ${action} "${texte}"`);
 
     SectionsCVPrimitives.trouverLigneParTexte(version, texte);
 
@@ -179,7 +179,7 @@ export class SectionsCVPrimitives {
   }
 
   static verifierVisibilite(version: Version, texte: string, attenduVisible: boolean): void {
-    cy.log(`🔍 Vérification visibilité "${texte}" = ${attenduVisible}`);
+    cy.log(`Vérification visibilité "${texte}" = ${attenduVisible}`);
 
     SectionsCVPrimitives.trouverLigneParTexte(version, texte);
 
@@ -194,7 +194,7 @@ export class SectionsCVPrimitives {
   // Réordonnancement
 
   static changerOrdre(version: Version, texte: string, nouvelOrdre: number): void {
-    cy.log(`🔢 Changer ordre "${texte}" → position ${nouvelOrdre}`);
+    cy.log(`Changer ordre "${texte}" → position ${nouvelOrdre}`);
 
     SectionsCVPrimitives.trouverLigneParTexte(version, texte);
 
@@ -218,7 +218,7 @@ export class SectionsCVPrimitives {
   }
 
   static verifierOrdre(version: Version, texte: string, ordreAttendu: number): void {
-    cy.log(`🔍 Vérification ordre "${texte}" = ${ordreAttendu}`);
+    cy.log(`Vérification ordre "${texte}" = ${ordreAttendu}`);
 
     SectionsCVPrimitives.trouverLigneParTexte(version, texte);
 
@@ -237,7 +237,7 @@ export class SectionsCVPrimitives {
   // Titres — ajout / modification
 
   static ajouterTitre(version: Version, titre: string): void {
-    cy.log(`➕ Ajout du titre "${titre}"`);
+    cy.log(`Ajout du titre "${titre}"`);
 
     const rowSelector = getSelector(SECTION_ROW.ROW, version);
     const inputSelector = getSelector(SECTION_TITRES.INPUT_TITRE, version);
@@ -262,11 +262,11 @@ export class SectionsCVPrimitives {
       SectionsCVPrimitives.attendreAutoSave();
     }
 
-    cy.log(`✅ Titre "${titre}" ajouté`);
+    cy.log(`Titre "${titre}" ajouté`);
   }
 
   static modifierTitre(version: Version, ancienTitre: string, nouveauTitre: string): void {
-    cy.log(`✏️ Modification "${ancienTitre}" → "${nouveauTitre}"`);
+    cy.log(`Modification "${ancienTitre}" → "${nouveauTitre}"`);
 
     const rowSelector = getSelector(SECTION_ROW.ROW, version);
     const inputSelector = getSelector(SECTION_TITRES.INPUT_TITRE, version);
@@ -291,13 +291,13 @@ export class SectionsCVPrimitives {
       SectionsCVPrimitives.attendreAutoSave();
     }
 
-    cy.log(`✅ Titre modifié`);
+    cy.log(`Titre modifié`);
   }
 
   // Titres — vérifications
 
   static verifierTitreExiste(version: Version, titre: string): void {
-    cy.log(`🔍 Vérification existence "${titre}"`);
+    cy.log(`Vérification existence "${titre}"`);
     const rowSelector = getSelector(SECTION_ROW.ROW, version);
     const inputSelector = getSelector(SECTION_TITRES.INPUT_TITRE, version);
 
@@ -311,7 +311,7 @@ export class SectionsCVPrimitives {
   }
 
   static verifierTitreAbsent(version: Version, titre: string): void {
-    cy.log(`🔍 Vérification absence "${titre}"`);
+    cy.log(`Vérification absence "${titre}"`);
     const rowSelector = getSelector(SECTION_ROW.ROW, version);
     const inputSelector = getSelector(SECTION_TITRES.INPUT_TITRE, version);
 
@@ -320,7 +320,7 @@ export class SectionsCVPrimitives {
       cy.get(`${rowSelector} ${inputSelector}`)
         .then($inputs => {
           $inputs.each((_i, el) => {
-            cy.log(`📋 Input value: "${(el as HTMLInputElement).value}"`);
+            cy.log(`Input value: "${(el as HTMLInputElement).value}"`);
           });
 
           const found = $inputs.filter((_i, el) =>

@@ -23,7 +23,7 @@ export class DiplomesPrimitives {
   // Helpers
 
   private static attendreAutoSave(): void {
-    cy.log('⏳ Attente sauvegarde automatique...');
+    cy.log('Attente sauvegarde automatique...');
     cy.wait(2500);
   }
 
@@ -65,7 +65,7 @@ export class DiplomesPrimitives {
 
   // stocke la ligne du diplôme dans l'alias @ligneDiplome
   static trouverLigneParNom(version: Version, nom: string): void {
-    cy.log(`🔍 Recherche ligne diplôme "${nom}"`);
+    cy.log(`Recherche ligne diplôme "${nom}"`);
 
     const rowSelector = getSelector(SECTION_DIPLOMES.ROW, version);
     const inputSelector = getSelector(SECTION_DIPLOMES.INPUT_DIPLOME, version);
@@ -85,7 +85,7 @@ export class DiplomesPrimitives {
 
   // cherche la dernière ligne vide pour un nouvel ajout
   static trouverDerniereLigneVide(version: Version): void {
-    cy.log('🔍 Recherche dernière ligne vide');
+    cy.log('Recherche dernière ligne vide');
 
     const rowSelector = getSelector(SECTION_DIPLOMES.ROW, version);
     const inputSelector = getSelector(SECTION_DIPLOMES.INPUT_DIPLOME, version);
@@ -111,14 +111,14 @@ export class DiplomesPrimitives {
     lieu: string = 'Université Hassan II',
     annee: string = '2024'
   ): void {
-    cy.log(`🔧 PRÉPARATION: Garantir diplôme "${nom}"`);
+    cy.log(`PRÉPARATION: Garantir diplôme "${nom}"`);
 
     DiplomesPrimitives.diplomeExiste(version, nom, (existe) => {
       if (!existe) {
-        cy.log(`➕ Diplôme "${nom}" inexistant → création`);
+        cy.log(`Diplôme "${nom}" inexistant → création`);
         DiplomesPrimitives.ajouterDiplome(version, nom, lieu, annee);
       } else {
-        cy.log(`✅ Diplôme "${nom}" déjà présent`);
+        cy.log(`Diplôme "${nom}" déjà présent`);
       }
     });
   }
@@ -131,7 +131,7 @@ export class DiplomesPrimitives {
     lieu: string = FIXTURE_DIPLOME.lieu,
     annee: string = FIXTURE_DIPLOME.annee
   ): void {
-    cy.log(`➕ Ajout diplôme "${nom}" — ${lieu} (${annee})`);
+    cy.log(`Ajout diplôme "${nom}" — ${lieu} (${annee})`);
 
     const rowSelector = getSelector(SECTION_DIPLOMES.ROW, version);
     const inputDiplome = getSelector(SECTION_DIPLOMES.INPUT_DIPLOME, version);
@@ -164,7 +164,7 @@ export class DiplomesPrimitives {
       DiplomesPrimitives.attendreAutoSave();
     }
 
-    cy.log(`✅ Diplôme "${nom}" ajouté`);
+    cy.log(`Diplôme "${nom}" ajouté`);
   }
 
   // Modification
@@ -176,7 +176,7 @@ export class DiplomesPrimitives {
     nouveauLieu: string = FIXTURE_DIPLOME_MODIFIE.lieu,
     nouvelleAnnee: string = FIXTURE_DIPLOME_MODIFIE.annee
   ): void {
-    cy.log(`✏️ Modification "${ancienNom}" → "${nouveauNom}"`);
+    cy.log(`Modification "${ancienNom}" → "${nouveauNom}"`);
 
     const rowSelector = getSelector(SECTION_DIPLOMES.ROW, version);
     const inputDiplome = getSelector(SECTION_DIPLOMES.INPUT_DIPLOME, version);
@@ -205,13 +205,13 @@ export class DiplomesPrimitives {
       DiplomesPrimitives.attendreAutoSave();
     }
 
-    cy.log(`✅ Diplôme modifié`);
+    cy.log(`Diplôme modifié`);
   }
 
   // Suppression
 
   static supprimerDiplome(version: Version, nom: string): void {
-    cy.log(`🗑️ Suppression diplôme "${nom}"`);
+    cy.log(`Suppression diplôme "${nom}"`);
 
     const rowSelector = getSelector(SECTION_DIPLOMES.ROW, version);
     const inputDiplome = getSelector(SECTION_DIPLOMES.INPUT_DIPLOME, version);
@@ -241,7 +241,7 @@ export class DiplomesPrimitives {
 
             cy.wait(2500).then(() => supprimerSiExiste());
           } else {
-            cy.log(`✅ Toutes les occurrences de "${nom}" supprimées`);
+            cy.log(`Toutes les occurrences de "${nom}" supprimées`);
           }
         });
       };
@@ -261,7 +261,7 @@ export class DiplomesPrimitives {
 
   static toggleVisibilite(version: Version, nom: string, activer: boolean): void {
     const action = activer ? 'Rendre visible' : 'Masquer';
-    cy.log(`${activer ? '✅' : '⬜'} ${action} diplôme "${nom}"`);
+    cy.log(`${activer ? '' : ''} ${action} diplôme "${nom}"`);
 
     DiplomesPrimitives.trouverLigneParNom(version, nom);
 
@@ -288,7 +288,7 @@ export class DiplomesPrimitives {
   // Ordre
 
   static changerOrdre(version: Version, nom: string, nouvelOrdre: number): void {
-    cy.log(`🔢 Changer ordre diplôme "${nom}" → position ${nouvelOrdre}`);
+    cy.log(`Changer ordre diplôme "${nom}" → position ${nouvelOrdre}`);
 
     DiplomesPrimitives.trouverLigneParNom(version, nom);
 
@@ -314,7 +314,7 @@ export class DiplomesPrimitives {
   // Vérifications
 
   static verifierDiplomeExiste(version: Version, nom: string): void {
-    cy.log(`🔍 Vérification existence diplôme "${nom}"`);
+    cy.log(`Vérification existence diplôme "${nom}"`);
 
     const rowSelector = getSelector(SECTION_DIPLOMES.ROW, version);
     const inputDiplome = getSelector(SECTION_DIPLOMES.INPUT_DIPLOME, version);
@@ -329,7 +329,7 @@ export class DiplomesPrimitives {
   }
 
   static verifierDiplomeAbsent(version: Version, nom: string): void {
-    cy.log(`🔍 Vérification absence diplôme "${nom}"`);
+    cy.log(`Vérification absence diplôme "${nom}"`);
 
     const rowSelector = getSelector(SECTION_DIPLOMES.ROW, version);
     const inputDiplome = getSelector(SECTION_DIPLOMES.INPUT_DIPLOME, version);
@@ -349,7 +349,7 @@ export class DiplomesPrimitives {
   }
 
   static verifierVisibilite(version: Version, nom: string, attenduVisible: boolean): void {
-    cy.log(`🔍 Vérification visibilité diplôme "${nom}" = ${attenduVisible}`);
+    cy.log(`Vérification visibilité diplôme "${nom}" = ${attenduVisible}`);
 
     DiplomesPrimitives.trouverLigneParNom(version, nom);
 
@@ -363,7 +363,7 @@ export class DiplomesPrimitives {
   }
 
   static verifierOrdre(version: Version, nom: string, ordreAttendu: number): void {
-    cy.log(`🔍 Vérification ordre diplôme "${nom}" = ${ordreAttendu}`);
+    cy.log(`Vérification ordre diplôme "${nom}" = ${ordreAttendu}`);
 
     DiplomesPrimitives.trouverLigneParNom(version, nom);
 
@@ -380,7 +380,7 @@ export class DiplomesPrimitives {
   }
 
   static verifierLieu(version: Version, nom: string, lieuAttendu: string): void {
-    cy.log(`🔍 Vérification lieu diplôme "${nom}" = "${lieuAttendu}"`);
+    cy.log(`Vérification lieu diplôme "${nom}" = "${lieuAttendu}"`);
 
     DiplomesPrimitives.trouverLigneParNom(version, nom);
 

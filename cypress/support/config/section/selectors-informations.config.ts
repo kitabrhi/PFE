@@ -1,7 +1,4 @@
-/**
- * Sélecteurs de la section informations.
- * On y retrouve la photo, l'email affiche, l'identite et les dates.
- */
+
 
 import { Version, getSelector } from '../carte-cv/selectors-carte-cv.config';
 
