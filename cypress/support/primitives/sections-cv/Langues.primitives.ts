@@ -48,11 +48,10 @@ export class LanguesPrimitives {
         cy.get(selectNiveau).click({ force: true });
       });
 
-    cy.get('.mat-mdc-select-panel')
-      .should('be.visible')
-      .contains('mat-option', niveau)
-      .click();
-  }
+      cy.get('.cdk-overlay-container mat-option', { timeout: 10000 })
+      .contains(niveau)
+      .click({ force: true });
+    }
 
   // Recherche
 
