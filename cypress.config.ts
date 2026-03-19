@@ -34,6 +34,9 @@ export default defineConfig({
     pageLoadTimeout: 120000,
     defaultCommandTimeout: 15000,
 
+
+    viewportWidth: 1400,
+    viewportHeight: 900,
     /**
      * Patterns de fichiers de tests
      * Support des fichiers .feature (BDD) et .cy.js (E2E classique)

@@ -20,19 +20,19 @@ export class CompetencesPrimitives {
     const rowSelector = getSelector(SECTION_COMPETENCES.ROW, 'v1');
     const inputComp = getSelector(SECTION_COMPETENCES.INPUT_COMPETENCE, 'v1');
     const selectExp = getSelector(SECTION_COMPETENCES.SELECT_EXPERIENCE, 'v1');
-
+  
     cy.get(`${rowSelector} ${inputComp}`)
       .filter((_i, el) => (el as HTMLInputElement).value === nom)
       .first()
       .closest(rowSelector)
+      .scrollIntoView()
       .within(() => {
         cy.get(selectExp).click({ force: true });
       });
-
-    cy.get('.mat-mdc-select-panel')
-      .should('be.visible')
-      .contains('mat-option', experience)
-      .click();
+  
+    cy.get('.cdk-overlay-container mat-option', { timeout: 10000 })
+      .contains(experience)
+      .click({ force: true });
   }
 
   // Recherche
