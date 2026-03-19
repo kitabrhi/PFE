@@ -11,7 +11,7 @@ const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';
 
 let derniereLangue = '';
 
-//  PRÉPARATION
+//  PRÉPARATION \
 
 Given('une langue {string} existe dans ma liste', (nom: string) => {
   derniereLangue = nom;
