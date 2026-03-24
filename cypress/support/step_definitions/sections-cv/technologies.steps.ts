@@ -1,19 +1,33 @@
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
-import { Version } from '../../config/section/selectors-technologies.config';
+import {
+  Version,
+  FIXTURES_TECHNOLOGIES
+} from '../../config/section/selectors-technologies.config';
 import { TechnologiesPrimitives } from '../../primitives/sections-cv/technologies.primitives';
 
 const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';
 
-// Ajout avec experience
+// ──────────────────────────────────────
+//  Utilitaire partagé par les Given
+// ──────────────────────────────────────
+
+function assurerTechnologieExiste(nom: string, categorie: string): void {
+  TechnologiesPrimitives.selectionnerCategorie(VERSION, categorie);
+  TechnologiesPrimitives.ajouterTechnologie(VERSION, categorie, nom);
+}
+
+// ──────────────────────────────────────
+//  When — Actions
+// ──────────────────────────────────────
 
 When(
-  'j\'ajoute la technologie {string} avec {string} d\'expérience dans la catégorie {string}',
-  (nom: string, experience: string, categorie: string) => {
-    TechnologiesPrimitives.ajouterTechnologie(VERSION, categorie, nom, experience);
+  'j\'ajoute la technologie {string} avec une expérience dans la catégorie {string}',
+  (nom: string, categorie: string) => {
+    TechnologiesPrimitives.ajouterTechnologie(
+      VERSION, categorie, nom, FIXTURES_TECHNOLOGIES.EXPERIENCE_PAR_DEFAUT
+    );
   }
 );
-
-// Ajout sans experience, garde pour les anciens cas
 
 When(
   'j\'ajoute la technologie {string} dans la catégorie {string}',
@@ -22,16 +36,12 @@ When(
   }
 );
 
-// Suppression
-
 When(
   'je supprime la technologie {string} de la catégorie {string}',
   (nom: string, categorie: string) => {
     TechnologiesPrimitives.supprimerTechnologie(VERSION, categorie, nom);
   }
 );
-
-// Visibilite
 
 When(
   'je masque la technologie {string} de la catégorie {string}',
@@ -47,61 +57,30 @@ When(
   }
 );
 
-// Preparation
+When(
+  'je modifie l\'expérience de {string} dans la catégorie {string}',
+  (nom: string, categorie: string) => {
+    TechnologiesPrimitives.modifierExperience(
+      VERSION, categorie, nom, FIXTURES_TECHNOLOGIES.NOUVELLE_EXPERIENCE
+    );
+  }
+);
+
+// ──────────────────────────────────────
+//  Given — Préconditions
+// ──────────────────────────────────────
 
 Given(
   'la technologie {string} existe dans la catégorie {string}',
   (nom: string, categorie: string) => {
-    cy.log(`Verifier que "${nom}" existe dans "${categorie}"`);
-
-    // On ouvre la bonne categorie avant de chercher la techno.
-    TechnologiesPrimitives.selectionnerCategorie(VERSION, categorie);
-
-    cy.get('[data-cy="technologieTitre"] input').then($inputs => {
-      const found = $inputs.filter((_i, el) =>
-        (el as HTMLInputElement).value === nom
-      );
-
-      if (found.length === 0) {
-        cy.log(`"${nom}" n'existe pas encore, on la cree`);
-        // La categorie est deja ouverte, on remplit juste la ligne vide.
-        cy.get('[data-cy="technologieTitre"] input')
-          .filter((_i, el) => (el as HTMLInputElement).value === '')
-          .last()
-          .scrollIntoView()
-          .clear()
-          .type(nom)
-          .blur();
-
-        cy.wait(2500);
-      } else {
-        cy.log(`"${nom}" est deja presente`);
-      }
-    });
+    assurerTechnologieExiste(nom, categorie);
   }
 );
 
 Given(
   'la technologie {string} existe et est visible dans la catégorie {string}',
   (nom: string, categorie: string) => {
-    TechnologiesPrimitives.selectionnerCategorie(VERSION, categorie);
-
-    cy.get('[data-cy="technologieTitre"] input').then($inputs => {
-      const found = $inputs.filter((_i, el) =>
-        (el as HTMLInputElement).value === nom
-      );
-      if (found.length === 0) {
-        cy.get('[data-cy="technologieTitre"] input')
-          .filter((_i, el) => (el as HTMLInputElement).value === '')
-          .last()
-          .scrollIntoView()
-          .clear()
-          .type(nom)
-          .blur();
-        cy.wait(2500);
-      }
-    });
-
+    assurerTechnologieExiste(nom, categorie);
     TechnologiesPrimitives.toggleVisibilite(VERSION, categorie, nom, true);
   }
 );
@@ -109,29 +88,14 @@ Given(
 Given(
   'la technologie {string} existe et est masquée dans la catégorie {string}',
   (nom: string, categorie: string) => {
-    TechnologiesPrimitives.selectionnerCategorie(VERSION, categorie);
-
-    cy.get('[data-cy="technologieTitre"] input').then($inputs => {
-      const found = $inputs.filter((_i, el) =>
-        (el as HTMLInputElement).value === nom
-      );
-      if (found.length === 0) {
-        cy.get('[data-cy="technologieTitre"] input')
-          .filter((_i, el) => (el as HTMLInputElement).value === '')
-          .last()
-          .scrollIntoView()
-          .clear()
-          .type(nom)
-          .blur();
-        cy.wait(2500);
-      }
-    });
-
+    assurerTechnologieExiste(nom, categorie);
     TechnologiesPrimitives.toggleVisibilite(VERSION, categorie, nom, false);
   }
 );
 
-// Verifications
+// ──────────────────────────────────────
+//  Then — Vérifications
+// ──────────────────────────────────────
 
 Then(
   'la technologie {string} apparaît dans la catégorie {string}',
@@ -158,5 +122,14 @@ Then(
   'la technologie {string} est visible dans la catégorie {string}',
   (nom: string, categorie: string) => {
     TechnologiesPrimitives.verifierVisibilite(VERSION, categorie, nom, true);
+  }
+);
+
+Then(
+  'l\'expérience de {string} est mise à jour dans la catégorie {string}',
+  (nom: string, categorie: string) => {
+    TechnologiesPrimitives.verifierExperience(
+      VERSION, categorie, nom, FIXTURES_TECHNOLOGIES.NOUVELLE_EXPERIENCE
+    );
   }
 );

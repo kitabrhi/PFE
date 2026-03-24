@@ -1,7 +1,35 @@
-
 export type Version = 'v1' | 'v2';
 
+export const DELAIS = {
+  AUTO_SAVE: 2500,
+  RENDU_UI: 800,
+  RENDU_UI_COURT: 500,
+  RENDU_UI_LONG: 1500,
+  VERIFICATION: 1000
+};
 
+/**
+ * Données de test centralisées.
+ * Le Gherkin dit "avec une expérience", la fixture fournit la valeur concrète.
+ */
+export const FIXTURES_TECHNOLOGIES = {
+  EXPERIENCE_PAR_DEFAUT: '3 ans',
+  NOUVELLE_EXPERIENCE: '> 5 ans'
+};
+
+export const EXPERIENCE_MAP: Record<string, Record<Version, string>> = {
+  '1 an':     { v1: '1 AN',     v2: '1 an' },
+  '2 ans':    { v1: '2 ANS',    v2: '2 ans' },
+  '3 ans':    { v1: '3 ANS',    v2: '3 ans' },
+  '4 ans':    { v1: '4 ANS',    v2: '4 ans' },
+  '5 ans':    { v1: '5 ANS',    v2: '5 ans' },
+  '> 5 ans':  { v1: '> 5 ANS',  v2: '> 5 ans' }
+};
+
+export function experienceVersUI(valeurMetier: string, version: Version): string {
+  const cle = valeurMetier.toLowerCase().trim();
+  return EXPERIENCE_MAP[cle]?.[version] ?? valeurMetier;
+}
 
 export const SECTION_TECHNOLOGIES = {
 
@@ -33,6 +61,16 @@ export const SECTION_TECHNOLOGIES = {
   ROW: {
     v1: '.tech-list .custom-form-item',
     v2: '[data-testid="technologie-row"]'
+  },
+
+  PANEL_OPTIONS_VISIBLE: {
+    v1: [
+      '.cdk-overlay-pane:visible .mat-mdc-select-panel',
+      '.mat-mdc-select-panel:visible',
+      '.cdk-overlay-pane:visible .mat-select-panel',
+      '.mat-select-panel:visible'
+    ].join(','),
+    v2: '[data-testid="technologies-options-panel"]'
   }
 };
 
