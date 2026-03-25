@@ -34,12 +34,22 @@ export default defineConfig({
     pageLoadTimeout: 120000,
     defaultCommandTimeout: 15000,
 
+    /**
+     * Retries automatiques pour les tests flaky en CI
+     * - runMode  : 2 tentatives en CI (headless) avant de déclarer un échec
+     * - openMode : 0 en local (pas de retry pour voir le vrai comportement)
+     */
+    retries: {
+      runMode: 2,
+      openMode: 0
+    },
 
     viewportWidth: 1400,
     viewportHeight: 900,
+
     /**
      * Patterns de fichiers de tests
-     * Support des fichiers .feature (BDD) et .cy.js (E2E classique)
+     * Support des fichiers .feature (BDD)
      */
     specPattern: [
       "cypress/e2e/**/*.feature"
