@@ -1,4 +1,3 @@
-// Steps pour l'authentification — connexion, déconnexion et vérifications.
 // Les steps n'importent rien de la config, tout passe par les primitives.
 
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
@@ -48,8 +47,6 @@ When('Je tente d\'accéder à une page protégée', () => {
   AuthPrimitives.tenterAccesPageProtegee(VERSION);
 });
 
-// Vérifications — succès
-
 Then('Je suis authentifié avec succès', () => {
   AuthPrimitives.verifierAuthentificationReussie(VERSION);
 });
@@ -57,8 +54,6 @@ Then('Je suis authentifié avec succès', () => {
 Then('Je vois mon espace personnel', () => {
   AuthPrimitives.verifierEspacePersonnel(VERSION);
 });
-
-// Vérifications — erreurs
 
 Then('L\'authentification échoue', () => {
   AuthPrimitives.verifierSurPageConnexion(VERSION);
@@ -75,8 +70,6 @@ Then('Je vois un message indiquant que le compte n\'existe pas', () => {
 Then('Je reste sur la page de connexion', () => {
   AuthPrimitives.verifierSurPageConnexion(VERSION);
 });
-
-// Vérifications — déconnexion / accès refusé
 
 Then('Je suis redirigé vers la page de connexion', () => {
   AuthPrimitives.verifierSurPageConnexion(VERSION);

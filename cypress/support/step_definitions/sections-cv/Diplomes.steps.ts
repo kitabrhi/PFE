@@ -1,8 +1,3 @@
-/**
- * Étapes pour la section Diplômes.
- * Pattern : le Given mémorise l'élément, le When utilise "ce diplôme".
- */
-
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
 import { Version } from '../../config/section/selectors-diplomes.config';
 import { DiplomesPrimitives } from '../../primitives/sections-cv/diplomes.primitives';
@@ -29,14 +24,11 @@ Given('un diplôme {string} existe et est masqué sur le CV', (nom: string) => {
   DiplomesPrimitives.garantirDiplomeExiste(VERSION, nom);
   DiplomesPrimitives.toggleVisibilite(VERSION, nom, false);
 });
-
-//  AJOUT
-
+// Ajout
 When('j\'ajoute un diplôme {string} à {string} en {string}', (nom: string, lieu: string, annee: string) => {
   DiplomesPrimitives.ajouterDiplome(VERSION, nom, lieu, annee);
 });
-
-//  MODIFICATION / SUPPRESSION / VISIBILITÉ — "ce diplôme"
+// Modification, suppression et visibilite
 
 When('je modifie ce diplôme en {string} à {string} en {string}', (nouveauNom: string, nouveauLieu: string, nouvelleAnnee: string) => {
   DiplomesPrimitives.modifierDiplome(VERSION, dernierDiplome, nouveauNom, nouveauLieu, nouvelleAnnee);

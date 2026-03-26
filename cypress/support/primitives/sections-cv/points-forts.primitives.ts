@@ -7,9 +7,7 @@ const FIXTURE_POINT_FORT = 'Cadrage stratégique';
 const FIXTURE_POINT_FORT_MODIFIE = 'Gestion de projet Agile';
 
 export class PointsFortsPrimitives {
-
-  // Helpers
-
+// Utilitaires
   private static attendreAutoSave(): void {
     cy.log('Attente sauvegarde automatique...');
     cy.wait(2500);

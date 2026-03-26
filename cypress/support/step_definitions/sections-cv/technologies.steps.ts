@@ -7,18 +7,12 @@ import { TechnologiesPrimitives } from '../../primitives/sections-cv/technologie
 
 const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';
 
-// ──────────────────────────────────────
-//  Utilitaire partagé par les Given
-// ──────────────────────────────────────
+// Utilitaire pour les Given
 
 function assurerTechnologieExiste(nom: string, categorie: string): void {
   TechnologiesPrimitives.selectionnerCategorie(VERSION, categorie);
   TechnologiesPrimitives.ajouterTechnologie(VERSION, categorie, nom);
 }
-
-// ──────────────────────────────────────
-//  When — Actions
-// ──────────────────────────────────────
 
 When(
   'j\'ajoute la technologie {string} avec une expérience dans la catégorie {string}',
@@ -66,10 +60,6 @@ When(
   }
 );
 
-// ──────────────────────────────────────
-//  Given — Préconditions
-// ──────────────────────────────────────
-
 Given(
   'la technologie {string} existe dans la catégorie {string}',
   (nom: string, categorie: string) => {
@@ -92,10 +82,6 @@ Given(
     TechnologiesPrimitives.toggleVisibilite(VERSION, categorie, nom, false);
   }
 );
-
-// ──────────────────────────────────────
-//  Then — Vérifications
-// ──────────────────────────────────────
 
 Then(
   'la technologie {string} apparaît dans la catégorie {string}',

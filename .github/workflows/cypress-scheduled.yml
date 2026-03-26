@@ -42,18 +42,18 @@ jobs:
     strategy:
       fail-fast: false
     steps:
-      - name: 📥 Checkout du code
+      - name: Checkout du code
         uses: actions/checkout@v4
 
-      - name: 🟢 Installation de Node.js 18
+      - name: Installation de Node.js 18
         uses: actions/setup-node@v4
         with:
           node-version: 18
 
-      - name: 📦 Installation des dépendances
+      - name: Installation des dépendances
         run: npm install
 
-      - name: 🧪 Lancer les tests Cypress (Cucumber BDD)
+      - name: Lancer les tests Cypress (Cucumber BDD)
         uses: cypress-io/github-action@v6
         with:
           browser: chrome
@@ -61,7 +61,7 @@ jobs:
         env:
           CYPRESS_BASE_URL: ${{ secrets.CYPRESS_BASE_URL }}
 
-      - name: 📝 Créer un commit de log   # ← nouvelle étape
+      - name: Créer un commit de log   # ← nouvelle étape
         if: always()
         run: |
           git config user.name "kitabrhi"
@@ -74,7 +74,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 📊 Upload des rapports
+      - name:  Upload des rapports
         uses: actions/upload-artifact@v4
         if: always()
         with:

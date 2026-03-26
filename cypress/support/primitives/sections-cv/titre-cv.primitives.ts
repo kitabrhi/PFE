@@ -4,9 +4,7 @@ import {
 } from '../../config/section/selectors-titre-cv.config';
 
 export class SectionsCVPrimitives {
-
-  // Helpers
-
+// Utilitaires
   private static attendreAutoSave(): void {
     cy.log('Attente sauvegarde automatique...');
     cy.wait(2500);
@@ -28,9 +26,7 @@ export class SectionsCVPrimitives {
       });
     }
   }
-
-  // Navigation
-
+// Navigation
   static naviguerVersSection(version: Version, nomSection: string): void {
     const label = getLabelSection(nomSection, version);
     cy.log(`Navigation vers section "${nomSection}" (label: "${label}")`);
@@ -234,8 +230,6 @@ export class SectionsCVPrimitives {
     });
   }
 
-  // Titres — ajout / modification
-
   static ajouterTitre(version: Version, titre: string): void {
     cy.log(`Ajout du titre "${titre}"`);
 
@@ -293,8 +287,6 @@ export class SectionsCVPrimitives {
 
     cy.log(`Titre modifié`);
   }
-
-  // Titres — vérifications
 
   static verifierTitreExiste(version: Version, titre: string): void {
     cy.log(`Vérification existence "${titre}"`);

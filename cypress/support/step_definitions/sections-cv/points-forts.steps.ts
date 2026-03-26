@@ -1,8 +1,3 @@
-/**
- * Étapes pour la section Points Forts.
- * Pattern : le Given mémorise l'élément, le When utilise "ce point fort".
- */
-
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
 import { Version } from '../../config/section/selectors-points-forts.config';
 import { PointsFortsPrimitives } from '../../primitives/sections-cv/points-forts.primitives';
@@ -29,14 +24,11 @@ Given('un point fort {string} existe et est masqué sur le CV', (texte: string) 
   PointsFortsPrimitives.garantirPointFortExiste(VERSION, texte);
   PointsFortsPrimitives.toggleVisibilite(VERSION, texte, false);
 });
-
-//  AJOUT
-
+// Ajout
 When('j\'ajoute le point fort {string}', (texte: string) => {
   PointsFortsPrimitives.ajouterPointFort(VERSION, texte);
 });
-
-//  MODIFICATION / SUPPRESSION / VISIBILITÉ — "ce point fort"
+// Modification, suppression et visibilite
 
 When('je modifie ce point fort en {string}', (nouveau: string) => {
   PointsFortsPrimitives.modifierPointFort(VERSION, dernierPointFort, nouveau);

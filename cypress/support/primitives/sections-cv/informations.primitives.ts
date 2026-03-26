@@ -10,9 +10,7 @@ const FIXTURE_DEBUT_ACTIVITE  = '01/09/2018';
 const FIXTURE_PHOTO           = 'cypress/fixtures/photo-test.jpg';
 
 export class InformationsPrimitives {
-
-  // Helpers
-
+// Utilitaires
   private static attendreAutoSave(): void {
     cy.log('Attente sauvegarde automatique...');
     cy.wait(2500);

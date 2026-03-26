@@ -9,9 +9,7 @@ import {
 } from '../../config/auth/selectors-auth.config';
 
 export class AuthPrimitives {
-
-  // Navigation
-
+// Navigation
   static naviguerPageConnexion(version: Version): void {
     cy.log('Navigation vers page de connexion');
 
@@ -124,8 +122,6 @@ export class AuthPrimitives {
     cy.wait(2000);
   }
 
-  // Vérifications — helpers internes
-
   // vérifie un élément soit par sélecteur soit par texte selon la version
   private static verifierElement(
     version: Version,
@@ -160,8 +156,6 @@ export class AuthPrimitives {
     }
   }
 
-  // Vérifications — succès
-
   static verifierAuthentificationReussie(version: Version): void {
     cy.log('Vérification authentification réussie');
 
@@ -174,8 +168,6 @@ export class AuthPrimitives {
 
     AuthPrimitives.verifierElement(version, AUTH_SELECTORS.ESPACE_PERSONNEL, AUTH_SELECTORS.ESPACE_PERSONNEL_TEXT);
   }
-
-  // Vérifications — erreurs
 
   static verifierErreurIdentifiants(version: Version): void {
     cy.log('Vérification erreur identifiants');
@@ -196,8 +188,6 @@ export class AuthPrimitives {
       AUTH_SELECTORS.ERROR_COMPTE_INEXISTANT_TEXT
     );
   }
-
-  // Vérifications — navigation / session
 
   // couvre : reste sur la page de connexion, redirigé, session terminée, accès refusé
   static verifierSurPageConnexion(version: Version, timeout: number = 10000): void {

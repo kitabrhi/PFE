@@ -155,10 +155,6 @@ export const CARTE_CV = {
     v2: 'button[data-testid="btn-telecharger"]'
   } as SelectorMap,
 };
-
-/**
- * Retourne le sélecteur correspondant a la version demandee.
- */
 export function getSelector(selectorMap: SelectorMap, version: Version): string {
   const selector = selectorMap[version];
   if (!selector) {

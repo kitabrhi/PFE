@@ -1,8 +1,3 @@
-/**
- * Étapes pour la section Compétences.
- * Pattern : le Given mémorise l'élément, le When utilise "cette compétence".
- */
-
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
 import { Version } from '../../config/section/selectors-competences.config';
 import { CompetencesPrimitives } from '../../primitives/sections-cv/competences.primitives';
@@ -10,8 +5,6 @@ import { CompetencesPrimitives } from '../../primitives/sections-cv/competences.
 const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';
 
 let derniereCompetence = '';
-
-//  PRÉPARATION
 
 Given('une compétence {string} existe dans ma liste', (nom: string) => {
   derniereCompetence = nom;
@@ -30,14 +23,9 @@ Given('une compétence {string} existe et est masquée sur le CV', (nom: string)
   CompetencesPrimitives.toggleVisibilite(VERSION, nom, false);
 });
 
-// 
-//  AJOUT
-
 When('j\'ajoute la compétence {string} avec {string} d\'expérience', (nom: string, exp: string) => {
   CompetencesPrimitives.ajouterCompetence(VERSION, nom, exp);
 });
-
-//  MODIFICATION / SUPPRESSION / VISIBILITÉ — "cette compétence"
 
 When('je modifie cette compétence en {string} avec {string} d\'expérience', (nouveauNom: string, nouvelleExp: string) => {
   CompetencesPrimitives.modifierCompetence(VERSION, derniereCompetence, nouveauNom, nouvelleExp);
@@ -55,8 +43,13 @@ When('je rends visible cette compétence sur le CV', () => {
   CompetencesPrimitives.toggleVisibilite(VERSION, derniereCompetence, true);
 });
 
-//  VÉRIFICATIONS
+When('je change le tri de la compétence {string} à la position {string}', (nom: string, position: string) => {
+  CompetencesPrimitives.changerTri(VERSION, nom, position);
+});
 
+Then('la compétence {string} est en position {string} dans la liste', (nom: string, position: string) => {
+  CompetencesPrimitives.verifierPosition(VERSION, nom, position);
+});
 
 Then('la compétence {string} apparaît dans ma liste', (nom: string) => {
   CompetencesPrimitives.verifierExiste(VERSION, nom);

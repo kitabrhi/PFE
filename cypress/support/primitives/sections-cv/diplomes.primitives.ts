@@ -19,9 +19,7 @@ const FIXTURE_DIPLOME_MODIFIE = {
 };
 
 export class DiplomesPrimitives {
-
-  // Helpers
-
+// Utilitaires
   private static attendreAutoSave(): void {
     cy.log('Attente sauvegarde automatique...');
     cy.wait(2500);

@@ -1,8 +1,3 @@
-/**
- * Étapes pour la section Titres et navigation entre sections.
- * Pattern : le Given mémorise l'élément, le When utilise "ce titre".
- */
-
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
 import { Version } from '../../config/section/selectors-titre-cv.config';
 import { SectionsCVPrimitives } from '../../primitives/sections-cv/titre-cv.primitives';
@@ -42,17 +37,11 @@ Given('les titres suivants existent dans l\'ordre :', (dataTable: any) => {
     SectionsCVPrimitives.garantirTitreExiste(VERSION, row.titre);
   });
 });
-
-//  AJOUT
-
-
+// Ajout
 When('j\'ajoute le titre {string}', (titre: string) => {
   SectionsCVPrimitives.ajouterTitre(VERSION, titre);
 });
-
-// ═══════════════════════════════════════════════════════════════════════════════
-//  MODIFICATION / SUPPRESSION / VISIBILITÉ — "ce titre"
-// ═══════════════════════════════════════════════════════════════════════════════
+// Modification, suppression et visibilite
 
 When('je modifie ce titre en {string}', (nouveauTitre: string) => {
   SectionsCVPrimitives.modifierTitre(VERSION, dernierTitre, nouveauTitre);
@@ -70,17 +59,11 @@ When('je rends visible ce titre sur le CV', () => {
   SectionsCVPrimitives.toggleVisibilite(VERSION, dernierTitre, true);
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-//  RÉORGANISATION (garde les noms — ce sont des données métier distinctes)
-// ═══════════════════════════════════════════════════════════════════════════════
-
 When('je place le titre {string} en position {int}', (titre: string, position: number) => {
   SectionsCVPrimitives.changerOrdre(VERSION, titre, position);
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
 //  VÉRIFICATIONS
-// ═══════════════════════════════════════════════════════════════════════════════
 
 Then('le titre {string} apparaît dans ma liste de titres', (titre: string) => {
   SectionsCVPrimitives.verifierTitreExiste(VERSION, titre);

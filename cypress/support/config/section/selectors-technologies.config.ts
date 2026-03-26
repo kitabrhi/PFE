@@ -7,11 +7,6 @@ export const DELAIS = {
   RENDU_UI_LONG: 1500,
   VERIFICATION: 1000
 };
-
-/**
- * Données de test centralisées.
- * Le Gherkin dit "avec une expérience", la fixture fournit la valeur concrète.
- */
 export const FIXTURES_TECHNOLOGIES = {
   EXPERIENCE_PAR_DEFAUT: '3 ans',
   NOUVELLE_EXPERIENCE: '> 5 ans'

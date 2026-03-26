@@ -8,21 +8,18 @@ Feature: Gérer les informations personnelles de mon CV
   Given je suis connecté à mon compte
   And je suis sur la section "Informations" d'un CV existant
 
-  # Cas autour de la photo de profil
 
   @INFO-001
   Scenario: Ajouter une photo de profil à mon CV
     When j'ajoute une photo de profil
     Then ma photo de profil est visible sur mon CV
 
-  # Vérification de l'email en lecture seule
 
   @INFO-002
   Scenario: Vérifier que mon email ne peut pas être modifié
     Then mon email est affiché sur ma page de profil
     And je ne peux pas modifier mon email
 
-  # Mise à jour de l'identité
 
   @INFO-003
   Scenario: Modifier mon prénom
@@ -34,7 +31,6 @@ Feature: Gérer les informations personnelles de mon CV
     When je mets à jour mon nom de famille
     Then mon nouveau nom de famille est affiché sur mon profil
 
-  # Saisie des dates
 
   @INFO-005
   Scenario: Renseigner ma date de naissance
@@ -46,7 +42,6 @@ Feature: Gérer les informations personnelles de mon CV
     When je renseigne mon début d'activité professionnelle
     Then mon début d'activité professionnelle est enregistré sur mon profil
 
-  # Contrôle de la persistance
 
   @INFO-007
   Scenario: Les modifications sont conservées après avoir navigué vers une autre section

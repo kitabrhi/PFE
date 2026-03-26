@@ -7,9 +7,7 @@ const FIXTURE_COMPETENCE = { nom: 'Angular', experience: '3 ANS' };
 const FIXTURE_COMPETENCE_MODIFIE = { nom: 'React', experience: '> 5 ANS' };
 
 export class CompetencesPrimitives {
-
-  // Helpers
-
+// Utilitaires
   private static attendreAutoSave(): void {
     cy.log('Attente sauvegarde automatique...');
     cy.wait(2500);
@@ -210,7 +208,7 @@ export class CompetencesPrimitives {
   // Visibilité
 
   static toggleVisibilite(version: Version, nom: string, activer: boolean): void {
-    cy.log(`${activer ? '' : ''} ${activer ? 'Rendre visible' : 'Masquer'} "${nom}"`);
+    cy.log(`${activer ? 'Rendre visible' : 'Masquer'} "${nom}"`);
 
     CompetencesPrimitives.trouverLigneParNom(version, nom);
 
@@ -225,6 +223,70 @@ export class CompetencesPrimitives {
     });
 
     CompetencesPrimitives.attendreAutoSave();
+  }
+
+  // Tri / Ordre
+
+  static changerTri(version: Version, nom: string, position: string): void {
+    cy.log(`Changer tri de "${nom}" → position ${position}`);
+
+    const ordreSelector = getSelector(SECTION_COMPETENCES.COL_ORDRE, version);
+
+    CompetencesPrimitives.trouverLigneParNom(version, nom);
+
+    if (version === 'v1') {
+      // en v1 on lit d'abord la valeur actuelle du tri pour éviter de re-sélectionner la même
+      cy.get('@ligneCompetence').scrollIntoView().within(() => {
+        cy.get(ordreSelector).find('.mat-mdc-select-value-text, .mat-select-value-text')
+          .invoke('text')
+          .then((triActuel) => {
+            const triNettoye = triActuel.trim();
+            if (triNettoye === position) {
+              cy.log(`Tri déjà à la position ${position}, pas de changement nécessaire`);
+            } else {
+              cy.get(ordreSelector).click({ force: true });
+            }
+          });
+      });
+
+      // on sélectionne la nouvelle position seulement si l'overlay est ouvert
+      cy.get('body').then($body => {
+        if ($body.find('.cdk-overlay-container mat-option').length > 0) {
+          cy.get('.cdk-overlay-container mat-option', { timeout: 10000 })
+            .contains(new RegExp(`^\\s*${position}\\s*$`))
+            .click({ force: true });
+
+          CompetencesPrimitives.attendreAutoSave();
+        }
+      });
+
+    } else {
+      cy.get('@ligneCompetence').scrollIntoView().within(() => {
+        cy.get(ordreSelector).select(position);
+      });
+      CompetencesPrimitives.attendreAutoSave();
+    }
+  }
+
+  static verifierPosition(version: Version, nom: string, positionAttendue: string): void {
+    cy.log(`Vérifier que "${nom}" est en position ${positionAttendue}`);
+
+    const rowSelector = getSelector(SECTION_COMPETENCES.ROW, version);
+    const inputComp = getSelector(SECTION_COMPETENCES.INPUT_COMPETENCE, version);
+    const posIndex = parseInt(positionAttendue, 10) - 1;
+
+    if (version === 'v1') {
+      cy.get(`${rowSelector}`, { timeout: 10000 })
+        .eq(posIndex)
+        .find(inputComp)
+        .should(($input) => {
+          expect(($input[0] as HTMLInputElement).value).to.equal(nom);
+        });
+    } else {
+      cy.get(rowSelector)
+        .eq(posIndex)
+        .should('contain', nom);
+    }
   }
 
   // Vérifications

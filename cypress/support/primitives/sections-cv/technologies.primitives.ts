@@ -21,10 +21,7 @@ const V1_BTN_SUPPRIMER = getSelector(SECTION_TECHNOLOGIES.BTN_SUPPRIMER, 'v1');
 const V1_VISIBLE_PANEL = getSelector(SECTION_TECHNOLOGIES.PANEL_OPTIONS_VISIBLE, 'v1');
 
 export class TechnologiesPrimitives {
-
-  // ──────────────────────────────────────
-  //  Utilitaires génériques
-  // ──────────────────────────────────────
+  // Utilitaires
 
   private static normaliserTexte(valeur: string): string {
     return (valeur || '').replace(/\s+/g, ' ').trim();
@@ -39,11 +36,6 @@ export class TechnologiesPrimitives {
     cy.log('Attente sauvegarde automatique...');
     cy.wait(DELAIS.AUTO_SAVE);
   }
-
-  /**
-   * Pattern réutilisable : sélectionner une valeur dans un dropdown
-   * qu'il soit un <select> natif ou un mat-select Angular Material.
-   */
   private static selectionnerDansDropdown(
     $el: JQuery<HTMLElement>,
     valeur: string
@@ -74,9 +66,7 @@ export class TechnologiesPrimitives {
       });
   }
 
-  // ──────────────────────────────────────
-  //  Gestion des catégories
-  // ──────────────────────────────────────
+  // Categories
 
   private static categorieExisteDejaV1(categorie: string): Cypress.Chainable<boolean> {
     return cy.get('body').then($body => {
@@ -122,13 +112,6 @@ export class TechnologiesPrimitives {
     cy.wait(DELAIS.RENDU_UI);
   }
 
-  // ──────────────────────────────────────
-  //  Recherche de ligne vide (v1) — découpée
-  // ──────────────────────────────────────
-
-  /**
-   * Filtre les inputs qui se trouvent entre deux éléments de catégorie dans le DOM.
-   */
   private static filtrerInputsDansBloc(
     $inputs: JQuery<HTMLElement>,
     catEl: Element,
@@ -152,11 +135,6 @@ export class TechnologiesPrimitives {
       return !TechnologiesPrimitives.lireValeurInput(el).trim();
     }).last();
   }
-
-  /**
-   * Débloquer une nouvelle ligne en remplissant l'expérience
-   * de la dernière ligne existante dans le bloc.
-   */
   private static debloquerLigneEnRemplissantExperience(
     $scoped: JQuery<HTMLElement>,
     categorie: string,
@@ -219,8 +197,6 @@ export class TechnologiesPrimitives {
           return false;
         }
       });
-
-      // Catégorie absente → la créer
       if (targetIdx === -1) {
         TechnologiesPrimitives.ajouterNouvelleCategorieV1(categorie);
 
@@ -233,8 +209,6 @@ export class TechnologiesPrimitives {
           .as('ligneTechno');
         return;
       }
-
-      // Catégorie trouvée → chercher une ligne vide dans son bloc
       const catEl = $allSelects[targetIdx];
       const nextCatEl =
         targetIdx + 1 < $allSelects.length ? $allSelects[targetIdx + 1] : null;
@@ -258,10 +232,7 @@ export class TechnologiesPrimitives {
       });
     });
   }
-
-  // ──────────────────────────────────────
   //  Expérience & checkbox
-  // ──────────────────────────────────────
 
   private static choisirExperienceDansLigneV1(experience: string): void {
     cy.get('@ligneTechno').within(() => {
@@ -291,10 +262,7 @@ export class TechnologiesPrimitives {
       });
     });
   }
-
-  // ──────────────────────────────────────
   //  Suppression récursive (v1)
-  // ──────────────────────────────────────
 
   private static supprimerToutesOccurrencesV1(nom: string): void {
     cy.get('body').then($body => {
@@ -322,10 +290,7 @@ export class TechnologiesPrimitives {
       TechnologiesPrimitives.supprimerToutesOccurrencesV1(nom);
     });
   }
-
-  // ──────────────────────────────────────
   //  Actions principales (API publique)
-  // ──────────────────────────────────────
 
   static selectionnerCategorie(version: Version, categorie: string): void {
     TechnologiesPrimitives.assurerCategorie(version, categorie);
@@ -473,10 +438,7 @@ export class TechnologiesPrimitives {
     TechnologiesPrimitives.setCheckboxDansLigne(version, activer);
     TechnologiesPrimitives.attendreAutoSave();
   }
-
-  // ──────────────────────────────────────
   //  Vérifications
-  // ──────────────────────────────────────
 
   static verifierTechnologieExiste(
     version: Version,

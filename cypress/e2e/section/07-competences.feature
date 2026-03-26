@@ -38,6 +38,13 @@ Feature: Gérer mes compétences
     Then la compétence "Angular" est visible sur le CV
 
   @COMP-006
+  Scenario: Changer le tri d'une compétence
+    Given une compétence "Angular" existe dans ma liste
+    And une compétence "React" existe dans ma liste
+    When je change le tri de la compétence "Angular" à la position "2"
+    Then la compétence "Angular" est en position "2" dans la liste
+
+  @COMP-007
   Scenario: La compétence est conservée après navigation
     Given une compétence "Angular" existe dans ma liste
     When je quitte la section "Compétences"

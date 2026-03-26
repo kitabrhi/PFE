@@ -9,9 +9,7 @@ const FIXTURE_LANGUE = { nom: 'Français', niveau: 'Langue maternelle' };
 const FIXTURE_LANGUE_2 = { nom: 'Anglais', niveau: 'C1' };
 
 export class LanguesPrimitives {
-
-  // Helpers
-
+// Utilitaires
   private static attendreAutoSave(): void {
     cy.log('Attente sauvegarde automatique...');
     cy.wait(2500);

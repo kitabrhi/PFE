@@ -5,7 +5,7 @@ import { CarteCVPrimitives } from '../../primitives/carte-cv/actions.primitives'
 
 const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';
 
-// Petit helper local pour eviter les collisions de noms pendant les tests.
+// Petit utilitaire pour eviter les doublons de nom pendant les tests.
 
 function genererNomUnique(base: string): string {
   const timestamp = Date.now().toString().slice(-6);
@@ -20,10 +20,6 @@ Given('un CV existe dans ma liste', () => {
   cy.log('PRÉPARATION: Vérifier qu\'un CV existe');
   CarteCVPrimitives.preparerEtVerifier(VERSION, 1);
 });
-// Given('2 CV existe dans ma liste', (nbMin: number) => {
-//   cy.log('PRÉPARATION: Vérifier que 2 CVs existes');
-//   CarteCVPrimitives.preparerEtVerifier2(VERSION, 2);
-// });
 
 // Renommage
 Given('j\'ai au moins {int} CVs sur la page', (nbMin: number) => {
