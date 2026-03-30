@@ -1,4 +1,4 @@
-@carte-cv @changer-statut @prioritaire
+@carte-cv @changer-statut 
 Feature: Changer le statut d'un CV
   En tant qu'utilisateur de ReDsume
   Je veux pouvoir changer le statut de mon CV

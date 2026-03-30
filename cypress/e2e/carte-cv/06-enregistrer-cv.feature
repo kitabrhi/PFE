@@ -1,4 +1,4 @@
-@carte-cv @enregistrer @prioritaire
+@carte-cv @enregistrer 
 Feature: Enregistrer les modifications d'un CV
   En tant qu'utilisateur de ReDsume
   Je veux pouvoir sauvegarder mes modifications
