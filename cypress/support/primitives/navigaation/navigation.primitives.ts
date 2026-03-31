@@ -31,16 +31,33 @@ export class NavigationPrimitives {
     cy.log('Sur la page: Mes CVS');
   }
 
+  // Navigation vers une page par son nom
+
   static naviguerVersPage(version: Version, pageName: string): void {
     if (pageName === 'Mes CVS') {
       NavigationPrimitives.naviguerVersPageMesCVs(version);
+
+    } else if (pageName === 'Invitation Candidat') {
+      cy.log('Navigation vers Invitation Candidat');
+      cy.get('.mat-sidenav', { timeout: 10000 }).should('be.visible');
+      cy.contains('.mat-sidenav a', 'Invitation Candidat').click({ force: true });
+      cy.wait(1000);
+      cy.contains('Invitation Candidat', { timeout: 10000 }).should('be.visible');
+
+    } else if (pageName === 'Recherche CV') {
+      cy.log('Navigation vers Recherche CV');
+      cy.get('.mat-sidenav', { timeout: 10000 }).should('be.visible');
+      cy.contains('.mat-sidenav a', 'Recherche CV').click({ force: true });
+      cy.wait(1000);
+      cy.get('input[name="searchTerm"]', { timeout: 10000 }).should('exist');
+
     } else {
       throw new Error(`Page inconnue : "${pageName}"`);
     }
   }
 
   // Ouvre le premier CV de la liste.
-  // Si la liste est vide, on stoppe le test avec une erreur claire.
+
   static selectionnerPremierCV(version: Version): void {
     cy.log('Sélection du premier CV');
 
@@ -60,7 +77,9 @@ export class NavigationPrimitives {
 
     cy.log('CV sélectionné');
   }
+
   // Enchaine la navigation complete jusqu'a la section demandee.
+
   static naviguerVersSectionCVExistant(version: Version, nomSection: string): void {
     NavigationPrimitives.naviguerVersPageMesCVs(version);
     NavigationPrimitives.selectionnerPremierCV(version);

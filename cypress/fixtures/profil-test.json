@@ -1,0 +1,78 @@
+{
+    "_id": "test-fixture-profile-001",
+    "userId": "test-user-id",
+    "versionName": "CV Test Upload Fixture",
+    "versionStatus": "new",
+    "id": 0,
+    "createdOn": "2026-01-01T00:00:00.000Z",
+    "modifiedOn": "2026-01-01T00:00:00.000Z",
+    "createdBy": "test@example.com",
+    "modifiedBy": "test@example.com",
+    "info": {
+      "firstName": "Jean",
+      "lastName": "Dupont",
+      "email": "jean.dupont@test.com"
+    },
+    "activitiesField": [
+      {
+        "title": "Santé",
+        "level": "3 ANS",
+        "selected": true
+      }
+    ],
+    "educations": [],
+    "experiences": [
+      {
+        "title": "Développeur Angular",
+        "company": "REDSEN",
+        "location": "Genève",
+        "beginDate": "01/2024",
+        "endDate": "06/2024",
+        "selected": true
+      }
+    ],
+    "missions": [
+      {
+        "title": "Consultant Senior",
+        "company": "Redsen Consulting",
+        "location": "Lausanne, Suisse",
+        "beginDate": "01/2024",
+        "endDate": "06/2024",
+        "selected": true
+      }
+    ],
+    "functions": [],
+    "hashtags": [
+      {
+        "title": "Chef de projet",
+        "selected": true
+      }
+    ],
+    "languages": [],
+    "roles": [],
+    "skills": [
+      {
+        "title": "Angular",
+        "level": "3 ANS",
+        "selected": true
+      },
+      {
+        "title": "TypeScript",
+        "level": "> 5 ANS",
+        "selected": true
+      }
+    ],
+    "strengths": [],
+    "ownerEmail": "test@example.com",
+    "version": 1,
+    "summary": "Développeur Full Stack passionné avec 5 ans d'expérience",
+    "technologies": [
+      {
+        "title": "Node.js",
+        "level": "3 ANS",
+        "selected": true
+      }
+    ],
+    "generatedOn": "2026-01-01T00:00:00.000Z",
+    "generatedBy": "test@example.com"
+  }
