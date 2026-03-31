@@ -51,3 +51,5 @@ Fonctionnalité: Gérer la configuration et générer mon CV
     Et je navigue vers la section "Compétences"
     Et je reviens sur la configuration
     Alors l'application est en mode sombre
+
+
