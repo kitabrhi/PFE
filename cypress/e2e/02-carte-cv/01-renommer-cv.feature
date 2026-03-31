@@ -1,4 +1,4 @@
-@carte-cv @renommer 
+@carte-cv @renommer
 Feature: Renommer un CV
   En tant qu'utilisateur de ReDsume
   Je veux pouvoir renommer mon CV

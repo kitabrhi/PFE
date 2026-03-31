@@ -1,12 +1,10 @@
-
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
 import { Version } from '../../config/carte-cv/selectors-carte-cv.config';
 import { CarteCVPrimitives } from '../../primitives/carte-cv/actions.primitives';
 
 const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';
 
-// Petit utilitaire pour eviter les doublons de nom pendant les tests.
-
+// Petit utilitaire pour éviter les doublons de nom pendant les tests.
 function genererNomUnique(base: string): string {
   const timestamp = Date.now().toString().slice(-6);
   return `${base}-${timestamp}`;
@@ -14,34 +12,32 @@ function genererNomUnique(base: string): string {
 
 let dernierNomGenere = '';
 
-// Preparation
+// ===============================
+// PRÉPARATION
+// ===============================
 
 Given('un CV existe dans ma liste', () => {
   cy.log('PRÉPARATION: Vérifier qu\'un CV existe');
   CarteCVPrimitives.preparerEtVerifier(VERSION, 1);
 });
 
-// Renommage
 Given('j\'ai au moins {int} CVs sur la page', (nbMin: number) => {
-  cy.log(`PRÉPARATION: Garantir au moins ${nbMin} CVs`);
-  CarteCVPrimitives.assurerSurPageListe(VERSION);
-  CarteCVPrimitives.garantirNbMinCVs(VERSION, nbMin);
+  cy.log(`PRÉPARATION: Garantir au moins ${nbMin} CV(s)`);
+  CarteCVPrimitives.preparerEtVerifier(VERSION, nbMin);
 });
 
 Given('un CV porte déjà le nom {string}', (nom: string) => {
-  cy.log(`PRÉPARATION: S'assurer qu'un CV s'appelle "${nom}"`);
-  CarteCVPrimitives.preparerEtVerifier(VERSION, 2);
-  CarteCVPrimitives.selectionnerCVParIndex(VERSION, 0);
-  CarteCVPrimitives.ouvrirModaleRenommer(VERSION);
-  CarteCVPrimitives.saisirNouveauNom(VERSION, nom);
-  CarteCVPrimitives.confirmerRenommage(VERSION);
-  CarteCVPrimitives.verifierModaleFermee(VERSION);
-  CarteCVPrimitives.retourListeCV(VERSION);
+  cy.log(`PRÉPARATION: S'assurer qu'un CV porte déjà le nom "${nom}"`);
+  CarteCVPrimitives.assurerQuUnCVPorteDejaCeNom(VERSION, nom);
 });
+
+// ===============================
+// RENOMMAGE
+// ===============================
 
 When('je renomme ce CV en {string}', (nouveauNom: string) => {
   dernierNomGenere = genererNomUnique(nouveauNom);
-  cy.log(`INTENTION: Renommer CV en "${dernierNomGenere}"`);
+  cy.log(`INTENTION : renommer le CV en "${dernierNomGenere}"`);
 
   CarteCVPrimitives.selectionnerCVParIndex(VERSION, 0);
   CarteCVPrimitives.ouvrirModaleRenommer(VERSION);
@@ -54,25 +50,26 @@ Then('le CV est renommé en {string}', () => {
   CarteCVPrimitives.verifierNouveauNom(VERSION, dernierNomGenere);
 });
 
-When('je tente de renommer un autre CV en {string}', (nouveauNom: string) => {
-  cy.log(`INTENTION: Tenter de renommer un autre CV en "${nouveauNom}"`);
+// ===============================
+// RENOMMAGE — SCÉNARIO NÉGATIF
+// ===============================
 
-  CarteCVPrimitives.preparerEtVerifier(VERSION, 2);
-  CarteCVPrimitives.selectionnerCVParIndex(VERSION, 1);
-  CarteCVPrimitives.ouvrirModaleRenommer(VERSION);
-  CarteCVPrimitives.saisirNouveauNom(VERSION, nouveauNom);
+When('je tente de renommer un autre CV en {string}', (nomExistant: string) => {
+  cy.log(`INTENTION : tenter de renommer un autre CV en "${nomExistant}"`);
+  CarteCVPrimitives.tenterRenommageAvecNomExistant(VERSION, nomExistant);
 });
 
 Then('un message d\'erreur indique que ce nom existe déjà', () => {
-  CarteCVPrimitives.verifierMessageErreur(VERSION, 'Ce nom existe déjà');
+  CarteCVPrimitives.verifierErreurNomDejaExistant(VERSION, 'Ce nom existe déjà');
 });
 
 Then('le renommage est refusé', () => {
-  CarteCVPrimitives.annulerRenommage(VERSION);
-  CarteCVPrimitives.verifierModaleFermee(VERSION);
+  CarteCVPrimitives.fermerModaleApresRefusRenommage(VERSION);
 });
 
-// Duplication
+// ===============================
+// DUPLICATION
+// ===============================
 
 When('je duplique ce CV', () => {
   cy.log('INTENTION: Dupliquer le CV');
@@ -96,7 +93,9 @@ Then('la copie apparaît dans ma liste de CV', () => {
   cy.log('Copie visible');
 });
 
-// Vidage
+// ===============================
+// VIDAGE
+// ===============================
 
 When('je vide ce CV', () => {
   cy.log('INTENTION: Vider le CV');
@@ -125,7 +124,9 @@ Then('le contenu du CV reste intact', () => {
   cy.log('Contenu intact');
 });
 
-// Changement de proprietaire
+// ===============================
+// CHANGEMENT DE PROPRIÉTAIRE
+// ===============================
 
 When('je transfère ce CV à un collègue', () => {
   cy.log('INTENTION: Transférer le CV à un collègue');
@@ -154,7 +155,9 @@ Then('un message indique que le propriétaire est introuvable', () => {
   CarteCVPrimitives.verifierMessageToast(VERSION, 'introuvable');
 });
 
-// Suppression
+// ===============================
+// SUPPRESSION
+// ===============================
 
 When('je supprime ce CV', () => {
   cy.log('INTENTION: Supprimer le CV');
@@ -191,13 +194,14 @@ Then('le CV reste dans ma liste', () => {
   cy.log('CV toujours présent');
 });
 
-// Sauvegarde
+// ===============================
+// SAUVEGARDE
+// ===============================
 
 When('je modifie ce CV', () => {
   cy.log('INTENTION: Modifier le CV');
 
   CarteCVPrimitives.selectionnerCVParIndex(VERSION, 0);
-  // On fait une petite modification pour que l'enregistrement soit utile.
   CarteCVPrimitives.changerStatut(VERSION, 'En cours');
 });
 
@@ -210,7 +214,9 @@ Then('les modifications sont sauvegardées', () => {
   cy.log('Modifications sauvegardées');
 });
 
-// Changement de statut
+// ===============================
+// CHANGEMENT DE STATUT
+// ===============================
 
 When('je change le statut de ce CV en {string}', (nouveauStatut: string) => {
   cy.log(`INTENTION: Changer statut → "${nouveauStatut}"`);
@@ -223,7 +229,9 @@ Then('le statut du CV devient {string}', (statutAttendu: string) => {
   CarteCVPrimitives.verifierStatutVisible(statutAttendu);
 });
 
-// Telechargement du JSON en v2
+// ===============================
+// TÉLÉCHARGEMENT JSON
+// ===============================
 
 When('je télécharge le JSON de ce CV', () => {
   cy.log('INTENTION: Download Json');

@@ -236,42 +236,164 @@ export class CarteCVPrimitives {
 
   // Renommage
 
-  static ouvrirModaleRenommer(version: Version): void {
-    cy.log('Ouverture modale renommage');
-    CarteCVPrimitives.ouvrirActionPage2(
-      version,
-      getSelector(CARTE_CV.BTN_RENOMMER, version),
-      'Renommer'
-    );
-    cy.get(getSelector(CARTE_CV.MODAL, version), { timeout: 5000 }).should('be.visible');
-  }
-
-  static saisirNouveauNom(version: Version, nouveauNom: string): void {
-    cy.log(`Saisie: "${nouveauNom}"`);
-    cy.get(getSelector(CARTE_CV.MODAL_INPUT, version)).clear().type(nouveauNom);
-  }
-
-  static confirmerRenommage(version: Version): void {
-    cy.log('Confirmation renommage');
-    cy.get(getSelector(CARTE_CV.MODAL, version)).within(() => {
-      cy.contains('button', 'Valider').click();
+  // Vérifie si un nom de CV existe déjà dans le tableau
+  static nomCVExisteDansListe(version: Version, nom: string): Cypress.Chainable<boolean> {
+    cy.log(`Vérifier si le nom "${nom}" existe déjà`);
+  
+    const rowSelector = getSelector(CARTE_CV.TABLE_ROW, version);
+  
+    return cy.get(rowSelector, { timeout: 10000 }).then(($rows) => {
+      const existe = [...$rows].some((row) => {
+        const texte = (row.innerText || '').trim();
+        return texte.includes(nom);
+      });
+  
+      Cypress.log({
+        name: 'nomCVExisteDansListe',
+        message: existe
+          ? `Le nom "${nom}" existe déjà`
+          : `Le nom "${nom}" n'existe pas encore`,
+      });
+  
+      return existe;
     });
-    cy.wait(2000);
   }
 
-  static annulerRenommage(version: Version): void {
-    cy.log('Annulation renommage');
-    CarteCVPrimitives.annulerActionModale(version);
-  }
+// Retourne l'index d'un CV différent du nom fourni
+static trouverIndexAutreCVQueNom(version: Version, nom: string): Cypress.Chainable<number> {
+  cy.log(`Recherche d'un autre CV différent de "${nom}"`);
 
-  static verifierNouveauNom(version: Version, nouveauNom: string): void {
-    cy.log(`Vérification nom: "${nouveauNom}"`);
-    cy.contains(nouveauNom).scrollIntoView();
-    cy.wait(500);
-    cy.contains(nouveauNom).should('be.visible');
-    cy.log(`Nom "${nouveauNom}" visible`);
-  }
+  const rowSelector = getSelector(CARTE_CV.TABLE_ROW, version);
 
+  return cy.get(rowSelector, { timeout: 10000 }).then(($rows) => {
+    const index = [...$rows].findIndex((row) => {
+      const texte = (row.innerText || '').trim();
+      return !texte.includes(nom);
+    });
+
+    if (index === -1) {
+      throw new Error(
+        `Impossible de trouver un autre CV différent de "${nom}". ` +
+        `Il faut au moins 2 CV avec des noms différents.`
+      );
+    }
+
+    Cypress.log({
+      name: 'trouverIndexAutreCVQueNom',
+      message: `Autre CV trouvé à l'index ${index}`,
+    });
+
+    return index;
+  });
+}
+
+static ouvrirModaleRenommer(version: Version): void {
+  cy.log('Ouverture modale renommage');
+  CarteCVPrimitives.ouvrirActionPage2(
+    version,
+    getSelector(CARTE_CV.BTN_RENOMMER, version),
+    'Renommer'
+  );
+  cy.get(getSelector(CARTE_CV.MODAL, version), { timeout: 5000 }).should('be.visible');
+}
+
+static saisirNouveauNom(version: Version, nouveauNom: string): void {
+  cy.log(`Saisie du nouveau nom : "${nouveauNom}"`);
+  cy.get(getSelector(CARTE_CV.MODAL_INPUT, version))
+    .should('be.visible')
+    .clear()
+    .type(nouveauNom);
+}
+
+// Cas positif uniquement : clique sur Valider seulement si le bouton est actif
+static confirmerRenommage(version: Version): void {
+  cy.log('Confirmation renommage');
+
+  cy.get(getSelector(CARTE_CV.MODAL_BTN_VALIDER, version))
+    .should('be.visible')
+    .and('not.be.disabled')
+    .click();
+
+  cy.wait(2000);
+}
+
+static annulerRenommage(version: Version): void {
+  cy.log('Annulation renommage');
+  CarteCVPrimitives.annulerActionModale(version);
+}
+
+static verifierNouveauNom(version: Version, nouveauNom: string): void {
+  cy.log(`Vérification du nouveau nom : "${nouveauNom}"`);
+  cy.contains(nouveauNom, { timeout: 10000 }).scrollIntoView().should('be.visible');
+}
+
+static verifierBoutonValiderDesactive(version: Version): void {
+  cy.log('Vérification : bouton Valider désactivé');
+
+  cy.get(getSelector(CARTE_CV.MODAL_BTN_VALIDER, version))
+    .should('be.visible')
+    .and('be.disabled');
+}
+
+// Préparation robuste : s'assure qu'un CV porte déjà ce nom
+// Si le nom existe déjà, on ne fait rien
+// Sinon, on renomme un CV avec ce nom
+static assurerQuUnCVPorteDejaCeNom(version: Version, nom: string): void {
+  cy.log(`Préparation : s'assurer qu'un CV porte déjà le nom "${nom}"`);
+
+  CarteCVPrimitives.preparerEtVerifier(version, 2);
+  CarteCVPrimitives.assurerSurPageListe(version);
+
+  CarteCVPrimitives.nomCVExisteDansListe(version, nom).then((existe) => {
+    if (existe) {
+      cy.log(`Préparation déjà OK : "${nom}" existe déjà`);
+      return;
+    }
+
+    cy.log(`Le nom "${nom}" n'existe pas encore, renommage d'un CV pour le créer`);
+
+    CarteCVPrimitives.selectionnerCVParIndex(version, 0);
+    CarteCVPrimitives.ouvrirModaleRenommer(version);
+    CarteCVPrimitives.saisirNouveauNom(version, nom);
+    CarteCVPrimitives.confirmerRenommage(version);
+    CarteCVPrimitives.verifierModaleFermee(version);
+    CarteCVPrimitives.retourListeCV(version);
+    CarteCVPrimitives.assurerSurPageListe(version);
+  });
+}
+
+// Ouvre la modale sur un AUTRE CV puis saisit un nom déjà existant
+static tenterRenommageAvecNomExistant(version: Version, nom: string): void {
+  cy.log(`Tentative de renommage avec un nom existant : "${nom}"`);
+
+  CarteCVPrimitives.preparerEtVerifier(version, 2);
+  CarteCVPrimitives.assurerSurPageListe(version);
+
+  CarteCVPrimitives.trouverIndexAutreCVQueNom(version, nom).then((index) => {
+    CarteCVPrimitives.selectionnerCVParIndex(version, index);
+    CarteCVPrimitives.ouvrirModaleRenommer(version);
+    CarteCVPrimitives.saisirNouveauNom(version, nom);
+  });
+}
+
+// Vérifie le cas négatif
+static verifierErreurNomDejaExistant(
+  version: Version,
+  message: string = 'Ce nom existe déjà'
+): void {
+  cy.log(`Vérification du message d'erreur : "${message}"`);
+
+  CarteCVPrimitives.verifierMessageErreur(version, message);
+  CarteCVPrimitives.verifierBoutonValiderDesactive(version);
+}
+
+// Ferme proprement la modale après le test négatif
+static fermerModaleApresRefusRenommage(version: Version): void {
+  cy.log('Fermeture de la modale après refus de renommage');
+
+  CarteCVPrimitives.annulerRenommage(version);
+  CarteCVPrimitives.verifierModaleFermee(version);
+}
   // Duplication
 
   static dupliquerCV(version: Version, nomDuplication?: string): void {
