@@ -355,10 +355,30 @@ static assurerQuUnCVPorteDejaCeNom(version: Version, nom: string): void {
     CarteCVPrimitives.selectionnerCVParIndex(version, 0);
     CarteCVPrimitives.ouvrirModaleRenommer(version);
     CarteCVPrimitives.saisirNouveauNom(version, nom);
-    CarteCVPrimitives.confirmerRenommage(version);
-    CarteCVPrimitives.verifierModaleFermee(version);
-    CarteCVPrimitives.retourListeCV(version);
-    CarteCVPrimitives.assurerSurPageListe(version);
+
+    // Attendre un instant pour que la validation async s'exécute
+    cy.wait(1000);
+
+    // Vérifier l'état du bouton AVANT de cliquer
+    cy.get(getSelector(CARTE_CV.MODAL_BTN_VALIDER, version))
+      .should('be.visible')
+      .then(($btn) => {
+        if ($btn.is(':disabled')) {
+          // Le nom existe déjà (détecté par l'appli même si nomCVExisteDansListe l'a raté)
+          // → Pas besoin de créer, le nom est déjà pris → préparation OK
+          cy.log(`"${nom}" existe déjà (détecté par l'appli) → annulation et on continue`);
+          CarteCVPrimitives.annulerRenommage(version);
+          CarteCVPrimitives.verifierModaleFermee(version);
+        } else {
+          // Le nom est libre → on confirme le renommage
+          cy.log(`"${nom}" est libre → confirmation du renommage`);
+          cy.wrap($btn).click();
+          cy.wait(2000);
+          CarteCVPrimitives.verifierModaleFermee(version);
+          CarteCVPrimitives.retourListeCV(version);
+          CarteCVPrimitives.assurerSurPageListe(version);
+        }
+      });
   });
 }
 
