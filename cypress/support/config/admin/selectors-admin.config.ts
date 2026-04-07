@@ -1,7 +1,7 @@
 export type Version = 'v1' | 'v2';
 
 export const SECTION_ADMIN = {
-  // ─── Invitation Candidat ──────────────────────────────────────
+  // ─── Invitation Candidat ──────────────────────────────────────-
   INPUT_EMAIL_INVITATION: {
     v1: 'input.input-invit[placeholder="Email du Candidat"]',
     v2: '[data-testid="invitation-email-input"]'
