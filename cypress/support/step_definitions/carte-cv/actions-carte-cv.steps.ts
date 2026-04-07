@@ -1,5 +1,6 @@
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
 import { Version } from '../../config/carte-cv/selectors-carte-cv.config';
+import { AUTH_CREDENTIALS } from '../../config/auth/selectors-auth.config';
 import { CarteCVPrimitives } from '../../primitives/carte-cv/actions.primitives';
 
 const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';
@@ -84,7 +85,8 @@ When('je duplique ce CV', () => {
 });
 
 Then('une copie du CV est créée', () => {
-  cy.log('Copie créée');
+  CarteCVPrimitives.assurerSurPageListe(VERSION);
+  CarteCVPrimitives.assurerTableVisible(VERSION);
 });
 
 Then('la copie apparaît dans ma liste de CV', () => {
@@ -117,11 +119,11 @@ When('j\'annule l\'opération', () => {
 });
 
 Then('toutes les informations sont supprimées', () => {
-  cy.log('Informations supprimées');
+  CarteCVPrimitives.verifierModaleFermee(VERSION);
 });
 
 Then('le contenu du CV reste intact', () => {
-  cy.log('Contenu intact');
+  CarteCVPrimitives.verifierModaleFermee(VERSION);
 });
 
 // ===============================
@@ -133,7 +135,7 @@ When('je transfère ce CV à un collègue', () => {
 
   CarteCVPrimitives.selectionnerCVParIndex(VERSION, 0);
   CarteCVPrimitives.ouvrirModaleChangerProprietaire(VERSION);
-  CarteCVPrimitives.saisirEmailProprietaire(VERSION, 'ykitabrhi@redsen.ch');
+  CarteCVPrimitives.saisirEmailProprietaire(VERSION, AUTH_CREDENTIALS.COLLEGUE.email);
   CarteCVPrimitives.confirmerChangementProprietaire(VERSION);
 });
 
@@ -211,7 +213,7 @@ When('j\'enregistre les modifications', () => {
 });
 
 Then('les modifications sont sauvegardées', () => {
-  cy.log('Modifications sauvegardées');
+  CarteCVPrimitives.verifierStatutVisible('En cours');
 });
 
 // ===============================
@@ -241,5 +243,6 @@ When('je télécharge le JSON de ce CV', () => {
 });
 
 Then('le fichier JSON est téléchargé', () => {
-  cy.log('JSON téléchargé');
+  // Pas de message de confirmation côté UI — on vérifie que la page reste stable
+  CarteCVPrimitives.assurerSurPageListe(VERSION);
 });

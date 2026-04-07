@@ -28,7 +28,7 @@ import {
   };
   
   export class ExperiencesPrimitives {
-// Utilitaires
+    // Utilitaires
     private static attendreAutoSave(): void {
       cy.log('Attente sauvegarde automatique...');
       cy.wait(2500);

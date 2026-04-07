@@ -1,4 +1,6 @@
 # language: fr
+# Feature créée par l’extension Claude Chrome
+
 @section @missions
 Fonctionnalité: Gérer mes missions professionnelles
   En tant qu'utilisateur de ReDsume

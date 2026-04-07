@@ -137,6 +137,9 @@ export const AUTH_CREDENTIALS = {
   EMAIL_INVALIDE: {
     email: 'email-inexistant-xyz@fake.com',
     password: 'nimportequoi'
+  },
+  COLLEGUE: {
+    email: 'ykitabrhi@redsen.ch'
   }
 };
 

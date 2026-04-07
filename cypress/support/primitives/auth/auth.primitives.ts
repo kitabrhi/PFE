@@ -9,7 +9,7 @@ import {
 } from '../../config/auth/selectors-auth.config';
 
 export class AuthPrimitives {
-// Navigation
+  // Navigation
   static naviguerPageConnexion(version: Version): void {
     cy.log('Navigation vers page de connexion');
 

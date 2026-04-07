@@ -27,3 +27,6 @@ backup-*/
 *.tmp
 
 quality-audit.sh
+
+
+cypress/e2e/05-Configuration/13-configuration.feature
