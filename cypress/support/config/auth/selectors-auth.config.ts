@@ -126,12 +126,13 @@ export const AUTH_SELECTORS = {
 // Identifiants utilisés dans les scénarios de test
 
 export const AUTH_CREDENTIALS = {
+  // Getters : Cypress.env() est lu au moment de l'accès, pas au chargement du module
   VALID: {
-    email: Cypress.env('USER_LOGIN') as string,
-    password: Cypress.env('USER_PASSWORD') as string,
+    get email(): string { return Cypress.env('USER_LOGIN'); },
+    get password(): string { return Cypress.env('USER_PASSWORD'); },
   },
   INVALID: {
-    email: Cypress.env('USER_LOGIN') as string,
+    get email(): string { return Cypress.env('USER_LOGIN'); },
     password: 'MauvaisMotDePasse123!'
   },
   EMAIL_INVALIDE: {
@@ -139,7 +140,7 @@ export const AUTH_CREDENTIALS = {
     password: 'nimportequoi'
   },
   COLLEGUE: {
-    email: Cypress.env('USER_LOGIN') as string,
+    email: 'ykitabrhi@redsen.ch'
   }
 };
 
