@@ -127,11 +127,11 @@ export const AUTH_SELECTORS = {
 
 export const AUTH_CREDENTIALS = {
   VALID: {
-    email: 'kitabrhi.youssef.1@gmail.com',
-    password: 'Winners@2003'
+    email: Cypress.env('USER_LOGIN') as string,
+    password: Cypress.env('USER_PASSWORD') as string,
   },
   INVALID: {
-    email: 'kitabrhi.youssef.1@gmail.com',
+    email: Cypress.env('USER_LOGIN') as string,
     password: 'MauvaisMotDePasse123!'
   },
   EMAIL_INVALIDE: {
@@ -139,7 +139,7 @@ export const AUTH_CREDENTIALS = {
     password: 'nimportequoi'
   },
   COLLEGUE: {
-    email: 'ykitabrhi@redsen.ch'
+    email: Cypress.env('USER_LOGIN') as string,
   }
 };
 

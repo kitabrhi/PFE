@@ -37,14 +37,14 @@ jobs:
       - name: Checkout du code
         uses: actions/checkout@v4
 
-      - name: Installation de Node.js 18
+      - name: Installation de Node.js 20
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: 'npm'
 
       - name: Installation des dépendances
-        run: npm install
+        run: npm ci
 
       - name: Lancer les tests Cypress (Cucumber BDD)
         uses: cypress-io/github-action@v6
