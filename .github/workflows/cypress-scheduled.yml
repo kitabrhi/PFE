@@ -22,7 +22,9 @@ on:
     - cron: '10 10 * * 5'
     - cron: '0 10 * * 6'
 
-
+concurrency:
+  group: cypress-tests
+  cancel-in-progress: false
 
 jobs:
   cypress-run:
@@ -39,6 +41,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
+          cache: 'npm'
 
       - name: Installation des dépendances
         run: npm install
@@ -49,22 +52,33 @@ jobs:
           browser: chrome
           headed: false
         env:
+          # ─── Configuration Cypress ────────────────────────────
           CYPRESS_BASE_URL: ${{ secrets.CYPRESS_BASE_URL }}
+          CYPRESS_APP_VERSION: v1
 
-      - name: Créer un commit de log   # ← nouvelle étape
+          # ─── Données utilisateur de test ──────────────────────
+          CYPRESS_TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+          CYPRESS_TEST_USER_FULLNAME: ${{ secrets.TEST_USER_FULLNAME }}
+
+          # ─── Credentials de connexion B2C ─────────────────────
+          CYPRESS_USER_LOGIN: ${{ secrets.CYPRESS_USER_LOGIN }}
+          CYPRESS_USER_PASSWORD: ${{ secrets.CYPRESS_USER_PASSWORD }}
+
+      - name: Créer un commit de log
         if: always()
         run: |
+          mkdir -p test-logs
           git config user.name "kitabrhi"
-          git config user.email "kitabrhi.youssef.1@gmail.com" 
+          git config user.email "kitabrhi.youssef.1@gmail.com"
           echo "Run #${{ github.run_number }} — $(date -u)" >> test-logs/run-history.log
           git add test-logs/run-history.log
-          git commit -m "ci: scheduled test run #${{ github.run_number }}"
+          git commit -m "ci: scheduled test run #${{ github.run_number }}" || echo "Rien à committer"
           git pull --rebase
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name:  Upload des rapports
+      - name: Upload des rapports
         uses: actions/upload-artifact@v4
         if: always()
         with:

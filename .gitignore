@@ -20,6 +20,9 @@ backup-*/
 # Environnement (IMPORTANT : ne pas commit les credentials)
 .env
 
+cypress.env.json
+
+
 # TypeScript
 *.tsbuildinfo
 
@@ -30,3 +33,7 @@ quality-audit.sh
 
 
 cypress/e2e/05-Configuration/13-configuration.feature
+# Cypress test artifacts
+cypress/reports/
+cypress/screenshots/
+cypress/videos/

@@ -15,7 +15,15 @@ const VERSION: Version = (Cypress.env('APP_VERSION') as Version) || 'v1';
 When('j\'envoie une invitation à {string}', (email: string) => {
   AdminPrimitives.envoyerInvitation(VERSION, email);
 });
+
+When('je clique sur modifier mon CV', () => {
+  AdminPrimitives.cliquerModifierMonCV(VERSION);
+});
  
+Then('un CV de {string} est présent dans les résultats', (nom: string) => {
+  AdminPrimitives.verifierCVExistePourNom(nom);
+});
+
 When('je saisis l\'email invalide {string}', (email: string) => {
   cy.get('input.input-invit', { timeout: 10000 })
     .scrollIntoView()

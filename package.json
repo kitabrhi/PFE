@@ -9,9 +9,18 @@
   "scripts": {
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
-    "cypress:run:auth": "cypress run --spec \"cypress/e2e/auth/**/*.feature\"",
+    "cypress:run:auth": "cypress run --spec \"cypress/e2e/01-auth/**/*.feature\"",
     "ts:check": "tsc --noEmit",
-    "ts:watch": "tsc --noEmit --watch"
+    "ts:watch": "tsc --noEmit --watch",
+
+    "cy:clean": "rm -rf cypress/reports",
+    "cy:run:all": "cypress run",
+    "cy:run:auth": "cypress run --spec \"cypress/e2e/01-auth/**/*.feature\"",
+    "cy:report:merge": "mochawesome-merge cypress/reports/.jsons/*.json > cypress/reports/merged.json",
+    "cy:report:html": "marge cypress/reports/merged.json -o cypress/reports --reportFilename redsume-report --reportTitle \"ReDsume BDD Tests Report\" --inline",
+    "cy:report": "npm run cy:report:merge && npm run cy:report:html",
+    "cy:full": "npm run cy:clean && npm run cy:run:all && npm run cy:report",
+    "cy:test": "npm run cy:clean && npm run cy:run:auth && npm run cy:report"
   },
   "devDependencies": {
     "@badeball/cypress-cucumber-preprocessor": "^24.0.0",
@@ -21,7 +30,10 @@
     "@typescript-eslint/parser": "^8.56.1",
     "cypress": "^15.10.0",
     "cypress-dotenv": "^3.0.1",
+    "cypress-mochawesome-reporter": "^4.0.2",
     "cypress-wait-until": "^3.0.2",
+    "mochawesome-merge": "^5.1.1",
+    "mochawesome-report-generator": "^6.3.2",
     "ts-loader": "^9.5.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"

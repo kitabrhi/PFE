@@ -10,12 +10,29 @@ import path from 'path';
  * ═══════════════════════════════════════════════════════════════════
  *
  * @description Configuration Cypress avec support BDD et Azure B2C
- * @version 2.0.0 (TypeScript)
+ * @version 2.1.0 (TypeScript) — ajout reporter mochawesome
  * @author Youssef - PFE REDSEN
  * @date 02/03/2026
  */
 
 export default defineConfig({
+  /**
+   * Reporter HTML mochawesome
+   * Génère un rapport HTML autonome dans cypress/reports/ après chaque run
+   */
+  reporter: 'cypress-mochawesome-reporter',
+  reporterOptions: {
+    reportDir: 'cypress/reports',
+    reportFilename: 'redsume-report',
+    reportPageTitle: 'ReDsume BDD Tests Report',
+    embeddedScreenshots: true,
+    inlineAssets: true,
+    saveAllAttempts: false,
+    charts: true,
+    overwrite: true,
+    timestamp: 'longDate',
+  },
+
   e2e: {
     /**
      * URL de base de l'application
@@ -63,10 +80,13 @@ export default defineConfig({
       config: Cypress.PluginConfigOptions
     ): Promise<Cypress.PluginConfigOptions> {
 
-      // Ajouter le plugin Cucumber pour les fichiers .feature
+      // 1. Mochawesome reporter (doit être en premier)
+      require('cypress-mochawesome-reporter/plugin')(on);
+
+      // 2. Cucumber pour les fichiers .feature
       await addCucumberPreprocessorPlugin(on, config);
 
-      // Configurer le preprocessor avec esbuild + alias de chemin @support
+      // 3. Preprocessor esbuild avec alias @support
       on(
         "file:preprocessor",
         createBundler({

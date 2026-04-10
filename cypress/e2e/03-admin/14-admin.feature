@@ -50,16 +50,17 @@ Fonctionnalité: Fonctions d'administration
     Quand je recherche "utilisateur-inexistant-xyz-999"
     Alors aucun résultat n'est affiché
 
-  @ADM-007
-  Scénario: Vérifier le statut d'un CV dans les résultats
-    Soit je suis sur la page "Recherche CV"
-    Quand je recherche "youssef"
-    Alors des résultats de recherche s'affichent
-    Et un CV de "Youssef" a le statut "EN COURS"
+@ADM-007
+Scénario: Vérifier le statut d'un CV dans les résultats
+  Soit je suis sur la page "Recherche CV"
+  Quand je recherche "youssef"
+  Alors des résultats de recherche s'affichent
+  Et un CV de "Youssef" a le statut "NON DÉMARRÉ"
 
-  @ADM-008
-  Scénario: Ouvrir un CV depuis les résultats de recherche
-    Soit je suis sur la page "Recherche CV"
-    Quand je recherche "youssef"
-    Et je clique sur modifier le CV de "Youssef"
-    Alors je suis redirigé vers l'édition du CV
+@ADM-008
+Scénario: Ouvrir mon propre CV depuis les résultats de recherche
+  Soit je suis sur la page "Recherche CV"
+  Quand je recherche "ykitabrhi@redsen.ch"
+  Et je clique sur modifier mon CV
+  Alors je suis redirigé vers l'édition du CV
+

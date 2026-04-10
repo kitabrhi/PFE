@@ -26,6 +26,9 @@ export class AuthPrimitives {
     });
   }
 
+
+  
+
   // Session
 
   // on vide les cookies et le localStorage pour repartir propre
