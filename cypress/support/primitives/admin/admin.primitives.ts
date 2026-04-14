@@ -35,14 +35,17 @@ export class AdminPrimitives {
       throw new Error('TEST_USER_EMAIL non défini dans cypress.env.json');
     }
   
-    return cy.get('mat-card.result-card', { timeout: 20000 })
-      .filter((_i, card) => {
-        const texte = card.innerText;
+    return cy.get('mat-card.result-card', { timeout: 15000 }).then($cards => {
+      const cartesFiltrees = $cards.filter((_i, card) => {
+        const texte = card.innerText || '';
         return texte.includes(`Propriétaire : ${monEmail}`);
-      })
-      .should('have.length.at.least', 1)
-      .first()
-      .should('be.visible');
+      });
+  
+      expect(cartesFiltrees.length, `Aucune carte trouvée pour ${monEmail}`)
+        .to.be.greaterThan(0);
+  
+      return cy.wrap(cartesFiltrees.first()).should('be.visible');
+    });
   }
   // ─── Navigation ───────────────────────────────────────────────
 
