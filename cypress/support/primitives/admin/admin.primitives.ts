@@ -27,7 +27,7 @@ export class AdminPrimitives {
   /**
    * Trouve la carte CV de l'utilisateur de test courant via son email unique.
    * Garantit qu'une seule carte est sélectionnée (sécurité anti-collision
-   * avec d'autres utilisateurs réels portant le même prénom).
+   * avec d'autres utilisateurs réels portant le même prénom)&/.
    */
   private static trouverMaCarteCV(): Cypress.Chainable<JQuery<HTMLElement>> {
     const monEmail = Cypress.env('TEST_USER_EMAIL');
