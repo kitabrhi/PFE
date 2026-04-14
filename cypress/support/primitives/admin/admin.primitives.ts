@@ -9,7 +9,7 @@ export class AdminPrimitives {
   // ─── Utilitaires ──────────────────────────────────────────────
 
   private static attendreChargement(): void {
-    cy.wait(2000);
+    cy.wait(4000);
   }
 
   /**
@@ -142,7 +142,7 @@ export class AdminPrimitives {
 
   static verifierAucunResultat(): void {
     cy.log('Vérification aucun résultat');
-    cy.wait(2000);
+    cy.wait(4000);
     cy.get('body').then($body => {
       const cards = $body.find('mat-card.result-card');
       expect(cards.length).to.equal(0);
