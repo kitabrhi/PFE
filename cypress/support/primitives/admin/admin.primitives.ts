@@ -35,13 +35,14 @@ export class AdminPrimitives {
       throw new Error('TEST_USER_EMAIL non défini dans cypress.env.json');
     }
   
-    return cy.get('mat-card.result-card', { timeout: 10000 })
+    return cy.get('mat-card.result-card', { timeout: 20000 })
       .filter((_i, card) => {
         const texte = card.innerText;
         return texte.includes(`Propriétaire : ${monEmail}`);
       })
       .should('have.length.at.least', 1)
-      .first();
+      .first()
+      .should('be.visible');
   }
   // ─── Navigation ───────────────────────────────────────────────
 
