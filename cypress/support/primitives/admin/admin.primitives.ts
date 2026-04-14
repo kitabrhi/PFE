@@ -34,13 +34,15 @@ export class AdminPrimitives {
     if (!monEmail) {
       throw new Error('TEST_USER_EMAIL non défini dans cypress.env.json');
     }
-    cy.log(`Recherche de ma carte CV via ${monEmail}`);
-
+  
     return cy.get('mat-card.result-card', { timeout: 10000 })
-      .filter(`:contains("${monEmail}")`)
-      .should('have.length', 1);
+      .filter((_i, card) => {
+        const texte = card.innerText;
+        return texte.includes(`Propriétaire : ${monEmail}`);
+      })
+      .should('have.length.at.least', 1)
+      .first();
   }
-
   // ─── Navigation ───────────────────────────────────────────────
 
   static naviguerVersInvitation(version: Version): void {

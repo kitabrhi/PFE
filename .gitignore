@@ -36,3 +36,8 @@ cypress/e2e/05-Configuration/13-configuration.feature
 cypress/reports/
 cypress/screenshots/
 cypress/videos/
+
+
+
+
+reports/
