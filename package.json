@@ -20,7 +20,13 @@
     "cy:report:html": "marge cypress/reports/merged.json -o cypress/reports --reportFilename redsume-report --reportTitle \"ReDsume BDD Tests Report\" --inline",
     "cy:report": "npm run cy:report:merge && npm run cy:report:html",
     "cy:full": "npm run cy:clean && npm run cy:run:all && npm run cy:report",
-    "cy:test": "npm run cy:clean && npm run cy:run:auth && npm run cy:report"
+    "cy:test": "npm run cy:clean && npm run cy:run:auth && npm run cy:report",
+
+    "test:cypress":    "RUNNER=cypress cypress run",
+    "test:playwright": "RUNNER=playwright npx cucumber-js --config playwright/cucumber.cjs",
+    "test":            "npx ts-node scripts/run-tests.ts",
+
+    "pw:install":      "npx playwright install chromium"
   },
   "devDependencies": {
     "@badeball/cypress-cucumber-preprocessor": "^24.0.0",
@@ -36,7 +42,10 @@
     "mochawesome-report-generator": "^6.3.2",
     "ts-loader": "^9.5.4",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "@cucumber/cucumber": "^11.0.0",
+    "@playwright/test": "^1.50.0",
+    "playwright": "^1.50.0"
   },
   "cypress-cucumber-preprocessor": {
     "stepDefinitions": "cypress/support/step_definitions/**/*.ts"
